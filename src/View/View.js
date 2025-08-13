@@ -37,7 +37,9 @@ class View {
 	 * @param {Frame} [input.frame]
 	 * @param {Locale} [input.locale]
 	 * @param {Map} [input.vocab]
+	 * @param {number[]} [input.windowSize]
 	 * @param {Map} [input.components]
+	 * @param {string} [input.renderMethod]
 	 */
 	constructor(input = {}) {
 		const {
@@ -47,7 +49,7 @@ class View {
 			frame = new Frame(),
 			locale = new Locale("uk-UA"),
 			vocab = new Map(),
-			windowSize = null,
+			windowSize = [0, 0],
 			components = new Map(),
 			renderMethod = Frame.RenderMethod.VISIBLE,
 		} = input
@@ -77,7 +79,7 @@ class View {
 		this.startedAt = Date.now()
 	}
 	spent(checkpoint = this.startedAt) {
-		return parseInt((Date.now() - checkpoint) / 1000)
+		return Math.round((Date.now() - checkpoint) / 1000)
 	}
 	/**
 	 * @todo complete the rendering with BOF and BOL.

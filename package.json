@@ -3,13 +3,18 @@
 	"version": "1.0.0",
 	"description": "NaN•Web UI. One application logic (algorithm) and many UI.",
 	"main": "src/index.js",
+	"types": "types/index.d.ts",
 	"type": "module",
 	"scripts": {
+		"build": "tsc",
 		"test": "vitest run",
 		"test:debug": "NODE_OPTIONS=--enable-source-maps vitest run --no-file-parallelism --no-cache --inspect-brk"
 	},
 	"exports": {
-		".": "./src/index.js",
+		".": {
+			"import": "./src/index.js",
+			"types": "./types/index.d.ts"
+		},
 		"./cli-app": "./apps/cli/src/index.js",
 		"./mobile-app": "./apps/mobile/src/index.js",
 		"./web-app": "./apps/web/src/App.jsx"
