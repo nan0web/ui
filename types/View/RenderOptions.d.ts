@@ -20,4 +20,10 @@ declare class RenderOptions {
     width: number;
     /** @type {number} */
     height: number;
+    get DEFAULTS(): {
+        resizeToView: boolean;
+        translateFrame: boolean;
+        render: boolean;
+        renderMethod: string;
+    };
 }

@@ -2,19 +2,19 @@ export default StdOut;
 /**
  * Handles standard output stream with formatting capabilities.
  */
-declare class StdOut extends NanoEvent {
+declare class StdOut extends EventProcessor {
     /** @type {string} End of line character */
     static EOL: string;
     /** @type {string} Beginning of line character */
     static BOL: string;
-    /** @type {object} Color escape codes */
-    static COLORS: object;
-    /** @type {object} Style escape codes */
-    static STYLES: object;
     /** @type {string} Reset formatting escape code */
     static RESET: string;
     /** @type {string} Clear screen escape code */
     static CLEAR: string;
+    /** @type {object} Color escape codes */
+    static COLORS: object;
+    /** @type {Record<string, string>} Style escape codes */
+    static STYLES: Record<string, string>;
     /**
      * Creates a new StdOut instance.
      * @param {object} props - StdOut properties
@@ -49,4 +49,4 @@ declare class StdOut extends NanoEvent {
      */
     getWindowSize(): number[];
 }
-import NanoEvent from "@yaro.page/nano-events";
+import EventProcessor from "@nan0web/event/oop";

@@ -5,6 +5,12 @@ declare class View {
     /** @type {typeof FrameRenderMethod} */
     static RenderMethod: typeof FrameRenderMethod;
     /**
+     * @param {Frame} frame
+     * @param {RenderOptions} [options]
+     * @returns {Frame}
+     */
+    static fixFrame(frame: Frame, options?: RenderOptions | undefined): Frame;
+    /**
      * @param {object} [input]
      * @param {StdIn} [input.stdin]
      * @param {StdOut} [input.stdout]
@@ -12,7 +18,9 @@ declare class View {
      * @param {Frame} [input.frame]
      * @param {Locale} [input.locale]
      * @param {Map} [input.vocab]
+     * @param {number[]} [input.windowSize]
      * @param {Map} [input.components]
+     * @param {string} [input.renderMethod]
      */
     constructor(input?: {
         stdin?: StdIn | undefined;
@@ -21,8 +29,10 @@ declare class View {
         frame?: Frame | undefined;
         locale?: Locale | undefined;
         vocab?: Map<any, any> | undefined;
+        windowSize?: number[] | undefined;
         components?: Map<any, any> | undefined;
-    });
+        renderMethod?: string | undefined;
+    } | undefined);
     /** @type {StdIn} */
     stdin: StdIn;
     /** @type {StdOut} */
@@ -42,17 +52,18 @@ declare class View {
     /** @type {string} */
     renderMethod: string;
     get empty(): boolean;
+    get RenderMethod(): typeof FrameRenderMethod;
+    get RenderOptions(): typeof RenderOptions;
     getWindowSize(): number[];
     setWindowSize(width: any, height: any): void;
     startTimer(): void;
     spent(checkpoint?: number): number;
     /**
-     * @todo complete the rendering with BOF and BOL.
      * @param {boolean|number|function} [shouldRender=0]
      * @param {RenderOptions} [options]
-     * @returns {(value: Frame|string|string[]) => Frame}
+     * @returns {(value: Frame|string|string[], ...args: any) => Frame}
      */
-    render(shouldRender?: boolean | number | Function, options?: RenderOptions): (value: Frame | string | string[]) => Frame;
+    render(shouldRender?: number | boolean | Function | undefined, options?: RenderOptions | undefined): (value: Frame | string | string[], ...args: any) => Frame;
     clear(shouldRender?: number): Frame;
     progress(shouldRender?: boolean): (value: any) => Frame;
     t(value: any): any;
@@ -89,6 +100,6 @@ import StdIn from "../StdIn.js";
 import StdOut from "../StdOut.js";
 import Frame from "../Frame/Frame.js";
 import Locale from "../Locale.js";
+import { FrameRenderMethod } from "../Frame/Frame.js";
 import RenderOptions from "./RenderOptions.js";
 import InputMessage from "../InputMessage.js";
-import { FrameRenderMethod } from "../Frame/Frame.js";

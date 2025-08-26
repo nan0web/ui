@@ -1,4 +1,4 @@
-import NanoEvent from "@yaro.page/nano-events"
+import EventProcessor from "@nan0web/event/oop"
 import View from "../../View/View.js"
 import InputMessage from "../../InputMessage.js"
 
@@ -7,7 +7,7 @@ import InputMessage from "../../InputMessage.js"
  * Widget is a view with ability to input data in a specific format.
  * Input and output data are typed classes.
  */
-class Widget extends NanoEvent {
+class Widget extends EventProcessor {
 	/** @type {View} The view associated with this widget */
 	view
 

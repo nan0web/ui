@@ -3,8 +3,8 @@ import Frame, { FrameRenderMethod } from "../Frame/Frame.js"
 import Locale from "../Locale.js"
 import StdOut from "../StdOut.js"
 import StdIn from "../StdIn.js"
-import RenderOptions from "./RenderOptions.js"
 import InputMessage from "../InputMessage.js"
+import RenderOptions from "./RenderOptions.js"
 
 class View {
 	/** @type {typeof RenderOptions} */
@@ -69,6 +69,12 @@ class View {
 	get empty() {
 		return empty(this.frame)
 	}
+	get RenderMethod() {
+		return /** @type {typeof View} */ (this.constructor).RenderMethod
+	}
+	get RenderOptions() {
+		return /** @type {typeof View} */ (this.constructor).RenderOptions
+	}
 	getWindowSize() {
 		return equal(this.windowSize, [0, 0]) ? this.stdout.getWindowSize() : this.windowSize
 	}
@@ -82,42 +88,22 @@ class View {
 		return Math.round((Date.now() - checkpoint) / 1000)
 	}
 	/**
-	 * @todo complete the rendering with BOF and BOL.
 	 * @param {boolean|number|function} [shouldRender=0]
 	 * @param {RenderOptions} [options]
-	 * @returns {(value: Frame|string|string[]) => Frame}
+	 * @returns {(value: Frame|string|string[], ...args: any) => Frame}
 	 */
-	render(shouldRender = 0, options = {}) {
-		const RenderOptions = this.constructor.RenderOptions
-
-		const [w, h] = this.getWindowSize()
-		const {
-			resizeToView = false,
-			translateFrame = false,
-			render = true,
-			renderMethod = this.renderMethod,
-			width = w,
-			height = h,
-		} = options
-
-		options = RenderOptions.from({
-			resizeToView, translateFrame, render, renderMethod, width, height,
+	render(shouldRender = 0, options = new this.RenderOptions()) {
+		const [width, height] = this.getWindowSize()
+		options = this.RenderOptions.from({
+			...options,
+			renderMethod: this.renderMethod, width, height,
+			// @ts-ignore
 		})
-		const renderFn = typeOf(Function)(shouldRender)
+		const renderFn = "function" === typeof shouldRender // no errors.
+			// const renderFn = typeOf(Function)(shouldRender) // Property 'bind' does not exist on type 'number | boolean | Function'.
 			? shouldRender.bind(this) : typeOf(String)(shouldRender)
 				? this.components.get(shouldRender)?.bind(this)
 				: null
-
-		/**
-		 * @param {Frame} frame
-		 * @returns {Frame}
-		 */
-		const fixFrame = (frame) => {
-			if (options.resizeToView && !equal(options.width, frame.width, options.height, frame.height)) {
-				frame.setWindowSize(options.width, options.height)
-			}
-			return frame
-		}
 
 		return (value, ...args) => {
 			if (renderFn) {
@@ -131,10 +117,10 @@ class View {
 						height: options.height,
 					})
 				}
-				rendered = fixFrame(rendered)
+				rendered = View.fixFrame(rendered, options)
 				rendered = rendered.transform(this.t.bind(this))
 				rendered.render()
-				if (render) {
+				if (options.render) {
 					this.stdout.write(String(rendered))
 					this.frame = rendered
 				}
@@ -142,29 +128,26 @@ class View {
 			}
 
 			let frame = Frame.from({ ...options, value })
-			frame = fixFrame(frame)
+			frame = View.fixFrame(frame, options)
 			let clearFrame = false
-			if (frame.value[0] === Frame.BOF) {
+			if (String(frame.value[0] ?? "") === Frame.BOF) {
 				frame.value = frame.value.slice(1)
 				clearFrame = true
 			}
-			let translated = translateFrame ? frame.transform(this.t.bind(this)) : frame
-			translated = fixFrame(translated)
+			let translated = options.translateFrame ? frame.transform(this.t.bind(this)) : frame
+			translated = View.fixFrame(translated, options)
 
 			let rendered = translated
 			rendered.render()
 			if (shouldRender) {
 				if (clearFrame) {
-					const distance = height - frame.value.length
+					const distance = options.height - frame.value.length
 					this.stdout.write(Frame.BOF)
 					for (let i = 0; i < distance; i++) {
 						this.stdout.write(Frame.EOL)
 					}
 				}
 				this.stdout.write(Frame.RESET + String(rendered))
-				/**
-				 * @todo if possible make Frame.from() as Frame(value)
-				 */
 				this.frame = rendered
 			}
 			return rendered
@@ -282,6 +265,20 @@ class View {
 		} while (!result.isValid() && !result.escaped)
 		return result.escaped ? null : result
 	}
+
+	/**
+	 * @param {Frame} frame
+	 * @param {RenderOptions} [options]
+	 * @returns {Frame}
+	 */
+	static fixFrame(frame, options = new RenderOptions()) {
+		if (options.resizeToView && !equal(options.width, frame.width, options.height, frame.height)) {
+			frame.setWindowSize(options.width, options.height)
+		}
+		// @todo add multiline visibility, for instance extended frame row into rows if it's wider than width.
+		return frame
+	}
+
 }
 
 export default View

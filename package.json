@@ -7,8 +7,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc",
-		"test": "vitest run",
-		"test:debug": "NODE_OPTIONS=--enable-source-maps vitest run --no-file-parallelism --no-cache --inspect-brk"
+		"playground": "node playground/main.js",
+		"test": "node --test src/core/**/*.test.js src/README.md.test.js"
 	},
 	"exports": {
 		".": {
@@ -27,15 +27,18 @@
 	"license": "ISC",
 	"packageManager": "pnpm@10.11.0",
 	"devDependencies": {
+		"@nan0web/event": "workspace:*",
+		"@nan0web/i18n": "workspace:*",
+		"@nan0web/test": "workspace:*",
 		"@nan0web/types": "workspace:*",
 		"@vitest/coverage-v8": "^3.2.4",
 		"vitest": "^3.2.4"
 	},
 	"dependencies": {
-		"@yaro.page/nano-events": "^1.0.0",
 		"string-width": "^7.2.0"
 	},
 	"peerDependencies": {
+		"@nan0web/event": "^1.0.0",
 		"@nan0web/types": "^1.0.0"
 	}
 }

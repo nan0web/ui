@@ -8,7 +8,7 @@ export type Processor = {
 /**
  * Handles standard input stream with message buffering.
  */
-declare class StdIn extends NanoEvent {
+declare class StdIn extends EventProcessor {
     /** @type {number} Read interval in milliseconds */
     static READ_INTERVAL: number;
     /** @type {string[]} Messages to ignore */
@@ -62,11 +62,11 @@ declare class StdIn extends NanoEvent {
      */
     decode(message: InputMessage | string[] | any): InputMessage;
 }
-import NanoEvent from "@yaro.page/nano-events";
+import EventProcessor from "@nan0web/event/oop";
 import InputMessage from "./InputMessage.js";
 /**
  * @typedef {Object} Processor
  * @property {Function} on - Event handler registration
  */
-declare class Processor extends NanoEvent {
+declare class Processor extends EventProcessor {
 }

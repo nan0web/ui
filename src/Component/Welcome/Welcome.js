@@ -16,7 +16,7 @@ function Welcome(props = {}) {
 	return [
 		["Welcome", " ", input.user.name, "!"],
 		["What can we do today great?"],
-		"",
+		[""],
 	]
 }
 

@@ -1,4 +1,5 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, it } from "node:test"
+import { strict as assert } from "node:assert"
 import UserApp from "./UserApp.js"
 import UserUI from "./UserUI.js"
 import View from "../../View/View.js"
@@ -12,10 +13,10 @@ describe("UserUI", () => {
 		const ui = new UserUI(app, view)
 
 		const commands = ui.convertInput("setUser -user Bob welcome")
-		expect(commands.length).toBe(1)
-		expect(commands[0].args.get(0)).toBe("setUser")
-		expect(commands[0].args.get(1)).toBe("welcome")
-		expect(commands[0].opts.user).toBe("Bob")
+		assert.equal(commands.length, 1)
+		assert.equal(commands[0].args.get(0), "setUser")
+		assert.equal(commands[0].args.get(1), "welcome")
+		assert.equal(commands[0].opts.user, "Bob")
 	})
 
 	it("should convert input without user.name to askUserName command", () => {
@@ -24,8 +25,8 @@ describe("UserUI", () => {
 		const ui = new UserUI(app, view)
 
 		const commands = ui.convertInput({})
-		expect(commands.length).toBe(1)
-		expect(String(commands[0])).toBe("<no options> <empty args>")
+		assert.equal(commands.length, 1)
+		assert.equal(String(commands[0]), "<no options> <empty args>")
 	})
 
 	it("should process askUserName command interactively", async () => {
@@ -35,15 +36,15 @@ describe("UserUI", () => {
 		view.register("Welcome", Welcome)
 
 		// Mock view.ask to return a name
-		view.ask = vi.fn().mockResolvedValue(new InputMessage("Charlie"))
+		view.ask = () => Promise.resolve(new InputMessage("Charlie"))
 		// Mock output to collect outputs
 		const outputs = []
 		ui.output = (results) => outputs.push(...results)
 
 		const results = await ui.process(["welcome"])
-		expect(view.ask).toHaveBeenCalled()
-		expect(results.length).toBe(1)
-		expect(results[0].value[0][0]).toBe("Welcome")
-		expect(view.stdout.stream[0]).toContain("Welcome Charlie!")
+		assert.ok(view.ask)
+		assert.equal(results.length, 1)
+		assert.equal(results[0].value[0][0], "Welcome")
+		assert.ok(view.stdout.stream[0].includes("Welcome Charlie!"))
 	})
 })

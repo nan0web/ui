@@ -1,4 +1,4 @@
-# NaN•UI
+# System intructions `system.md` / NaN•Web UI
 
 Vanilla javascript UI interfaces with no platform dependencies.  
 Must work for nodejs, browser and other compilers that supports ESM.

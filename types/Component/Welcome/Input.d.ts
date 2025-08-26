@@ -13,13 +13,13 @@ declare class WelcomeInput {
     /**
      * Creates a new WelcomeInput instance.
      * @param {object} props - Welcome input properties
-     * @param {Model.User|object} [props.user=new Model.User()] - User data
+     * @param {User|object} [props.user=new User()] - User data
      */
     constructor(props?: {
-        user?: Model.User | object;
+        user?: User | object;
     });
-    /** @type {Model.User} User data for welcome message */
-    user: Model.User;
+    /** @type {User} User data for welcome message */
+    user: User;
     /**
      * Checks if the input is empty (no user data).
      * @returns {boolean} True if user data is empty, false otherwise
@@ -31,3 +31,4 @@ declare class WelcomeInput {
      */
     toString(): string;
 }
+import { User } from "../../Model/index.js";

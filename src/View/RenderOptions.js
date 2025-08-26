@@ -20,7 +20,7 @@ class RenderOptions {
 	/** @type {number} */
 	height
 	constructor(props = {}) {
-		const DEFAULTS = this.constructor.DEFAULTS
+		const DEFAULTS = this.DEFAULTS
 		const {
 			resizeToView = DEFAULTS.resizeToView,
 			translateFrame = DEFAULTS.translateFrame,
@@ -35,6 +35,9 @@ class RenderOptions {
 		this.renderMethod = renderMethod
 		this.width = width
 		this.height = height
+	}
+	get DEFAULTS() {
+		return /** @type {typeof RenderOptions} */ (this.constructor).DEFAULTS
 	}
 	static from(props = {}) {
 		if (props instanceof RenderOptions) return props

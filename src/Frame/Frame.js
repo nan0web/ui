@@ -46,7 +46,7 @@ class Frame {
 	value
 	/** @type {FrameProps} */
 	defaultProps
-	/** @type {string[]} */
+	/** @type {string} */
 	imprint
 	/** @type {number} */
 	width
@@ -55,23 +55,29 @@ class Frame {
 	/** @type {string} */
 	renderMethod
 	/**
-	 * @param {object} props
-	 * @param {string[]|string[][]} props.value
+	 * @param {object} [input]
+	 * @param {string[]|string[][]} [input.value]
+	 * @param {number} [input.width]
+	 * @param {number} [input.height]
+	 * @param {string} [input.imprint]
+	 * @param {string} [input.renderMethod]
+	 * @param {FrameProps} [input.defaultProps]
 	 */
-	constructor(props = {}) {
-		if (typeOf(Array)(props)) {
-			props = { value: props }
-		}
-		if (props instanceof Frame) {
-			props = { ...props }
+	constructor(input = {}) {
+		// if (typeOf(Array)(input)) {
+		// 	input = { value: input }
+		// }
+		if (input instanceof Frame) {
+			input = { ...input }
 		}
 		let {
 			value = [],
 			width = -1,
 			height = -1,
+			imprint = "",
 			renderMethod = "append",
 			defaultProps = new FrameProps(),
-		} = props
+		} = input
 		if (value instanceof Frame) {
 			value = value.value
 		}
@@ -87,7 +93,8 @@ class Frame {
 			}
 			return [row]
 		})
-		this.value = value
+		this.value = value.map(v => Array.isArray(v) ? v : [v])
+		this.imprint = String(imprint)
 		this.width = width
 		this.height = height
 		this.renderMethod = renderMethod
@@ -176,10 +183,10 @@ class Frame {
 				if (moveUpLines > 0) {
 					--moveUpLines
 				}
-				carret = `\x1b[${moveUpLines}A\r`
+				carret = Frame.cursorUp(moveUpLines)
 			}
 			rows = rows.map(
-				row => row + " ".repeat(Math.max(0, this.width - this.lengthOf(row)))
+				row => Frame.clearLine("\r") + row
 			)
 		}
 		else {
@@ -437,10 +444,12 @@ class Frame {
 			return false
 		}
 	}
-	static from(strings) {
-		if (strings instanceof Frame) return strings
-		if (strings?.value instanceof Frame) return new this(to(Object)(strings.value))
-		return new this(strings)
+	static from(input) {
+		if (input instanceof Frame) return input
+		if (input?.value instanceof Frame) return new Frame(to(Object)(input.value))
+		if ("string" === typeof input) input = [input]
+		if (Array.isArray(input)) return new Frame({ value: input })
+		return new Frame(input)
 	}
 	static spaces(options = {}) {
 		const { cols = [], padding = 1, aligns = [] } = options
@@ -487,6 +496,19 @@ class Frame {
 			return arr.map(row => Frame.spaces({ cols, padding, aligns })(row))
 		}
 	}
+	static cursorUp(lines = 1) {
+		return `\x1b[${lines}A`
+	}
+	static cursorDown(lines = 1) {
+		return `\x1b[${lines}B`
+	}
+	static clearLine(str = "\r") {
+		return '\x1b[2K' + str
+	}
+	static clearScreen() {
+		return '\x1b[2J\x1b[0;0H'
+	}
+
 }
 
 export default Frame

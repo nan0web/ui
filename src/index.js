@@ -5,7 +5,6 @@ import StdOut from "./StdOut.js"
 import View from "./View/View.js"
 import RenderOptions from "./View/RenderOptions.js"
 import FrameProps from "./Frame/Props.js"
-import InputMessage from "./InputMessage.js"
 import Model from "./Model/index.js"
 import Component from "./Component/index.js"
 import App from "./App/index.js"
@@ -18,10 +17,18 @@ export {
 	StdOut,
 	View,
 	RenderOptions,
-	InputMessage,
 	Model,
 	Component,
 	App,
 }
 
 // export default App
+export { default as FormMessage } from "./core/Form/Message.js"
+export { default as FormInput } from "./core/Form/Input.js"
+export { default as InputAdapter } from "./core/InputAdapter.js"
+export { default as InputMessage } from "./core/Message/InputMessage.js"
+export { default as OutputAdapter } from "./core/OutputAdapter.js"
+export { default as OutputMessage } from "./core/Message/OutputMessage.js"
+export { default as UIForm } from "./core/Form/Form.js"
+export { default as UIMessage } from "./core/Message/Message.js"
+export { default as UIStream } from "./core/Stream.js"

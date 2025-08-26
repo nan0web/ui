@@ -4,12 +4,12 @@ export default Widget;
  * Widget is a view with ability to input data in a specific format.
  * Input and output data are typed classes.
  */
-declare class Widget extends NanoEvent {
+declare class Widget extends EventProcessor {
     /**
      * Creates a new Widget instance.
      * @param {View} [view] - View instance (default: new View())
      */
-    constructor(view?: View);
+    constructor(view?: View | undefined);
     /** @type {View} The view associated with this widget */
     view: View;
     /**
@@ -32,6 +32,6 @@ declare class Widget extends NanoEvent {
      */
     render(viewFnOrName: Function | string, outputData: object): any;
 }
-import NanoEvent from "@yaro.page/nano-events";
+import EventProcessor from "@nan0web/event/oop";
 import View from "../../View/View.js";
 import InputMessage from "../../InputMessage.js";

@@ -29,7 +29,7 @@ declare class Frame {
     static STRIKETHROUGH: string;
     static RESET: string;
     static is(value: any): boolean;
-    static from(strings: any): Frame;
+    static from(input: any): Frame;
     static spaces(options?: {}): (row: any) => any;
     static weight(arr: any): (Fn?: (v: any) => any) => any[];
     /**
@@ -47,13 +47,27 @@ declare class Frame {
         padding?: number | undefined;
         aligns?: string[] | undefined;
     }): (arr: []) => string[][];
+    static cursorUp(lines?: number): string;
+    static cursorDown(lines?: number): string;
+    static clearLine(str?: string): string;
+    static clearScreen(): string;
     /**
-     * @param {object} props
-     * @param {string[]|string[][]} props.value
+     * @param {object} [input]
+     * @param {string[]|string[][]} [input.value]
+     * @param {number} [input.width]
+     * @param {number} [input.height]
+     * @param {string} [input.imprint]
+     * @param {string} [input.renderMethod]
+     * @param {FrameProps} [input.defaultProps]
      */
-    constructor(props?: {
-        value: string[] | string[][];
-    });
+    constructor(input?: {
+        value?: string[] | string[][] | undefined;
+        width?: number | undefined;
+        height?: number | undefined;
+        imprint?: string | undefined;
+        renderMethod?: string | undefined;
+        defaultProps?: FrameProps | undefined;
+    } | undefined);
     /**
      * @example
      * ```js
@@ -68,8 +82,8 @@ declare class Frame {
     value: string[][] | any[][];
     /** @type {FrameProps} */
     defaultProps: FrameProps;
-    /** @type {string[]} */
-    imprint: string[];
+    /** @type {string} */
+    imprint: string;
     /** @type {number} */
     width: number;
     /** @type {number} */
@@ -78,8 +92,8 @@ declare class Frame {
     renderMethod: string;
     get empty(): boolean;
     lengthOf(str: any): number;
-    render(options?: {}): string[];
-    toString(): string[];
+    render(options?: {}): string;
+    toString(): string;
     transform(fn: any): Frame;
     setWindowSize(width: any, height: any): void;
     #private;

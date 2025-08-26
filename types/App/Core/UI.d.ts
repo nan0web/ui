@@ -9,7 +9,7 @@ declare class UI extends Widget {
      * @param {CoreApp} app - The app to connect to this UI
      * @param {View} [view] - View instance for rendering (default: new View())
      */
-    constructor(app: CoreApp, view?: View);
+    constructor(app: CoreApp, view?: View | undefined);
     /** @type {CoreApp} The app instance connected to this UI */
     app: CoreApp;
     /**

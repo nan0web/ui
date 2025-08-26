@@ -1,4 +1,6 @@
-import NanoEvent from "@yaro.page/nano-events"
+import EventProcessor from "@nan0web/event/oop"
+import { CommandMessage } from "@nan0web/co"
+import { typeOf } from "@nan0web/types"
 import InputMessage from "./InputMessage.js"
 
 /**
@@ -6,24 +8,24 @@ import InputMessage from "./InputMessage.js"
  * @property {Function} on - Event handler registration
  */
 
-class Processor extends NanoEvent { }
+class Processor extends EventProcessor { }
 
 /**
  * Handles standard input stream with message buffering.
  */
-class StdIn extends NanoEvent {
+class StdIn extends EventProcessor {
 	/** @type {number} Read interval in milliseconds */
 	static READ_INTERVAL = 99
-	
+
 	/** @type {string[]} Messages to ignore */
 	static IGNORE_MESSAGES = ["", undefined]
-	
+
 	/** @type {InputMessage[]} Input message buffer */
 	stream = []
-	
+
 	/** @type {Processor} Input processor */
 	processor
-	
+
 	/**
 	 * Creates a new StdIn instance.
 	 * @param {object} props - StdIn properties
@@ -48,9 +50,9 @@ class StdIn extends NanoEvent {
 	 * @returns {boolean} True if waiting messages, false otherwise
 	 */
 	get waiting() {
-		return this.stream.length
+		return this.stream.length > 0
 	}
-	
+
 	/**
 	 * Checks if the input stream has ended (no messages left).
 	 * @returns {boolean} True if no messages left, false otherwise
@@ -70,7 +72,7 @@ class StdIn extends NanoEvent {
 		}
 		return this.stream.shift()
 	}
-	
+
 	/**
 	 * Writes a message to the input stream.
 	 * @param {string} message - Message to write
@@ -85,7 +87,7 @@ class StdIn extends NanoEvent {
 		this.stream.push(this.decode(text))
 		return true
 	}
-	
+
 	/**
 	 * Decodes a message into an InputMessage instance.
 	 * @param {InputMessage | string[] | any} message - Message to decode
@@ -94,11 +96,11 @@ class StdIn extends NanoEvent {
 	decode(message) {
 		if (message instanceof InputMessage) return message
 		if (Array.isArray(message) && message.every(typeOf(String))) {
-			return CommandMessage.parse(message)
+			return new InputMessage(CommandMessage.parse(message))
 		}
 		return new InputMessage(message)
 	}
-	
+
 	/**
 	 * Creates a StdIn instance from the given input.
 	 * @param {StdIn|object} input - The input to create from

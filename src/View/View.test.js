@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest"
+import { describe, it } from "node:test"
+import { strict as assert } from "node:assert"
 import View from "./View.js"
 import Frame from "../Frame/Frame.js"
 import FrameProps from "../Frame/Props.js"
@@ -7,14 +8,14 @@ import Welcome from "../Component/Welcome/index.js"
 describe("View", () => {
 	it("should create empty instance", () => {
 		const view = new View()
-		expect(view).toBeDefined()
+		assert.ok(view)
 	})
 	it("should print frame", () => {
 		const view = new View()
 		view.render(1)(["Hello"])
-		expect(String(view.frame)).toBe("Hello")
+		assert.equal(String(view.frame), "Hello")
 		const value = view.render(0)(["No output"])
-		expect({ ...value }).toEqual({
+		assert.deepStrictEqual({ ...value }, {
 			imprint: "No output",
 			value: [["No output"]],
 			width: 144,
@@ -23,8 +24,8 @@ describe("View", () => {
 			defaultProps: new FrameProps(),
 		})
 		view.render(() => (["fn result"]))(["Even with a function"])
-		expect(String(view.frame)).toBe("fn result")
-		expect(view.stdout.stream).toEqual([
+		assert.equal(String(view.frame), "fn result")
+		assert.deepStrictEqual(view.stdout.stream, [
 			"Hello",
 			"fn result"
 		])
@@ -32,11 +33,11 @@ describe("View", () => {
 	it("should print frame with render method set to append", () => {
 		const view = new View({ renderMethod: View.RenderMethod.APPEND })
 		view.render(1)(["Hello"])
-		expect(String(view.frame)).toBe("Hello" + " ".repeat(139))
+		assert.equal(String(view.frame), "Hello" + " ".repeat(139))
 		view.render(1)(["world"])
-		expect(String(view.frame)).toBe("world" + " ".repeat(139))
+		assert.equal(String(view.frame), "world" + " ".repeat(139))
 		const value = view.render(0)(["No output"])
-		expect({ ...value }).toEqual({
+		assert.deepStrictEqual({ ...value }, {
 			imprint: "No output" + " ".repeat(144 - "No output".length),
 			value: [["No output"]],
 			width: 144,
@@ -45,8 +46,8 @@ describe("View", () => {
 			defaultProps: new FrameProps(),
 		})
 		view.render(() => (["fn result"]))(["Even with a function"])
-		expect(String(view.frame)).toBe("fn result" + " ".repeat(144 - 9))
-		expect(view.stdout.stream).toEqual([
+		assert.equal(String(view.frame), "fn result" + " ".repeat(144 - 9))
+		assert.deepStrictEqual(view.stdout.stream, [
 			"Hello",
 			"world",
 			"fn result"
@@ -62,7 +63,7 @@ describe("View", () => {
 		})
 		view.register(Welcome)
 		const frame = view.render("Welcome")({ user: { name: "View" } })
-		expect(frame).toBeInstanceOf(Frame)
+		assert.ok(frame instanceof Frame)
 		const expected = [
 			"Welcome View!",
 			"What can we do today great?",
@@ -70,6 +71,6 @@ describe("View", () => {
 		].map(
 			row => (row + " ".repeat(144 - row.length))
 		).join("\n")
-		expect(view.stdout.stream).toEqual([expected])
+		assert.deepStrictEqual(view.stdout.stream, [expected])
 	})
 })

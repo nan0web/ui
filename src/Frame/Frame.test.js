@@ -1,4 +1,5 @@
-import { describe, it, expect } from "vitest"
+import { describe, it } from "node:test"
+import { strict as assert } from "node:assert"
 import { empty, notEmpty } from "@nan0web/types"
 import Frame from "./Frame.js"
 import stringWidth from "string-width"
@@ -6,11 +7,11 @@ import stringWidth from "string-width"
 describe("Frame", () => {
 	it("should create empty Frame", () => {
 		const frame = new Frame()
-		expect(empty(frame)).toBeTruthy()
+		assert.ok(empty(frame))
 	})
 	it("should create non-empty Frame", () => {
 		const frame = new Frame(["Non", "empty"])
-		expect(notEmpty(frame)).toBeTruthy()
+		assert.ok(notEmpty(frame))
 	})
 	it("should print empty zero and false", () => {
 		const input = [
@@ -18,11 +19,12 @@ describe("Frame", () => {
 			[undefined, null, "", {}]
 		]
 		const frame = new Frame({ value: input, width: 144, height: 33 })
-		expect(notEmpty(frame)).toBeTruthy()
+		assert.ok(notEmpty(frame))
 		const rows = input.map(row => row.map(String))
-		expect(frame.value).toEqual(rows)
+		assert.deepStrictEqual(frame.value, rows)
 		frame.render()
-		expect(frame.imprint).toBe(
+		assert.equal(
+			frame.imprint,
 			rows.map(
 				row => row.join("")
 			).map(
@@ -42,13 +44,13 @@ describe("Frame", () => {
 		)
 		const frame = new Frame({ value: input, width: 144, height: 33 })
 		frame.render()
-		expect(frame.imprint).toEqual(rows.join("\n"))
+		assert.equal(frame.imprint, rows.join("\n"))
 	})
 	it("should transform value", () => {
 		const frame = new Frame(["Welcome"])
 		const t = v => "Вітання"
 		const transformed = frame.transform(t)
-		expect(transformed.value).toEqual([["Вітання"]])
+		assert.deepStrictEqual(transformed.value, [["Вітання"]])
 	})
 	it("should print special utf characters and fit the width", () => {
 		const input = [
@@ -60,9 +62,9 @@ describe("Frame", () => {
 		frame.render()
 		const imprintLines = frame.imprint.split("\n")
 		imprintLines.forEach(line => {
-			expect(stringWidth(line)).toBeLessThanOrEqual(144)
+			assert.ok(stringWidth(line) <= 144)
 		})
-		expect(frame.value).toEqual(input)
+		assert.deepStrictEqual(frame.value, input)
 	})
 	it("should render table with padding", () => {
 		const rows = [
@@ -70,7 +72,7 @@ describe("Frame", () => {
 			["gpt-4o", 128_000],
 		]
 		const table = Frame.table({ padding: 3 })(rows)
-		expect(table).toEqual([
+		assert.deepStrictEqual(table, [
 			["gpt-4.1   ", "1047576"],
 			["gpt-4o    ", "128000"],
 		])
@@ -79,23 +81,23 @@ describe("Frame", () => {
 		const input = [["Test"]]
 		const frame = new Frame({ value: input, width: 10, height: 3 })
 		const output = frame.render({ method: Frame.RenderMethod.REPLACE }).split("\n")
-		expect(output.length).toBe(3)
-		expect(output[0].length - `\x1b[0;0H`.length).toBe(10)
-		expect(output[1].length).toBe(10)
-		expect(output[2].length).toBe(10)
+		assert.equal(output.length, 3)
+		assert.equal(output[0].length - `\x1b[0;0H`.length, 10)
+		assert.equal(output[1].length, 10)
+		assert.equal(output[2].length, 10)
 	})
 	it("should render with append method over previous frame", () => {
 		const input = [["Append"]]
 		const frame = new Frame({ value: input, width: 10, height: 3 })
 		const output = frame.render({ method: "append" }).split("\n")
-		expect(output.length).toBeLessThanOrEqual(3)
-		expect(output[0].length).toBeLessThanOrEqual(10)
+		assert.ok(output.length <= 3)
+		assert.ok(output[0].length <= 10)
 	})
 	it("should render visible method", () => {
 		const input = [["Visible"]]
 		const frame = new Frame({ value: input, width: 10, height: 3 })
 		const output = frame.render({ method: "visible" }).split("\n")
-		expect(output.length).toBeLessThanOrEqual(3)
+		assert.ok(output.length <= 3)
 	})
 	it("should handle cell options with style objects", () => {
 		const input = [
@@ -104,7 +106,7 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 20, height: 4 })
 		const output = frame.render()
-		expect(output.split("\n").length).toBeLessThanOrEqual(4)
+		assert.ok(output.split("\n").length <= 4)
 	})
 	it("should handle row options with style objects", () => {
 		const input = [
@@ -114,7 +116,7 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 30, height: 4 })
 		const output = frame.render()
-		expect(output.split("\n").length).toBeLessThanOrEqual(4)
+		assert.ok(output.split("\n").length <= 4)
 	})
 	it("should handle frame options set by method with XML tags", () => {
 		const input = [
@@ -123,7 +125,7 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 20, height: 4 })
 		const output = frame.render()
-		expect(output.split("\n").length).toBeLessThanOrEqual(4)
+		assert.ok(output.split("\n").length <= 4)
 	})
 
 	it("should render correctly with different window sizes", () => {
@@ -146,9 +148,9 @@ describe("Frame", () => {
 			const frame = new Frame({ value: input, width, height })
 			const output = frame.render({ method: Frame.RenderMethod.APPEND })
 			const lines = output.split("\n")
-			expect(lines.length).toBeLessThanOrEqual(height)
+			assert.ok(lines.length <= height)
 			lines.forEach(line => {
-				expect(stringWidth(line)).toBeLessThanOrEqual(width)
+				assert.ok(stringWidth(line) <= width)
 			})
 		})
 	})
@@ -163,11 +165,11 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 10, height: 4 })
 		const output = frame.render({ method: Frame.RenderMethod.REPLACE })
-		expect(output.startsWith(Frame.BOF)).toBe(true)
+		assert.ok(output.startsWith(Frame.BOF))
 		const lines = output.split("\n")
-		expect(lines.length).toBe(4)
-		expect(lines[1]).toMatch(/^\s*$/) // empty row
-		expect(lines.slice(-2)).toEqual(["Line 1    ", "Line 2    "])
+		assert.equal(lines.length, 4)
+		assert.match(lines[1], /^\s*$/) // empty row
+		assert.deepStrictEqual(lines.slice(-2), ["Line 1    ", "Line 2    "])
 	})
 
 	it("should handle BOF at end with REPLACE method", () => {
@@ -178,11 +180,11 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 10, height: 4 })
 		const output = frame.render({ method: Frame.RenderMethod.REPLACE })
-		expect(output.startsWith(Frame.BOF)).toBe(true)
+		assert.ok(output.startsWith(Frame.BOF))
 		const lines = output.split("\n")
-		expect(lines.length).toBe(4)
-		expect(lines.slice(0, 2)).toEqual([`\x1b[0;0H` + "Line 1    ", "Line 2    "])
-		expect(lines[2]).toMatch(/^\s*$/) // empty row
+		assert.equal(lines.length, 4)
+		assert.deepStrictEqual(lines.slice(0, 2), [`\x1b[0;0H` + "Line 1    ", "Line 2    "])
+		assert.match(lines[2], /^\s*$/) // empty row
 	})
 
 	it("should handle BOF at start with APPEND method", () => {
@@ -193,10 +195,10 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 10, height: 4 })
 		const output = frame.render({ method: Frame.RenderMethod.APPEND })
-		expect(output.startsWith(Frame.BOF)).toBe(true)
+		assert.ok(output.startsWith(Frame.BOF))
 		const lines = output.split("\n")
-		expect(lines.length).toBeLessThanOrEqual(4)
-		expect(lines.slice(-2)).toEqual(["Line 1    ", "Line 2    "])
+		assert.ok(lines.length <= 4)
+		assert.deepStrictEqual(lines.slice(-2), ["Line 1    ", "Line 2    "])
 	})
 
 	it("should handle BOF at end with APPEND method", () => {
@@ -207,10 +209,10 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 10, height: 4 })
 		const output = frame.render({ method: Frame.RenderMethod.APPEND })
-		expect(output.startsWith(Frame.BOF)).toBe(true)
+		assert.ok(output.startsWith(Frame.BOF))
 		const lines = output.split("\n")
-		expect(lines.length).toBe(4)
-		expect(lines.slice(1, 3)).toEqual(["Line 2    ", ""])
+		assert.equal(lines.length, 4)
+		assert.deepStrictEqual(lines.slice(1, 3), ["Line 2    ", ""])
 	})
 
 	it("should handle BOF at start with VISIBLE method", () => {
@@ -221,10 +223,10 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 10, height: 4 })
 		const output = frame.render({ method: Frame.RenderMethod.VISIBLE })
-		expect(output.startsWith(`\x1b[1A`)).toBe(true)
+		assert.ok(output.startsWith(`\x1b[1A`))
 		const lines = output.split("\n")
-		expect(lines.length).toBeLessThanOrEqual(2)
-		expect(lines).toEqual([`\x1b[1A` + "Line 1", "Line 2"])
+		assert.ok(lines.length <= 2)
+		assert.deepStrictEqual(lines, [`\x1b[1A` + "Line 1", "Line 2"])
 	})
 
 	it("should handle BOF at end with VISIBLE method", () => {
@@ -235,10 +237,10 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 10, height: 4 })
 		const output = frame.render({ method: Frame.RenderMethod.VISIBLE })
-		expect(output.startsWith(`\x1b[1A`)).toBe(true)
+		assert.ok(output.startsWith(`\x1b[1A`))
 		const lines = output.split("\n")
-		expect(lines.length).toBeLessThanOrEqual(2)
-		expect(lines).toEqual([`\x1b[1A` + "Line 1", "Line 2"])
+		assert.ok(lines.length <= 2)
+		assert.deepStrictEqual(lines, [`\x1b[1A` + "Line 1", "Line 2"])
 	})
 
 	it("should handle BOL in lines with REPLACE method", () => {
@@ -249,8 +251,8 @@ describe("Frame", () => {
 		const frame = new Frame({ value: input, width: 10, height: 3 })
 		const output = frame.render({ method: Frame.RenderMethod.REPLACE })
 		const lines = output.split("\n")
-		expect(lines.some(line => line.includes(Frame.BOL))).toBe(true)
-		expect(lines.length).toBe(3)
+		assert.ok(lines.some(line => line.includes(Frame.BOL)))
+		assert.equal(lines.length, 3)
 	})
 
 	it("should handle BOL in lines with APPEND method", () => {
@@ -261,8 +263,8 @@ describe("Frame", () => {
 		const frame = new Frame({ value: input, width: 10, height: 3 })
 		const output = frame.render({ method: Frame.RenderMethod.APPEND })
 		const lines = output.split("\n")
-		expect(lines.some(line => line.includes(Frame.BOL))).toBe(true)
-		expect(lines.length).toBeLessThanOrEqual(3)
+		assert.ok(lines.some(line => line.includes(Frame.BOL)))
+		assert.ok(lines.length <= 3)
 	})
 
 	it("should handle BOL in lines with VISIBLE method", () => {
@@ -273,8 +275,8 @@ describe("Frame", () => {
 		const frame = new Frame({ value: input, width: 10, height: 3 })
 		const output = frame.render({ method: Frame.RenderMethod.VISIBLE })
 		const lines = output.split("\n")
-		expect(lines.some(line => line.includes(Frame.BOL))).toBe(true)
-		expect(lines.length).toBeLessThanOrEqual(3)
+		assert.ok(lines.some(line => line.includes(Frame.BOL)))
+		assert.ok(lines.length <= 3)
 	})
 })
 
@@ -297,35 +299,35 @@ describe("Frame.RenderMethod", () => {
 		const output = frame.render({
 			method: Frame.RenderMethod.REPLACE,
 		})
-		expect(typeof output).toBe("string")
+		assert.equal(typeof output, "string")
 		const lines = output.split("\n")
-		expect(lines.length).toBeGreaterThan(0)
+		assert.ok(lines.length > 0)
 		lines.forEach(line => {
-			expect(line.length).toBeLessThanOrEqual(frame.width < 0 ? 144 : frame.width)
+			assert.ok(line.length <= (frame.width < 0 ? 144 : frame.width))
 		})
 	})
 
 	it("should render with APPEND method", () => {
 		const output = frame.render({ method: Frame.RenderMethod.APPEND })
-		expect(typeof output).toBe("string")
+		assert.equal(typeof output, "string")
 		const lines = output.split("\n")
 		const height = frame.height < 0 ? 10 : frame.height
 		const width = frame.width < 0 ? 144 : frame.width
-		expect(lines.length).toBeLessThanOrEqual(height)
+		assert.ok(lines.length <= height)
 		lines.forEach(line => {
-			expect(line.length).toBeLessThanOrEqual(width)
+			assert.ok(line.length <= width)
 		})
 	})
 
 	it("should render with VISIBLE method", () => {
 		const output = frame.render({ method: Frame.RenderMethod.VISIBLE })
-		expect(typeof output).toBe("string")
+		assert.equal(typeof output, "string")
 		const lines = output.split("\n")
 		const height = frame.height < 0 ? 10 : frame.height
 		const width = frame.width < 0 ? 144 : frame.width
-		expect(lines.length).toBeLessThanOrEqual(height)
+		assert.ok(lines.length <= height)
 		lines.forEach(line => {
-			expect(line.length).toBeLessThanOrEqual(width)
+			assert.ok(line.length <= width)
 		})
 	})
 })
@@ -346,7 +348,7 @@ describe("Frame (3rd party deprecations)", () => {
 		const frame = new Frame({ value: selectBox, width: 30, height: 8 })
 		const output = frame.render({ method: Frame.RenderMethod.REPLACE })
 		// The output should start with BOF and have the select box content
-		expect(output.startsWith(Frame.BOF)).toBe(true)
+		assert.ok(output.startsWith(Frame.BOF))
 		const lines = output.split("\n")
 		// Simulate that the select box is rendered at the top, but if there are extra lines above,
 		// the select box will be shifted down by `extraLines`
@@ -357,9 +359,9 @@ describe("Frame (3rd party deprecations)", () => {
 			...lines
 		]
 		// The select box should appear at index `extraLines` (after the warnings)
-		expect(screen[extraLines + 2]).toContain("Select a command to run")
-		expect(screen[extraLines + 3]).toContain("[+]draw")
-		expect(screen[extraLines + 4]).toContain("- send")
+		assert.ok(screen[extraLines + 2].includes("Select a command to run"))
+		assert.ok(screen[extraLines + 3].includes("[+]draw"))
+		assert.ok(screen[extraLines + 4].includes("- send"))
 	})
 
 	it("should allow for offset rendering by prepending empty lines before BOF", () => {
@@ -380,8 +382,8 @@ describe("Frame (3rd party deprecations)", () => {
 		const output = frame.render({ method: Frame.RenderMethod.REPLACE })
 		const lines = output.split("\n")
 		// The select box should now appear after the empty lines
-		expect(lines[4]).toBe("Select a command to run".padEnd(30))
-		expect(lines[5]).toBe("[+]draw".padEnd(30))
+		assert.equal(lines[4], "Select a command to run".padEnd(30))
+		assert.equal(lines[5], "[+]draw".padEnd(30))
 	})
 
 	it("should render select box correctly even with extra lines above (simulate terminal shift)", () => {
@@ -406,13 +408,13 @@ describe("Frame (3rd party deprecations)", () => {
 			...lines
 		]
 		// The select box should still be visible at the correct offset
-		expect(screen[extraLines].trim()).toBe(`\x1b[0;0H`)
-		expect(screen[extraLines + 1].trim()).toBe("")
-		expect(screen[extraLines + 2].trim()).toBe("Select a command to run")
-		expect(screen[extraLines + 3].trim()).toBe("[+]draw")
-		expect(screen[extraLines + 4].trim()).toBe("- send")
-		expect(screen[extraLines + 5].trim()).toBe("- stats")
-		expect(screen[extraLines + 6].trim()).toBe("- analyze")
-		expect(screen[extraLines + 7].trim()).toBe("- extract")
+		assert.equal(screen[extraLines].trim(), `\x1b[0;0H`)
+		assert.equal(screen[extraLines + 1].trim(), "")
+		assert.equal(screen[extraLines + 2].trim(), "Select a command to run")
+		assert.equal(screen[extraLines + 3].trim(), "[+]draw")
+		assert.equal(screen[extraLines + 4].trim(), "- send")
+		assert.equal(screen[extraLines + 5].trim(), "- stats")
+		assert.equal(screen[extraLines + 6].trim(), "- analyze")
+		assert.equal(screen[extraLines + 7].trim(), "- extract")
 	})
 })
