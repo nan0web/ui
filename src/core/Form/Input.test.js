@@ -4,10 +4,11 @@ import FormInput from "./Input.js"
 
 describe("FormInput", () => {
 	it("should create instance with default values", () => {
-		const input = new FormInput()
+		const input = new FormInput({ name: "name" })
 		assert.ok(input instanceof FormInput)
 		assert.equal(input.type, FormInput.TYPES.TEXT)
 		assert.equal(input.required, false)
+		assert.equal(input.name, "name")
 		assert.equal(input.placeholder, "")
 		assert.deepEqual(input.options, [])
 	})
@@ -45,17 +46,13 @@ describe("FormInput", () => {
 		assert.equal(input.name, "test")
 	})
 
-	it("should check if input has options", () => {
-		const selectInput = new FormInput({ type: "select", options: ["opt1"] })
-		const textInput = new FormInput({ type: "text" })
-		assert.ok(selectInput.hasOptions())
-		assert.ok(!textInput.hasOptions())
-	})
-
-	it("should validate type", () => {
-		const validInput = new FormInput({ type: "email" })
-		const invalidInput = new FormInput({ type: "invalid" })
-		assert.ok(validInput.isValidType())
-		assert.ok(!invalidInput.isValidType())
+	it("should validate type", async () => {
+		const validInput = new FormInput({ name: "email", type: "email" })
+		assert.ok(validInput)
+		const fn = async () => new FormInput({ name: "email", type: "invalid" })
+		await assert.rejects(fn, {
+			name: "TypeError",
+			message: /FormInput\.type is invalid!/
+		})
 	})
 })

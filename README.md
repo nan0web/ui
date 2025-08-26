@@ -42,11 +42,9 @@ const output = OutputMessage.from({ content: ['Hello World'] })
 - [Форма реєстрації](./playground/registration.form.js)
 - [Поповнонення рахунку мобільного телефону](./playground/topup.telephone.js)
 
-## Тестування
-
-Запуск тестів через npm test
+Для запуску використовуй:
 ```bash
-npm test
+pnpm playground
 ```
 
 ## Ліцензія

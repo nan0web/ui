@@ -259,7 +259,7 @@ export default class UIForm extends FormMessage {
 	 * Auto‑generates form fields from a plain object.
 	 *
 	 * @param {Object} data - Example data object; its own enumerable keys become field names.
-	 * @param {Object<string,Partial<import("./Input.js").default>} [overrides={}]
+	 * @param {Object<string, Partial<import("./Input.js").default>>} [overrides={}]
 	 *        Optional per‑field overrides (e.g. type, required, label).
 	 *
 	 * @returns {UIForm} Form with Array of `FormInput` instances as form.fields

@@ -11,12 +11,16 @@ declare class InputMessage {
     static from(value: InputMessage | object | string): InputMessage;
     /**
      * Creates a new InputMessage instance.
-     * @param {object|string} props - Input message properties
+     * @param {object} props - Input message properties
      * @param {string | null} [props.value=""] - Input value
      * @param {string[]} [props.options=[]] - Available options
      * @param {boolean} [props.waiting=false] - Waiting state flag
      */
-    constructor(props?: object | string);
+    constructor(props?: {
+        value?: string | null | undefined;
+        options?: string[] | undefined;
+        waiting?: boolean | undefined;
+    });
     /** @type {string | null} Input value */
     value: string | null;
     /** @type {string[]} Available options for this input */
