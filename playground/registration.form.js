@@ -7,7 +7,7 @@
  *   - Input "0" -> cancel (onCancel)
  *   - Empty input on final prompt -> submit (onSubmit)
  */
-import { CancelError } from "./ui/index.js"
+import { CancelError } from "@nan0web/ui-cli"
 
 /**
  * Main registration flow

@@ -11,7 +11,7 @@
  *   - Empty input on final confirmation submits.
  */
 
-import createInput, { CancelError, select } from "./ui/index.js"
+import { CancelError, select } from "@nan0web/ui-cli"
 
 const rates = {
 	USD: 1,

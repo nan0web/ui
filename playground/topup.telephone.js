@@ -10,7 +10,7 @@
  * Validation:
  *   - Phone number must contain only digits and be 7‑15 characters long.
  */
-import { CancelError } from "./ui/index.js"
+import { CancelError } from "@nan0web/ui-cli"
 
 const rates = {
 	USD: 1,

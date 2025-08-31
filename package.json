@@ -8,7 +8,15 @@
 	"scripts": {
 		"build": "tsc",
 		"playground": "node playground/main.js",
-		"test": "node --test src/core/**/*.test.js src/README.md.test.js"
+		"test": "node --test",
+		"test:coverage": "node --experimental-test-coverage --test-coverage-include=\"src/**/*.js\" --test-coverage-exclude=\"src/**/*.test.js\" --test \"src/**/*.test.js\"",
+		"test:coverage:collect": "nan0test coverage",
+		"test:docs": "node --test src/README.md.js",
+		"test:release": "node --test \"releases/**/*.test.js\"",
+		"test:status": "nan0test status --hide-name",
+		"precommit": "npm test",
+		"prepush": "npm test",
+		"prepare": "husky"
 	},
 	"exports": {
 		".": {
@@ -31,6 +39,7 @@
 		"@nan0web/i18n": "workspace:*",
 		"@nan0web/test": "workspace:*",
 		"@nan0web/types": "workspace:*",
+		"@nan0web/ui-cli": "workspace:*",
 		"@vitest/coverage-v8": "^3.2.4",
 		"vitest": "^3.2.4"
 	},

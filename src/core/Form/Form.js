@@ -280,7 +280,7 @@ export default class UIForm extends FormMessage {
 				required: !!custom.required,
 				placeholder: custom.placeholder ?? "",
 				options: custom.options ?? [],
-				validator: custom.validator ?? null,
+				validator: custom.validator ?? undefined,
 				defaultValue: custom.defaultValue ?? "",
 			})
 		})

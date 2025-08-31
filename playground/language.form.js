@@ -11,7 +11,7 @@
  *   - Empty input on final confirmation submits.
  */
 import { localesMap } from "./i18n/index.js"
-import { select } from "./ui/index.js"
+import { select } from "@nan0web/ui-cli"
 
 /** Main exchange flow */
 export async function runLanguage(t, ask, console, prompt, invalidPrompt) {
