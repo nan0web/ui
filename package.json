@@ -5,6 +5,11 @@
 	"main": "src/index.js",
 	"types": "types/index.d.ts",
 	"type": "module",
+	"files": [
+		"src/**/*.js",
+		"!src/**/*.test.js",
+		"types/**/*.d.ts"
+	],
 	"scripts": {
 		"build": "tsc",
 		"playground": "node playground/main.js",
