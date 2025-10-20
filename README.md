@@ -2,7 +2,7 @@
 
 |[Status](https://github.com/nan0web/monorepo/blob/main/system.md#написання-сценаріїв)|Documentation|Test coverage|Features|Npm version|
 |---|---|---|---|---|
- |🟡 `80.6%` |🧪 [English 🏴󠁧󠁢󠁥󠁮󠁧󠁿](https://github.com/nan0web/ui/blob/main/README.md) |🟡 `81.1%` |📜 system.md 🕹️ playground |— |
+ |🟢 `96.6%` |🧪 [English 🏴󠁧󠁢󠁥󠁮󠁧󠁿](https://github.com/nan0web/ui/blob/main/README.md)<br />[Українською 🇺🇦](https://github.com/nan0web/ui/blob/main/docs/uk/README.md) |🟡 `81.1%` |✅ d.ts 📜 system.md 🕹️ playground |— |
 
 A lightweight, agnostic UI framework designed with the **nan0web philosophy**
 — one application logic, many UI implementations.
