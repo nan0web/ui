@@ -210,6 +210,12 @@ function testRender() {
 	 *
 	 * `Frame` manages visual rendering with width and height limits.
 	 * Useful for fixed-size terminals or UI blocks.
+	 *
+	 * Render methods:
+	 *
+	 * - `APPEND` – adds content after previous frame
+	 * - `REPLACE` – erases and replaces full frame area
+	 * - `VISIBLE` – renders only visible part of frame
 	 */
 	it("How to create a Frame with fixed size?", () => {
 		//import { Frame } from '@nan0web/ui'
@@ -224,6 +230,23 @@ function testRender() {
 		const rendered = frame.render()
 		console.info(rendered.includes("Frame content")) // ← true
 		assert.ok(rendered.includes("Frame content"))
+	})
+	it("How to create a Frame with different render methods?", () => {
+		//import { Frame } from '@nan0web/ui'
+
+		const frame = new Frame({
+			value: [["Frame content"]],
+			width: 20,
+			height: 5,
+		})
+
+		frame.renderMethod = Frame.RenderMethod.REPLACE
+		const renderedReplace = frame.render()
+		assert.ok(renderedReplace.includes("Frame content"))
+
+		frame.renderMethod = Frame.RenderMethod.VISIBLE
+		const renderedVisible = frame.render()
+		assert.ok(renderedVisible.includes("Frame content"))
 	})
 
 	/**

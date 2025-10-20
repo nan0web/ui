@@ -1,5 +1,6 @@
 import Event from "@nan0web/event/oop"
 import InputMessage from "./Message/InputMessage.js"
+import CancelError from "./Error/CancelError.js"
 
 /**
  * Abstract input adapter for UI implementations.
@@ -7,7 +8,8 @@ import InputMessage from "./Message/InputMessage.js"
  * @class InputAdapter
  * @extends Event
  */
-class InputAdapter extends Event {
+export default class InputAdapter extends Event {
+	static CancelError = CancelError
 	/**
 	 * Starts listening for input and emits an `input` event.
 	 *
@@ -36,6 +38,22 @@ class InputAdapter extends Event {
 	isReady() {
 		return true
 	}
-}
 
-export default InputAdapter
+	/**
+	 * Helper to ask a question.
+	 * @param {string} question - Question to ask.
+	 * @returns {Promise<string>}
+	 */
+	async ask(question) {
+		throw new Error('ask() method must be implemented in subclass')
+	}
+
+	/**
+	 * Generic selection prompt.
+	 * @param {Object} config - Selection configuration.
+	 * @returns {Promise<{ index: number, value: string | null }>}
+	 */
+	async select(config) {
+		throw new Error('select() method must be implemented in subclass')
+	}
+}

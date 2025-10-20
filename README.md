@@ -2,7 +2,7 @@
 
 |[Status](https://github.com/nan0web/monorepo/blob/main/system.md#написання-сценаріїв)|Documentation|Test coverage|Features|Npm version|
 |---|---|---|---|---|
- |🟢 `96.6%` |🧪 [English 🏴󠁧󠁢󠁥󠁮󠁧󠁿](https://github.com/nan0web/ui/blob/main/README.md)<br />[Українською 🇺🇦](https://github.com/nan0web/ui/blob/main/docs/uk/README.md) |🟡 `80.9%` |✅ d.ts 📜 system.md 🕹️ playground |— |
+ |🟢 `96.8%` |🧪 [English 🏴󠁧󠁢󠁥󠁮󠁧󠁿](https://github.com/nan0web/ui/blob/main/README.md)<br />[Українською 🇺🇦](https://github.com/nan0web/ui/blob/main/docs/uk/README.md) |🟡 `81.1%` |✅ d.ts 📜 system.md 🕹️ playground |1.0.1 |
 
 A lightweight, agnostic UI framework designed with the **nan0web philosophy**
 — one application logic, many UI implementations.
@@ -131,6 +131,12 @@ console.info(String(view.frame)) // ← "\rHello, world"
 
 `Frame` manages visual rendering with width and height limits.
 Useful for fixed-size terminals or UI blocks.
+
+Render methods:
+
+- `APPEND` – adds content after previous frame
+- `REPLACE` – erases and replaces full frame area
+- `VISIBLE` – renders only visible part of frame
 
 How to create a Frame with fixed size?
 ```js
