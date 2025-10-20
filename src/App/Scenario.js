@@ -1,4 +1,4 @@
-import { App } from "@nan0web/ui"
+import App from "./index.js"
 import UI from "./Core/UI.js"
 
 /** @typedef {import("./Core/CoreApp.js").default} CoreApp */

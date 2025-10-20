@@ -8,5 +8,6 @@ export default Welcome;
 declare function Welcome(props?: WelcomeInput | object): string[][];
 declare namespace Welcome {
     export { WelcomeInput as Input };
+    export function ask(): Promise<string>;
 }
 import WelcomeInput from "./Input.js";

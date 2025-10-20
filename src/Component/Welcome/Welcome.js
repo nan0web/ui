@@ -21,5 +21,6 @@ function Welcome(props = {}) {
 }
 
 Welcome.Input = WelcomeInput
+Welcome.ask = async () => ""
 
 export default Welcome

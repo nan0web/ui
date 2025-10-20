@@ -17,6 +17,7 @@
 		"precommit": "npm test",
 		"prepush": "npm test",
 		"prepare": "husky",
+		"release": "nan0release publish",
 		"clean": "rm -rf .cache/ && rm -rf dist/",
 		"clean:modules": "rm -rf node_modules"
 	},
@@ -24,6 +25,10 @@
 		".": {
 			"import": "./src/index.js",
 			"types": "./types/index.d.ts"
+		},
+		"./components": {
+			"import": "./src/Component/index.js",
+			"types": "./types/Component/index.d.ts"
 		},
 		"./cli-app": "./apps/cli/src/index.js",
 		"./mobile-app": "./apps/mobile/src/index.js",
@@ -33,10 +38,11 @@
 		"ui",
 		"nanoweb"
 	],
-	"author": "YaRaSlove [ЯRаСлав]",
+	"author": "YaRaSLove (ЯRаСлав) <support@yaro.page>",
 	"license": "ISC",
 	"packageManager": "pnpm@10.11.0",
 	"devDependencies": {
+		"@nan0web/co": "workspace:*",
 		"@nan0web/event": "workspace:*",
 		"@nan0web/i18n": "workspace:*",
 		"@nan0web/test": "workspace:*",
@@ -50,6 +56,7 @@
 		"string-width": "^7.2.0"
 	},
 	"peerDependencies": {
+		"@nan0web/co": "^1.0.0",
 		"@nan0web/event": "^1.0.0",
 		"@nan0web/types": "^1.0.0"
 	}
