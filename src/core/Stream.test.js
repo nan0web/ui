@@ -1,6 +1,7 @@
 import { describe, it } from "node:test"
 import { strict as assert } from "node:assert"
 import UIStream from "./Stream.js"
+import StreamEntry from "./StreamEntry.js"
 
 describe("UIStream", () => {
 	it("should create processor generator", async () => {
@@ -20,11 +21,11 @@ describe("UIStream", () => {
 		const controller = new AbortController()
 		controller.abort()
 
-		const processorFn = () => Promise.resolve("test result")
+		const processorFn = () => Promise.resolve(StreamEntry.from({ value: "Hello", done: true }))
 		const generator = UIStream.createProcessor(controller.signal, processorFn)
 
 		for await (const item of generator()) {
-			assert.deepEqual(item, { done: true, canceled: true })
+			assert.deepEqual(item, StreamEntry.from({ done: true, value: "Hello" }))
 			break
 		}
 	})
@@ -35,8 +36,8 @@ describe("UIStream", () => {
 		let completeCalled = false
 
 		const generatorFn = async function* () {
-			yield { progress: 0.5 }
-			yield { done: true }
+			yield StreamEntry.from({ progress: 0.5 })
+			yield StreamEntry.from({ done: true })
 		}
 
 		const onProgress = () => { progressCalled = true }

@@ -1,3 +1,5 @@
+import StreamEntry from "./StreamEntry.js"
+
 /**
  * Agnostic UI stream for processing progress.
  *
@@ -8,8 +10,8 @@ export default class UIStream {
 	 * Creates an async generator that runs the supplied processor function.
 	 *
 	 * @param {AbortSignal} signal - Abort signal.
-	 * @param {Function} processorFn - Async function that returns a result.
-	 * @returns {Function} Async generator function.
+	 * @param {() => Promise<StreamEntry>} processorFn - Async function that returns a result.
+	 * @returns {() => AsyncGenerator<StreamEntry>} Async generator function.
 	 */
 	static createProcessor(signal, processorFn) {
 		return async function* () {
@@ -18,9 +20,9 @@ export default class UIStream {
 				yield result
 			} catch (/** @type {any} */ error) {
 				if (error.name === 'AbortError') {
-					yield { done: true, canceled: true }
+					yield StreamEntry.from({ done: true, cancelled: true })
 				} else {
-					yield { error: error.message, done: false }
+					yield StreamEntry.from({ error: error.message })
 				}
 			}
 		}
@@ -59,7 +61,7 @@ export default class UIStream {
 			}
 		} catch (/** @type {any} */ error) {
 			if (error.name === 'AbortError') {
-				onComplete?.({ canceled: true })
+				onComplete?.({ cancelled: true })
 			} else {
 				onError?.(error.message)
 			}

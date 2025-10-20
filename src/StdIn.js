@@ -3,11 +3,6 @@ import { CommandMessage } from "@nan0web/co"
 import { typeOf } from "@nan0web/types"
 import InputMessage from "./InputMessage.js"
 
-/**
- * @typedef {Object} Processor
- * @property {Function} on - Event handler registration
- */
-
 class Processor extends EventProcessor { }
 
 /**
@@ -18,7 +13,7 @@ class StdIn extends EventProcessor {
 	static READ_INTERVAL = 99
 
 	/** @type {string[]} Messages to ignore */
-	static IGNORE_MESSAGES = ["", undefined]
+	static IGNORE_MESSAGES = ["", "undefined"]
 
 	/** @type {InputMessage[]} Input message buffer */
 	stream = []
@@ -70,7 +65,7 @@ class StdIn extends EventProcessor {
 		while (this.ended) {
 			await new Promise(resolve => setTimeout(resolve, StdIn.READ_INTERVAL))
 		}
-		return this.stream.shift()
+		return this.stream.shift() ?? new InputMessage()
 	}
 
 	/**
@@ -96,7 +91,8 @@ class StdIn extends EventProcessor {
 	decode(message) {
 		if (message instanceof InputMessage) return message
 		if (Array.isArray(message) && message.every(typeOf(String))) {
-			return new InputMessage(CommandMessage.parse(message))
+			const parsed = CommandMessage.parse(message)
+			return new InputMessage({ value: parsed })
 		}
 		return new InputMessage(message)
 	}

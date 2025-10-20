@@ -8,7 +8,7 @@
 	"scripts": {
 		"build": "tsc",
 		"playground": "node playground/main.js",
-		"test": "node --test",
+		"test": "node --test --test-timeout=3333 \"src/**/*.test.js\" | nan0test parse --fail",
 		"test:coverage": "node --experimental-test-coverage --test-coverage-include=\"src/**/*.js\" --test-coverage-exclude=\"src/**/*.test.js\" --test \"src/**/*.test.js\"",
 		"test:coverage:collect": "nan0test coverage",
 		"test:docs": "node --test src/README.md.js",

@@ -1,9 +1,9 @@
-export default CoreApp;
+/** @typedef {Function} CommandFn */
 /**
  * Abstract base class for all apps.
  * Each app processes input commands and produces output.
  */
-declare class CoreApp {
+export default class CoreApp {
     /**
      * Creates a new CoreApp instance.
      * @param {object} props - CoreApp properties
@@ -18,12 +18,12 @@ declare class CoreApp {
     });
     /** @type {string} App name */
     name: string;
-    /** @type {Map<string, Function>} Registered command handlers */
-    commands: Map<string, Function>;
+    /** @type {Map<string, CommandFn>} Registered command handlers */
+    commands: Map<string, CommandFn>;
     /** @type {object} App state */
     state: object;
-    /** @type {Command.Message} Starting command parsed from argv */
-    startCommand: Command.Message;
+    /** @type {CommandMessage} Starting command parsed from argv */
+    startCommand: CommandMessage;
     /**
      * Sets app state.
      * @param {string|object} state - State key or object with multiple keys
@@ -44,18 +44,19 @@ declare class CoreApp {
     toString(): string;
     /**
      * Process a command message.
-     * @param {Command.Message} commandMessage - Command to process
+     * @param {CommandMessage} commandMessage - Command to process
      * @param {UI} ui - UI instance to use for rendering
      * @returns {Promise<any>} Output of the command
      * @throws {Error} If the command is not registered
      */
-    processCommand(commandMessage: Command.Message, ui: UI): Promise<any>;
+    processCommand(commandMessage: CommandMessage, ui: UI): Promise<any>;
     /**
      * Process an array of command messages sequentially.
-     * @param {Command.Message[]} commandMessages - Array of commands to process
+     * @param {CommandMessage[]} commandMessages - Array of commands to process
+     * @param {UI} ui - UI instance to use for rendering
      * @returns {Promise<any[]>} Array of command outputs
      */
-    processCommands(commandMessages: Command.Message[]): Promise<any[]>;
+    processCommands(commandMessages: CommandMessage[], ui: UI): Promise<any[]>;
     /**
      * Select a command to run. Must be implemented by subclasses.
      * @param {UI} ui - UI instance for interaction
@@ -64,4 +65,6 @@ declare class CoreApp {
      */
     selectCommand(ui: UI): Promise<string>;
 }
+export type CommandFn = Function;
+import { CommandMessage } from "../Command/index.js";
 import UI from "./UI.js";

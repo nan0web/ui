@@ -4,20 +4,17 @@
 class User {
 	/** @type {string} User name */
 	name
-	
+
 	/** @type {string} User email */
 	email
 
 	/**
 	 * Creates a new User instance.
-	 * @param {object|string} props - User properties or name string
+	 * @param {object} props - User properties or name string
 	 * @param {string} [props.name=""] - User name
 	 * @param {string} [props.email=""] - User email
 	 */
 	constructor(props = {}) {
-		if ("string" === typeof props) {
-			props = { name: props }
-		}
 		const {
 			name = "",
 			email = "",
@@ -49,6 +46,9 @@ class User {
 	 */
 	static from(props) {
 		if (props instanceof User) return props
+		if ("string" === typeof props) {
+			return new User({ name: props })
+		}
 		return new User(props)
 	}
 }

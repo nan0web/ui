@@ -3,34 +3,34 @@ import { typeOf, notEmpty } from "@nan0web/types"
 /**
  * Handles locale-specific formatting for different data types.
  */
-class Locale {
+export default class Locale {
 	/** @type {string} Language locale */
 	lang
-	
+
 	/** @type {string} Collation locale */
 	collate
-	
+
 	/** @type {string} Character type locale */
 	ctype
-	
+
 	/** @type {string} Messages locale */
 	messages
-	
+
 	/** @type {string} Monetary locale */
 	monetary
-	
+
 	/** @type {string} Numeric locale */
 	numeric
-	
+
 	/** @type {string} Time locale */
 	time
-	
+
 	/** @type {string} General locale fallback */
 	all
-	
+
 	/**
 	 * Creates a new Locale instance.
-	 * @param {object|string} props - Locale properties or all locale string
+	 * @param {object} props - Locale properties or all locale string
 	 * @param {string} [props.lang=""] - Language locale
 	 * @param {string} [props.collate=""] - Collation locale
 	 * @param {string} [props.ctype=""] - Character type locale
@@ -41,9 +41,6 @@ class Locale {
 	 * @param {string} [props.all="uk_UA.UTF-8"] - General locale fallback
 	 */
 	constructor(props = {}) {
-		if (typeOf(String)(props)) {
-			props = { all: props }
-		}
 		const {
 			lang = "",
 			collate = "",
@@ -63,7 +60,7 @@ class Locale {
 		this.time = time
 		this.all = all
 	}
-	
+
 	/**
 	 * Formats values according to locale settings.
 	 * @param {Function} type - Type constructor (Number, String, etc.)
@@ -94,7 +91,7 @@ class Locale {
 				return new Intl.NumberFormat(locales, options).format(value)
 			}
 		}
-		if (typeOf(String)(type)) {
+		if ("string" === typeof type) {
 			const locales = [this.monetary, this.numeric, this.all, this.lang].filter(notEmpty)
 			return (value) => {
 				return new Intl.NumberFormat(locales, {
@@ -106,6 +103,17 @@ class Locale {
 		}
 		return null
 	}
+
+	/**
+	 * @param {any} input
+	 * @returns {Locale}
+	 */
+	static from(input) {
+		if (input instanceof Locale) return input
+		if ("string" === typeof input) {
+			return new Locale({ all: input })
+		}
+		return new Locale(input)
+	}
 }
 
-export default Locale

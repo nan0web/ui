@@ -1,5 +1,6 @@
 import { describe, it } from "node:test"
 import { strict as assert } from "node:assert"
+import stringWidth from "string-width"
 import View from "./View.js"
 import Frame from "../Frame/Frame.js"
 import FrameProps from "../Frame/Props.js"
@@ -13,10 +14,10 @@ describe("View", () => {
 	it("should print frame", () => {
 		const view = new View()
 		view.render(1)(["Hello"])
-		assert.equal(String(view.frame), "Hello")
+		assert.equal(String(view.frame), Frame.CLEAR_LINE + "\r" + "Hello")
 		const value = view.render(0)(["No output"])
 		assert.deepStrictEqual({ ...value }, {
-			imprint: "No output",
+			imprint: Frame.CLEAR_LINE + "\r" + "No output",
 			value: [["No output"]],
 			width: 144,
 			height: 33,
@@ -24,10 +25,10 @@ describe("View", () => {
 			defaultProps: new FrameProps(),
 		})
 		view.render(() => (["fn result"]))(["Even with a function"])
-		assert.equal(String(view.frame), "fn result")
+		assert.equal(String(view.frame), Frame.CLEAR_LINE + "\r" + "fn result")
 		assert.deepStrictEqual(view.stdout.stream, [
-			"Hello",
-			"fn result"
+			Frame.RESET + Frame.CLEAR_LINE + "\r" + "Hello",
+			Frame.CLEAR_LINE + "\r" + "fn result"
 		])
 	})
 	it("should print frame with render method set to append", () => {
@@ -48,11 +49,11 @@ describe("View", () => {
 		view.render(() => (["fn result"]))(["Even with a function"])
 		assert.equal(String(view.frame), "fn result" + " ".repeat(144 - 9))
 		assert.deepStrictEqual(view.stdout.stream, [
-			"Hello",
-			"world",
+			Frame.RESET + "Hello",
+			Frame.RESET + "world",
 			"fn result"
 		].map(
-			row => row + " ".repeat(144 - row.length)
+			row => row + " ".repeat(144 - stringWidth(row))
 		))
 	})
 	it("should render Welcome component", () => {

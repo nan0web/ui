@@ -24,6 +24,5 @@ export default class InputMessage extends UIMessage {
     waiting: boolean;
     options: string[];
     get empty(): boolean;
-    isValid(): boolean;
 }
 import UIMessage from "./Message.js";

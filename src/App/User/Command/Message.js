@@ -1,30 +1,35 @@
-import Command from "../../Command/index.js"
+import { CommandMessage } from "../../Command/index.js"
 import UserAppCommandOptions from "./Options.js"
 
 /**
  * Extends Command.Message to include user-specific command options.
  */
-class UserAppCommandMessage extends Command.Message {
-	/** @type {UserAppCommandOptions} User-specific options */
-	opts
-	
+class UserAppCommandMessage extends CommandMessage {
 	/**
 	 * Creates a new UserAppCommandMessage instance.
 	 * @param {object} props - Command message properties
 	 * @param {string[]} [props.args=[]] - Command arguments
-	 * @param {UserAppCommandOptions|object} [props.opts={}] - User-specific options
+	 * @param {Partial<UserAppCommandOptions>} [props.opts={}] - User-specific options
 	 */
 	constructor(props = {}) {
 		super(props)
-		const {
-			opts = new UserAppCommandOptions(props?.opts),
-		} = props
-		this.opts = UserAppCommandOptions.from(opts)
 	}
-	
+
+	/** @returns {UserAppCommandOptions} */
+	get opts() {
+		return UserAppCommandOptions.from(super.opts)
+	}
+
+	/**
+	 * @param {Partial<UserAppCommandOptions>} value
+	 */
+	set opts(value) {
+		super.opts = UserAppCommandOptions.from(value)
+	}
+
 	/**
 	 * Parses an array of strings into a UserAppCommandMessage.
-	 * @param {string[]} value - Arguments to parse
+	 * @param {string[] | string} value - Arguments to parse
 	 * @returns {UserAppCommandMessage} Parsed command message
 	 */
 	static parse(value = []) {

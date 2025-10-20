@@ -1,11 +1,15 @@
-export default Locale;
 /**
  * Handles locale-specific formatting for different data types.
  */
-declare class Locale {
+export default class Locale {
+    /**
+     * @param {any} input
+     * @returns {Locale}
+     */
+    static from(input: any): Locale;
     /**
      * Creates a new Locale instance.
-     * @param {object|string} props - Locale properties or all locale string
+     * @param {object} props - Locale properties or all locale string
      * @param {string} [props.lang=""] - Language locale
      * @param {string} [props.collate=""] - Collation locale
      * @param {string} [props.ctype=""] - Character type locale
@@ -15,7 +19,16 @@ declare class Locale {
      * @param {string} [props.time=""] - Time locale
      * @param {string} [props.all="uk_UA.UTF-8"] - General locale fallback
      */
-    constructor(props?: object | string);
+    constructor(props?: {
+        lang?: string | undefined;
+        collate?: string | undefined;
+        ctype?: string | undefined;
+        messages?: string | undefined;
+        monetary?: string | undefined;
+        numeric?: string | undefined;
+        time?: string | undefined;
+        all?: string | undefined;
+    });
     /** @type {string} Language locale */
     lang: string;
     /** @type {string} Collation locale */

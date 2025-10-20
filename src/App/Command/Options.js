@@ -13,13 +13,13 @@ class CommandOptions {
 		help: false,
 		cwd: "",
 	}
-	
+
 	/** @type {boolean} Whether help is requested */
 	help
-	
+
 	/** @type {string} Current working directory */
 	cwd
-	
+
 	/**
 	 * Creates a new CommandOptions instance.
 	 * @param {object} props - The properties for command options
@@ -34,7 +34,12 @@ class CommandOptions {
 		this.help = Boolean(help)
 		this.cwd = String(cwd)
 	}
-	
+
+	/** @type {Record<string, any>} */
+	get DEFAULTS() {
+		return /** @type {typeof CommandOptions} */ (this.constructor).DEFAULTS
+	}
+
 	/**
 	 * Checks if all options have their default values.
 	 * @returns {boolean} True if all options are at their default values, false otherwise
@@ -44,21 +49,21 @@ class CommandOptions {
 			([key, value]) => CommandOptions.DEFAULTS[key] === value
 		)
 	}
-	
+
 	/**
 	 * Converts the options to a string representation.
 	 * @returns {string} String representation of the options or "<no options>" if none set
 	 */
 	toString() {
 		const opts = Object.entries(this).map(([key, value]) => {
-			if (this.constructor.DEFAULTS[key] === value) return false
+			if (this.DEFAULTS[key] === value) return false
 			const prefix = true === value ? "--" : "-"
 			return `${prefix}${key}${value ? ` ${value}` : ""}`
 		}).filter(Boolean)
 		if (0 === opts.length) return "<no options>"
 		return opts.join(" ")
 	}
-	
+
 	/**
 	 * Creates a CommandOptions instance from the given props.
 	 * @param {CommandOptions|object} props - The properties to create from

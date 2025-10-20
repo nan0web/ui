@@ -4,7 +4,6 @@ declare namespace _default {
     export let Command: {
         Message: typeof import("./Command/Message.js").default;
         Options: typeof import("./Command/Options.js").default;
-        Args: typeof import("../Command/Args.js").default;
     };
 }
 export default _default;

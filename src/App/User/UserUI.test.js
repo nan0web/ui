@@ -5,6 +5,7 @@ import UserUI from "./UserUI.js"
 import View from "../../View/View.js"
 import InputMessage from "../../InputMessage.js"
 import Welcome from "../../Component/Welcome/index.js"
+import Command from "./Command/index.js"
 
 describe("UserUI", () => {
 	it("should convert input with user.name to commands", () => {
@@ -12,10 +13,10 @@ describe("UserUI", () => {
 		const view = new View()
 		const ui = new UserUI(app, view)
 
-		const commands = ui.convertInput("setUser -user Bob welcome")
+		const commands = ui.convertInput("setUser --user Bob welcome")
 		assert.equal(commands.length, 1)
-		assert.equal(commands[0].args.get(0), "setUser")
-		assert.equal(commands[0].args.get(1), "welcome")
+		assert.equal(commands[0].args[0], "setUser")
+		assert.equal(commands[0].args[1], "welcome")
 		assert.equal(commands[0].opts.user, "Bob")
 	})
 
@@ -24,9 +25,10 @@ describe("UserUI", () => {
 		const view = new View()
 		const ui = new UserUI(app, view)
 
-		const commands = ui.convertInput({})
+		const commands = ui.convertInput("")
 		assert.equal(commands.length, 1)
-		assert.equal(String(commands[0]), "<no options> <empty args>")
+		assert.equal(commands[0].args.length, 0)
+		assert.equal(commands[0].opts.user, "")
 	})
 
 	it("should process askUserName command interactively", async () => {
@@ -36,7 +38,7 @@ describe("UserUI", () => {
 		view.register("Welcome", Welcome)
 
 		// Mock view.ask to return a name
-		view.ask = () => Promise.resolve(new InputMessage("Charlie"))
+		view.ask = (input) => Promise.resolve(new InputMessage("Charlie"))
 		// Mock output to collect outputs
 		const outputs = []
 		ui.output = (results) => outputs.push(...results)
@@ -44,7 +46,7 @@ describe("UserUI", () => {
 		const results = await ui.process(["welcome"])
 		assert.ok(view.ask)
 		assert.equal(results.length, 1)
-		assert.equal(results[0].value[0][0], "Welcome")
+		assert.ok(results[0].value[0][0].includes("Welcome"))
 		assert.ok(view.stdout.stream[0].includes("Welcome Charlie!"))
 	})
 })

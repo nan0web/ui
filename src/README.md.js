@@ -20,6 +20,7 @@ function testRender() {
 		pkg = await fs.loadDocument("package.json", pkg)
 	})
 	beforeEach(() => {
+		// @ts-ignore
 		console = new NoConsole()
 	})
 	after(() => {

@@ -1,8 +1,11 @@
 export default InputMessage;
+export type InputMessageValue = Message | string | null;
+/** @typedef {Message | string | null} InputMessageValue */
 /**
  * Represents a message input with value, options, and metadata.
  */
 declare class InputMessage {
+    static ESCAPE: string;
     /**
      * Creates an InputMessage instance from the given value.
      * @param {InputMessage|object|string} value - The value to create from
@@ -12,17 +15,19 @@ declare class InputMessage {
     /**
      * Creates a new InputMessage instance.
      * @param {object} props - Input message properties
-     * @param {string | null} [props.value=""] - Input value
+     * @param {InputMessageValue} [props.value=""] - Input value
      * @param {string[]} [props.options=[]] - Available options
      * @param {boolean} [props.waiting=false] - Waiting state flag
+     * @param {boolean} [props.escaped=false] - Sets value to escape when true
      */
     constructor(props?: {
-        value?: string | null | undefined;
+        value?: InputMessageValue | undefined;
         options?: string[] | undefined;
         waiting?: boolean | undefined;
+        escaped?: boolean | undefined;
     });
-    /** @type {string | null} Input value */
-    value: string | null;
+    /** @type {InputMessageValue} Input value */
+    value: InputMessageValue;
     /** @type {string[]} Available options for this input */
     options: string[];
     /** @type {boolean} Whether this input is waiting for response */
@@ -37,6 +42,11 @@ declare class InputMessage {
      * @returns {number} Creation timestamp
      */
     get time(): number;
+    /**
+     * Returns the escape value.
+     * @returns {string}
+     */
+    get ESCAPE(): string;
     /**
      * Checks if the input is an escape sequence.
      * @returns {boolean} True if input value is escape sequence, false otherwise
@@ -59,3 +69,4 @@ declare class InputMessage {
     toString(): string;
     #private;
 }
+import { Message } from "@nan0web/co";

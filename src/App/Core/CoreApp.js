@@ -1,22 +1,24 @@
 import { typeOf } from "@nan0web/types"
-import Command from "../Command/index.js"
+import { CommandMessage } from "../Command/index.js"
 import UI from "./UI.js"
+
+/** @typedef {Function} CommandFn */
 
 /**
  * Abstract base class for all apps.
  * Each app processes input commands and produces output.
  */
-class CoreApp {
+export default class CoreApp {
 	/** @type {string} App name */
 	name
-	
-	/** @type {Map<string, Function>} Registered command handlers */
+
+	/** @type {Map<string, CommandFn>} Registered command handlers */
 	commands
-	
+
 	/** @type {object} App state */
 	state
-	
-	/** @type {Command.Message} Starting command parsed from argv */
+
+	/** @type {CommandMessage} Starting command parsed from argv */
 	startCommand
 
 	/**
@@ -35,7 +37,7 @@ class CoreApp {
 		this.name = String(name)
 		this.state = state
 		this.commands = new Map()
-		this.startCommand = Command.Message.parse(argv)
+		this.startCommand = CommandMessage.parse(argv)
 	}
 
 	/**
@@ -76,14 +78,15 @@ class CoreApp {
 
 	/**
 	 * Process a command message.
-	 * @param {Command.Message} commandMessage - Command to process
+	 * @param {CommandMessage} commandMessage - Command to process
 	 * @param {UI} ui - UI instance to use for rendering
 	 * @returns {Promise<any>} Output of the command
 	 * @throws {Error} If the command is not registered
 	 */
 	async processCommand(commandMessage, ui) {
-		const cmd = commandMessage.args.get(0)
-		if (!this.commands.has(cmd)) {
+		const cmd = commandMessage.args[0]
+		const handler = this.commands.get(cmd)
+		if (!handler) {
 			throw new Error([
 				"Unknown command", ": ",
 				cmd, "\n",
@@ -91,10 +94,9 @@ class CoreApp {
 				[...this.commands.keys()].join(", "),
 			].join(""))
 		}
-		const handler = this.commands.get(cmd)
-		const Class = commandMessage.constructor
-		const command = new Class({
-			args: commandMessage.args.toArray().slice(1),
+		const Class = /** @type {typeof CommandMessage} */ (commandMessage.constructor)
+		const command = Class.from({
+			args: commandMessage.args.slice(1),
 			opts: commandMessage.opts,
 		})
 		return await handler.apply(this, [command, ui])
@@ -102,13 +104,14 @@ class CoreApp {
 
 	/**
 	 * Process an array of command messages sequentially.
-	 * @param {Command.Message[]} commandMessages - Array of commands to process
+	 * @param {CommandMessage[]} commandMessages - Array of commands to process
+	 * @param {UI} ui - UI instance to use for rendering
 	 * @returns {Promise<any[]>} Array of command outputs
 	 */
-	async processCommands(commandMessages) {
+	async processCommands(commandMessages, ui) {
 		const results = []
 		for (const cmdMsg of commandMessages) {
-			const result = await this.processCommand(cmdMsg)
+			const result = await this.processCommand(cmdMsg, ui)
 			results.push(result)
 		}
 		return results
@@ -124,5 +127,3 @@ class CoreApp {
 		throw new Error("Not implemented, must be implemented by subclass")
 	}
 }
-
-export default CoreApp

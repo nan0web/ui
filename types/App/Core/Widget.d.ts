@@ -1,4 +1,6 @@
 export default Widget;
+export type ComponentFn = import("./UI.js").ComponentFn;
+/** @typedef {import("./UI.js").ComponentFn} ComponentFn */
 /**
  * Abstract Widget class.
  * Widget is a view with ability to input data in a specific format.
@@ -35,3 +37,4 @@ declare class Widget extends EventProcessor {
 import EventProcessor from "@nan0web/event/oop";
 import View from "../../View/View.js";
 import InputMessage from "../../InputMessage.js";
+import { StreamEntry } from "@nan0web/db";

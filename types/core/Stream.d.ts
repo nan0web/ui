@@ -8,10 +8,10 @@ export default class UIStream {
      * Creates an async generator that runs the supplied processor function.
      *
      * @param {AbortSignal} signal - Abort signal.
-     * @param {Function} processorFn - Async function that returns a result.
-     * @returns {Function} Async generator function.
+     * @param {() => Promise<StreamEntry>} processorFn - Async function that returns a result.
+     * @returns {() => AsyncGenerator<StreamEntry>} Async generator function.
      */
-    static createProcessor(signal: AbortSignal, processorFn: Function): Function;
+    static createProcessor(signal: AbortSignal, processorFn: () => Promise<StreamEntry>): () => AsyncGenerator<StreamEntry>;
     /**
      * Runs a generator with progress callbacks and abort handling.
      *
@@ -24,3 +24,4 @@ export default class UIStream {
      */
     static process(signal: AbortSignal, generator: Function, onProgress?: Function | undefined, onError?: Function | undefined, onComplete?: Function | undefined): Promise<void>;
 }
+import StreamEntry from "./StreamEntry.js";

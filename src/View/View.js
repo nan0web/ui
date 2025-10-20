@@ -6,7 +6,14 @@ import StdIn from "../StdIn.js"
 import InputMessage from "../InputMessage.js"
 import RenderOptions from "./RenderOptions.js"
 
-class View {
+/**
+ * @typedef {Object} ComponentFn
+ * @property {string} name
+ * @property {(input: InputMessage) => Promise<any>} ask
+ * @property {Function} bind
+ */
+
+export default class View {
 	/** @type {typeof RenderOptions} */
 	static RenderOptions = RenderOptions
 	/** @type {typeof FrameRenderMethod} */
@@ -25,7 +32,7 @@ class View {
 	vocab
 	/** @type {number[]} */
 	windowSize
-	/** @type {Map} */
+	/** @type {Map<string, ComponentFn>} */
 	components
 	/** @type {string} */
 	renderMethod
@@ -38,7 +45,7 @@ class View {
 	 * @param {Locale} [input.locale]
 	 * @param {Map} [input.vocab]
 	 * @param {number[]} [input.windowSize]
-	 * @param {Map} [input.components]
+	 * @param {Map<string, ComponentFn>} [input.components]
 	 * @param {string} [input.renderMethod]
 	 */
 	constructor(input = {}) {
@@ -47,7 +54,7 @@ class View {
 			stdout = new StdOut(),
 			startedAt = Date.now(),
 			frame = new Frame(),
-			locale = new Locale("uk-UA"),
+			locale = Locale.from("uk-UA"),
 			vocab = new Map(),
 			windowSize = [0, 0],
 			components = new Map(),
@@ -88,7 +95,7 @@ class View {
 		return Math.round((Date.now() - checkpoint) / 1000)
 	}
 	/**
-	 * @param {boolean|number|function} [shouldRender=0]
+	 * @param {boolean | number | Function | ComponentFn} [shouldRender=0]
 	 * @param {RenderOptions} [options]
 	 * @returns {(value: Frame|string|string[], ...args: any) => Frame}
 	 */
@@ -101,7 +108,7 @@ class View {
 		})
 		const renderFn = "function" === typeof shouldRender // no errors.
 			// const renderFn = typeOf(Function)(shouldRender) // Property 'bind' does not exist on type 'number | boolean | Function'.
-			? shouldRender.bind(this) : typeOf(String)(shouldRender)
+			? shouldRender.bind(this) : "string" === typeof shouldRender
 				? this.components.get(shouldRender)?.bind(this)
 				: null
 
@@ -186,36 +193,36 @@ class View {
 	}
 
 	debug(...args) {
-		return this.render(1)([
+		return this.render(1)(
 			[StdOut.STYLES.dim,
 				"Debug: ", args.join(" "), Frame.EOL, StdOut.RESET],
-		])
+		)
 	}
 
 	info(...args) {
-		return this.render(1)([
+		return this.render(1)(
 			[StdOut.COLORS.green,
 				"Info : ", args.join(" "), Frame.EOL, StdOut.RESET],
-		])
+		)
 	}
 
 	warn(...args) {
-		return this.render(1)([
+		return this.render(1)(
 			[StdOut.COLORS.yellow,
 				"Warn : ", args.join(" "), Frame.EOL, StdOut.RESET],
-		])
+		)
 	}
 
 	error(...args) {
-		return this.render(1)([
+		return this.render(1)(
 			[StdOut.COLORS.red, StdOut.STYLES.bold,
 				"Error: ", args.join(" "), Frame.EOL, StdOut.RESET],
-		])
+		)
 	}
 
 	/**
 	 * @param {string} name
-	 * @param {Function} component
+	 * @param {ComponentFn} component
 	 */
 	register(name, component) {
 		if (undefined === component && "function" === typeof name) {
@@ -242,7 +249,7 @@ class View {
 
 	/**
 	 * @param {string} name
-	 * @returns {Function}
+	 * @returns {ComponentFn | undefined}
 	 */
 	get(name) {
 		return this.components.get(name)
@@ -261,7 +268,7 @@ class View {
 		let result = null
 		do {
 			const answer = await this.stdin.read()
-			result = input.constructor.from(answer)
+			result = /** @type {typeof InputMessage} */ (input.constructor).from(answer)
 		} while (!result.isValid() && !result.escaped)
 		return result.escaped ? null : result
 	}
@@ -280,5 +287,3 @@ class View {
 	}
 
 }
-
-export default View

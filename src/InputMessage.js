@@ -1,10 +1,14 @@
 import { notEmpty } from "@nan0web/types"
+import { Message } from "@nan0web/co"
+
+/** @typedef {Message | string | null} InputMessageValue */
 
 /**
  * Represents a message input with value, options, and metadata.
  */
 class InputMessage {
-	/** @type {string | null} Input value */
+	static ESCAPE = String.fromCharCode(27)
+	/** @type {InputMessageValue} Input value */
 	value
 
 	/** @type {string[]} Available options for this input */
@@ -19,9 +23,10 @@ class InputMessage {
 	/**
 	 * Creates a new InputMessage instance.
 	 * @param {object} props - Input message properties
-	 * @param {string | null} [props.value=""] - Input value
+	 * @param {InputMessageValue} [props.value=""] - Input value
 	 * @param {string[]} [props.options=[]] - Available options
 	 * @param {boolean} [props.waiting=false] - Waiting state flag
+	 * @param {boolean} [props.escaped=false] - Sets value to escape when true
 	 */
 	constructor(props = {}) {
 		if ("string" === typeof props) {
@@ -31,12 +36,16 @@ class InputMessage {
 			value = "",
 			waiting = false,
 			options = [],
+			escaped = false,
 		} = props
 		this.#time = Date.now()
 		this.waiting = Boolean(waiting)
 
 		this.options = options.map(String)
 		this.value = String(value)
+		if (!this.value && escaped) {
+
+		}
 	}
 
 	/**
@@ -44,7 +53,7 @@ class InputMessage {
 	 * @returns {boolean} True if value is empty or null, false otherwise
 	 */
 	get empty() {
-		return null === this.value || 0 === this.value.length
+		return null === this.value || 0 === String(this.value).length
 	}
 
 	/**
@@ -56,11 +65,19 @@ class InputMessage {
 	}
 
 	/**
+	 * Returns the escape value.
+	 * @returns {string}
+	 */
+	get ESCAPE() {
+		return /** @type {typeof InputMessage} */ (this.constructor).ESCAPE
+	}
+
+	/**
 	 * Checks if the input is an escape sequence.
 	 * @returns {boolean} True if input value is escape sequence, false otherwise
 	 */
 	get escaped() {
-		return String.fromCharCode(27) + "\n" === this.value
+		return this.ESCAPE === this.value
 	}
 
 	/**

@@ -10,7 +10,7 @@ describe("Frame", () => {
 		assert.ok(empty(frame))
 	})
 	it("should create non-empty Frame", () => {
-		const frame = new Frame(["Non", "empty"])
+		const frame = Frame.from(["Non", "empty"])
 		assert.ok(notEmpty(frame))
 	})
 	it("should print empty zero and false", () => {
@@ -47,7 +47,7 @@ describe("Frame", () => {
 		assert.equal(frame.imprint, rows.join("\n"))
 	})
 	it("should transform value", () => {
-		const frame = new Frame(["Welcome"])
+		const frame = Frame.from(["Welcome"])
 		const t = v => "Вітання"
 		const transformed = frame.transform(t)
 		assert.deepStrictEqual(transformed.value, [["Вітання"]])
@@ -58,7 +58,7 @@ describe("Frame", () => {
 			["Привіт", "Світ"],
 			["こんにちは", "世界"],
 		]
-		const frame = new Frame(input)
+		const frame = Frame.from(input)
 		frame.render()
 		const imprintLines = frame.imprint.split("\n")
 		imprintLines.forEach(line => {
@@ -180,10 +180,13 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 10, height: 4 })
 		const output = frame.render({ method: Frame.RenderMethod.REPLACE })
-		assert.ok(output.startsWith(Frame.BOF))
+		assert.ok(output.endsWith(Frame.BOF))
 		const lines = output.split("\n")
 		assert.equal(lines.length, 4)
-		assert.deepStrictEqual(lines.slice(0, 2), [`\x1b[0;0H` + "Line 1    ", "Line 2    "])
+		assert.deepStrictEqual(lines.slice(0, 2), [
+			"Line 1    ",
+			"Line 2    "
+		])
 		assert.match(lines[2], /^\s*$/) // empty row
 	})
 
@@ -209,7 +212,7 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 10, height: 4 })
 		const output = frame.render({ method: Frame.RenderMethod.APPEND })
-		assert.ok(output.startsWith(Frame.BOF))
+		assert.ok(output.endsWith(Frame.BOF))
 		const lines = output.split("\n")
 		assert.equal(lines.length, 4)
 		assert.deepStrictEqual(lines.slice(1, 3), ["Line 2    ", ""])
@@ -226,7 +229,10 @@ describe("Frame", () => {
 		assert.ok(output.startsWith(`\x1b[1A`))
 		const lines = output.split("\n")
 		assert.ok(lines.length <= 2)
-		assert.deepStrictEqual(lines, [`\x1b[1A` + "Line 1", "Line 2"])
+		assert.deepStrictEqual(lines, [
+			Frame.cursorUp() + Frame.CLEAR_LINE + "\r" + "Line 1",
+			Frame.CLEAR_LINE + "\r" + "Line 2"
+		])
 	})
 
 	it("should handle BOF at end with VISIBLE method", () => {
@@ -237,10 +243,13 @@ describe("Frame", () => {
 		]
 		const frame = new Frame({ value: input, width: 10, height: 4 })
 		const output = frame.render({ method: Frame.RenderMethod.VISIBLE })
-		assert.ok(output.startsWith(`\x1b[1A`))
+		assert.ok(output.startsWith(Frame.CLEAR_LINE + "\r"))
 		const lines = output.split("\n")
 		assert.ok(lines.length <= 2)
-		assert.deepStrictEqual(lines, [`\x1b[1A` + "Line 1", "Line 2"])
+		assert.deepStrictEqual(lines, [
+			Frame.CLEAR_LINE + "\r" + "Line 1",
+			Frame.CLEAR_LINE + "\r" + "Line 2" + Frame.cursorUp(1)
+		])
 	})
 
 	it("should handle BOL in lines with REPLACE method", () => {

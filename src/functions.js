@@ -32,9 +32,7 @@ export const table = (options = {}) => {
 		aligns = []
 	} = options
 	return (arr) => {
-		if (empty(cols)) {
-			cols = weight(arr)(Fn)
-		}
-		return arr.map(row => spaces(row, { cols, padding, aligns }))
+		const options = { cols: empty(cols) ? weight(arr)(Fn) : cols, padding, aligns }
+		return arr.map(row => spaces(options)(row))
 	}
 }

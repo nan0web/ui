@@ -1,11 +1,11 @@
 import Command from "../../Command/index.js"
-import Message from "./Message.js"
-import Options from "./Options.js"
+import CommandMessage from "./Message.js"
+import CommandOptions from "./Options.js"
 
-export { Message, Options }
+export { CommandMessage, CommandOptions }
 
 export default {
 	...Command,
-	Message,
-	Options,
+	Message: CommandMessage,
+	Options: CommandOptions,
 }

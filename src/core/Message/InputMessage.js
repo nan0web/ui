@@ -30,7 +30,7 @@ export default class InputMessage extends UIMessage {
 		return this.value === null || this.value.length === 0
 	}
 
-	isValid() {
+	get isValid() {
 		return !this.empty
 	}
 

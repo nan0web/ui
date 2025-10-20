@@ -1,4 +1,6 @@
 export default UI;
+export type ComponentFn = import("../../View/View.js").ComponentFn;
+/** @typedef {import("../../View/View.js").ComponentFn} ComponentFn */
 /**
  * Abstract UI class to connect apps and widgets.
  * Supports input/output data typed classes and views.
@@ -27,14 +29,14 @@ declare class UI extends Widget {
      * @emits {data} Emitted for each command being processed
      * @emits {end} Emitted when all commands have been processed
      * @param {any} rawInput - Raw input to process
-     * @returns {Promise<void>} Results of command processing
+     * @returns {Promise<any[]>} Results of command processing
      */
-    process(rawInput: any): Promise<void>;
+    process(rawInput: any): Promise<any[]>;
     /**
      * Sets up event handlers for UI process events.
-     * @param {Function} UIProcess - Process view component
+     * @param {ComponentFn} UIProcess - Process view component
      */
-    show(UIProcess: Function): void;
+    show(UIProcess: ComponentFn): void;
     /**
      * Output results to the interface.
      * @param {any[]} results - Results to output
@@ -43,5 +45,5 @@ declare class UI extends Widget {
 }
 import Widget from "./Widget.js";
 import CoreApp from "./CoreApp.js";
-import CommandMessage from "../Command/Message.js";
+import { CommandMessage } from "../Command/index.js";
 import View from "../../View/View.js";

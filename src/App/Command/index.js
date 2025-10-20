@@ -1,11 +1,9 @@
-import CommandMessage from "./Message.js"
-import CommandArgs from "./Args.js"
+import { CommandMessage } from "@nan0web/co"
 import CommandOptions from "./Options.js"
 
-export { CommandMessage, CommandArgs, CommandOptions }
+export { CommandMessage, CommandOptions }
 
 export default {
 	Message: CommandMessage,
-	Args: CommandArgs,
 	Options: CommandOptions,
 }

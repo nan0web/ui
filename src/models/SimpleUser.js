@@ -8,7 +8,7 @@ export default class SimpleUser {
 	 * @param {Object} data
 	 * @param {string} [data.name]
 	 * @param {string} [data.email]
-	 * @param {number} [data.age]
+	 * @param {number | null} [data.age]
 	 */
 	constructor({ name = "", email = "", age = null } = {}) {
 		this.name = name

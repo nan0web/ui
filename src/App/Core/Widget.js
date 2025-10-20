@@ -1,6 +1,9 @@
 import EventProcessor from "@nan0web/event/oop"
 import View from "../../View/View.js"
 import InputMessage from "../../InputMessage.js"
+import { StreamEntry } from "@nan0web/db"
+
+/** @typedef {import("./UI.js").ComponentFn} ComponentFn */
 
 /**
  * Abstract Widget class.
@@ -35,7 +38,7 @@ class Widget extends EventProcessor {
 	 */
 	async read(stream) {
 		for await (const entry of stream) {
-			this.view.progress(entry)
+			this.view.progress(true)(entry)
 		}
 	}
 
@@ -47,16 +50,17 @@ class Widget extends EventProcessor {
 	 * @throws {Error} If view component is not found when using string name
 	 */
 	render(viewFnOrName, outputData) {
-		if (typeof viewFnOrName === "string") {
-			const viewFn = this.view.get(viewFnOrName)
-			if (!viewFn) {
-				throw new Error([
-					"View component not found", ": ", viewFnOrName
-				].join(""))
-			}
-			return this.view.render(viewFn)(outputData)
+		/** @type {Function | ComponentFn | undefined} */
+		const viewFn = typeof viewFnOrName === "string"
+			? this.view.get(viewFnOrName)
+			: viewFnOrName
+
+		if (!viewFn) {
+			throw new Error([
+				"View component not found", ": ", viewFnOrName
+			].join(""))
 		}
-		return this.view.render(viewFnOrName)(outputData)
+		return this.view.render(viewFn)(outputData)
 	}
 }
 

@@ -1,5 +1,5 @@
 import App from "../Core/index.js"
-import Command from "./Command/index.js"
+import { CommandMessage } from "./Command/index.js"
 
 /**
  * UserUI connects UserApp and View.
@@ -12,9 +12,9 @@ export default class UserUI extends App.UI {
 	 * If user.name provided in rawInput, use it directly.
 	 * Otherwise ask user for name.
 	 * @param {any} rawInput - Raw input to convert
-	 * @returns {Command.Message[]} Array of command messages
+	 * @returns {CommandMessage[]} Array of command messages
 	 */
 	convertInput(rawInput) {
-		return [Command.Message.parse(rawInput)]
+		return [CommandMessage.parse(rawInput)]
 	}
 }

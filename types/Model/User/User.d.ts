@@ -11,11 +11,14 @@ declare class User {
     static from(props: User | object | string): User;
     /**
      * Creates a new User instance.
-     * @param {object|string} props - User properties or name string
+     * @param {object} props - User properties or name string
      * @param {string} [props.name=""] - User name
      * @param {string} [props.email=""] - User email
      */
-    constructor(props?: object | string);
+    constructor(props?: {
+        name?: string | undefined;
+        email?: string | undefined;
+    });
     /** @type {string} User name */
     name: string;
     /** @type {string} User email */

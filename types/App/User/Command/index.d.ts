@@ -1,9 +1,8 @@
-declare const _default: {
-    Message: typeof Message;
-    Options: typeof Options;
-    Args: typeof import("../../Command/Args.js").default;
-};
+declare namespace _default {
+    export { CommandMessage as Message };
+    export { CommandOptions as Options };
+}
 export default _default;
-import Message from "./Message.js";
-import Options from "./Options.js";
-export { Message, Options };
+import CommandMessage from "./Message.js";
+import CommandOptions from "./Options.js";
+export { CommandMessage, CommandOptions };

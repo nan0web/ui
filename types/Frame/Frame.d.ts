@@ -3,11 +3,10 @@ export class FrameRenderMethod {
     static REPLACE: string;
     static VISIBLE: string;
 }
-export default Frame;
 /**
  * @link https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797 - ANSI escape codes
  */
-declare class Frame {
+export default class Frame {
     /** @type {typeof FrameRenderMethod} */
     static RenderMethod: typeof FrameRenderMethod;
     static Props: typeof FrameProps;
@@ -23,33 +22,86 @@ declare class Frame {
     static SHOW_CURSOR: string;
     /** @type {string} Tab */
     static TAB: string;
+    /** @type {string} Bold */
     static BOLD: string;
+    /** @type {string} Italic */
     static ITALIC: string;
+    /** @type {string} Underline */
     static UNDERLINE: string;
+    /** @type {string} Strikethrough */
     static STRIKETHROUGH: string;
+    /** @type {string} Reset */
     static RESET: string;
+    /** @type {string} Clear line */
+    static CLEAR_LINE: string;
+    /**
+     * Check if a value can be used to create a Frame instance.
+     * @param {*} value - Value to check.
+     * @returns {boolean} True if the value is valid for Frame creation.
+     */
     static is(value: any): boolean;
+    /**
+     * Create a Frame instance from input.
+     * @param {*} input - Input value to convert.
+     * @returns {Frame} A new Frame instance.
+     */
     static from(input: any): Frame;
-    static spaces(options?: {}): (row: any) => any;
-    static weight(arr: any): (Fn?: (v: any) => any) => any[];
+    /**
+     * Create a function to space columns based on options.
+     * @param {object} options - Spacing options.
+     * @param {number[]} [options.cols=[]] - Widths of the columns.
+     * @param {number} [options.padding=1] - Padding between columns.
+     * @param {string[]} [options.aligns=[]] - Alignment for each column ('l' or 'r').
+     * @returns {Function} Function that spaces a row.
+     */
+    static spaces(options?: {
+        cols?: number[] | undefined;
+        padding?: number | undefined;
+        aligns?: string[] | undefined;
+    }): Function;
+    /**
+     *
+     * @param {Array} arr
+     * @returns {(v) => number[]}
+     */
+    static weight(arr: any[]): (v: any) => number[];
     /**
      *
      * @param {object} options
-     * @param {function} [options.fn=(fn = v => v)] - Function to calculate weight.
-     * @param {string[]} [options.cols=[]] - Widths of the columns.
+     * @param {Function} [options.fn=(fn = v => v)] - Function to calculate weight.
+     * @param {number[]} [options.cols=[]] - Widths of the columns.
      * @param {number} [options.padding=1] - The padding between columns.
      * @param {string[]} [options.aligns=[]] - The column aligns: l, r
      * @returns {(arr: []) => string[][]}
      */
     static table(options?: {
         fn?: Function | undefined;
-        cols?: string[] | undefined;
+        cols?: number[] | undefined;
         padding?: number | undefined;
         aligns?: string[] | undefined;
     }): (arr: []) => string[][];
-    static cursorUp(lines?: number): string;
-    static cursorDown(lines?: number): string;
-    static clearLine(str?: string): string;
+    /**
+     * Move cursor up by specified lines.
+     * @param {number} [lines=1] - Number of lines to move up.
+     * @returns {string} ANSI escape code for cursor movement.
+     */
+    static cursorUp(lines?: number | undefined): string;
+    /**
+     * Move cursor down by specified lines.
+     * @param {number} [lines=1] - Number of lines to move down.
+     * @returns {string} ANSI escape code for cursor movement.
+     */
+    static cursorDown(lines?: number | undefined): string;
+    /**
+     * Clear the current line.
+     * @param {string} [str="\r"] - String to append after clearing.
+     * @returns {string} ANSI escape code for line clearing followed by the string.
+     */
+    static clearLine(str?: string | undefined): string;
+    /**
+     * Clear the entire screen.
+     * @returns {string} ANSI escape codes for screen clearing.
+     */
     static clearScreen(): string;
     /**
      * @param {object} [input]
@@ -90,12 +142,45 @@ declare class Frame {
     height: number;
     /** @type {string} */
     renderMethod: string;
+    /**
+     * Get whether the frame is empty.
+     * @returns {boolean} True if the frame has no content.
+     */
     get empty(): boolean;
-    lengthOf(str: any): number;
-    render(options?: {}): string;
+    /**
+     * Calculate the visual width of a string.
+     * @param {string} str
+     * @returns {number} The visual width of the string.
+     */
+    lengthOf(str: string): number;
+    /**
+     * Render the frame into a string representation.
+     * @param {object} [options]
+     * @param {string} [options.method] - Render method to use.
+     * @param {FrameProps} [options.props] - Properties to apply during rendering.
+     * @returns {string} The rendered frame as a string.
+     */
+    render(options?: {
+        method?: string | undefined;
+        props?: FrameProps | undefined;
+    } | undefined): string;
+    /**
+     * Convert the frame to its string representation.
+     * @returns {string} The frame's imprint.
+     */
     toString(): string;
-    transform(fn: any): Frame;
-    setWindowSize(width: any, height: any): void;
+    /**
+     * Transform each cell in the frame using a function.
+     * @param {Function} fn - Function to apply to each cell.
+     * @returns {Frame} A new Frame with transformed values.
+     */
+    transform(fn: Function): Frame;
+    /**
+     * Set the window size for the frame.
+     * @param {number} width - The width of the window.
+     * @param {number} height - The height of the window.
+     */
+    setWindowSize(width: number, height: number): void;
     #private;
 }
 import FrameProps from "./Props.js";

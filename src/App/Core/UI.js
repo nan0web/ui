@@ -1,8 +1,10 @@
 import View from "../../View/View.js"
 import CoreApp from "./CoreApp.js"
 import Widget from "./Widget.js"
-import CommandMessage from "../Command/Message.js"
 import { notEmpty } from "@nan0web/types"
+import { CommandMessage } from "../Command/index.js"
+
+/** @typedef {import("../../View/View.js").ComponentFn} ComponentFn */
 
 /**
  * Abstract UI class to connect apps and widgets.
@@ -40,21 +42,24 @@ class UI extends Widget {
 	 * @emits {data} Emitted for each command being processed
 	 * @emits {end} Emitted when all commands have been processed
 	 * @param {any} rawInput - Raw input to process
-	 * @returns {Promise<void>} Results of command processing
+	 * @returns {Promise<any[]>} Results of command processing
 	 */
 	async process(rawInput) {
 		const commands = this.convertInput(rawInput).filter(notEmpty)
 		const results = []
 		let count = commands.length
 
-		this.show(this.view.get("UIProcess"))
+		const proc = this.view.get("UIProcess")
+		if (proc) {
+			this.show(proc)
+		}
 
 		if (0 === count && this.app.selectCommand) {
 			const answer = await this.app.selectCommand(this)
 			if (answer) {
 				const [input] = this.convertInput(rawInput)
 				const cmd = new CommandMessage({
-					args: [answer],
+					argv: [answer],
 					opts: input?.opts ?? {},
 				})
 				commands.push(cmd)
@@ -78,7 +83,7 @@ class UI extends Widget {
 
 	/**
 	 * Sets up event handlers for UI process events.
-	 * @param {Function} UIProcess - Process view component
+	 * @param {ComponentFn} UIProcess - Process view component
 	 */
 	show(UIProcess) {
 		if (!UIProcess) return

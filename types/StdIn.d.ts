@@ -1,10 +1,4 @@
 export default StdIn;
-export type Processor = {
-    /**
-     * - Event handler registration
-     */
-    on: Function;
-};
 /**
  * Handles standard input stream with message buffering.
  */
@@ -64,9 +58,5 @@ declare class StdIn extends EventProcessor {
 }
 import EventProcessor from "@nan0web/event/oop";
 import InputMessage from "./InputMessage.js";
-/**
- * @typedef {Object} Processor
- * @property {Function} on - Event handler registration
- */
 declare class Processor extends EventProcessor {
 }

@@ -10,8 +10,9 @@ export default class UserUI extends UserUI_base {
      * If user.name provided in rawInput, use it directly.
      * Otherwise ask user for name.
      * @param {any} rawInput - Raw input to convert
-     * @returns {Command.Message[]} Array of command messages
+     * @returns {CommandMessage[]} Array of command messages
      */
-    convertInput(rawInput: any): Command.Message[];
+    convertInput(rawInput: any): CommandMessage[];
 }
+import { CommandMessage } from "./Command/index.js";
 export {};

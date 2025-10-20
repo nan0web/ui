@@ -38,7 +38,7 @@ describe("InputMessage", () => {
 	it("should validate message", () => {
 		const validMsg = new InputMessage({ value: "test" })
 		const invalidMsg = new InputMessage({ value: "" })
-		assert.ok(validMsg.isValid())
-		assert.ok(!invalidMsg.isValid())
+		assert.ok(validMsg.isValid)
+		assert.ok(!invalidMsg.isValid)
 	})
 })

@@ -11,7 +11,7 @@ export class FrameRenderMethod {
 /**
  * @link https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797 - ANSI escape codes
  */
-class Frame {
+export default class Frame {
 	/** @type {typeof FrameRenderMethod} */
 	static RenderMethod = FrameRenderMethod
 	static Props = FrameProps
@@ -27,11 +27,18 @@ class Frame {
 	static SHOW_CURSOR = "\x1b[?25h"
 	/** @type {string} Tab */
 	static TAB = "\t"
+	/** @type {string} Bold */
 	static BOLD = "\x1b[1m"
+	/** @type {string} Italic */
 	static ITALIC = "\x1b[3m"
+	/** @type {string} Underline */
 	static UNDERLINE = "\x1b[4m"
+	/** @type {string} Strikethrough */
 	static STRIKETHROUGH = "\x1b[9m"
+	/** @type {string} Reset */
 	static RESET = "\x1b[0m"
+	/** @type {string} Clear line */
+	static CLEAR_LINE = '\x1b[2K'
 	/**
 	 * @example
 	 * ```js
@@ -100,12 +107,28 @@ class Frame {
 		this.renderMethod = renderMethod
 		this.defaultProps = defaultProps
 	}
+	/**
+	 * Get whether the frame is empty.
+	 * @returns {boolean} True if the frame has no content.
+	 */
 	get empty() {
 		return empty(this.value)
 	}
+	/**
+	 * Calculate the visual width of a string.
+	 * @param {string} str
+	 * @returns {number} The visual width of the string.
+	 */
 	lengthOf(str) {
 		return stringWidth(str)
 	}
+	/**
+	 * Render the frame into a string representation.
+	 * @param {object} [options]
+	 * @param {string} [options.method] - Render method to use.
+	 * @param {FrameProps} [options.props] - Properties to apply during rendering.
+	 * @returns {string} The rendered frame as a string.
+	 */
 	render(options = {}) {
 		const {
 			method = this.renderMethod,
@@ -422,20 +445,39 @@ class Frame {
 		this.imprint = rows.join("\n")
 		return this.imprint
 	}
+	/**
+	 * Convert the frame to its string representation.
+	 * @returns {string} The frame's imprint.
+	 */
 	toString() {
 		return this.imprint
 	}
+	/**
+	 * Transform each cell in the frame using a function.
+	 * @param {Function} fn - Function to apply to each cell.
+	 * @returns {Frame} A new Frame with transformed values.
+	 */
 	transform(fn) {
 		const value = this.value.map(
 			row => row.map(fn)
 		)
 		return new Frame({ ...this, value })
 	}
+	/**
+	 * Set the window size for the frame.
+	 * @param {number} width - The width of the window.
+	 * @param {number} height - The height of the window.
+	 */
 	setWindowSize(width, height) {
 		this.width = Math.max(0, Number(width))
 		this.height = Math.max(0, Number(height))
 		this.render()
 	}
+	/**
+	 * Check if a value can be used to create a Frame instance.
+	 * @param {*} value - Value to check.
+	 * @returns {boolean} True if the value is valid for Frame creation.
+	 */
 	static is(value) {
 		try {
 			new Frame(value)
@@ -444,6 +486,11 @@ class Frame {
 			return false
 		}
 	}
+	/**
+	 * Create a Frame instance from input.
+	 * @param {*} input - Input value to convert.
+	 * @returns {Frame} A new Frame instance.
+	 */
 	static from(input) {
 		if (input instanceof Frame) return input
 		if (input?.value instanceof Frame) return new Frame(to(Object)(input.value))
@@ -451,6 +498,14 @@ class Frame {
 		if (Array.isArray(input)) return new Frame({ value: input })
 		return new Frame(input)
 	}
+	/**
+	 * Create a function to space columns based on options.
+	 * @param {object} options - Spacing options.
+	 * @param {number[]} [options.cols=[]] - Widths of the columns.
+	 * @param {number} [options.padding=1] - Padding between columns.
+	 * @param {string[]} [options.aligns=[]] - Alignment for each column ('l' or 'r').
+	 * @returns {Function} Function that spaces a row.
+	 */
 	static spaces(options = {}) {
 		const { cols = [], padding = 1, aligns = [] } = options
 		return (row) => (
@@ -460,6 +515,11 @@ class Frame {
 			})
 		)
 	}
+	/**
+	 *
+	 * @param {Array} arr
+	 * @returns {(v) => number[]}
+	 */
 	static weight(arr) {
 		return (Fn = v => v) => {
 			const cols = []
@@ -475,8 +535,8 @@ class Frame {
 	/**
 	 *
 	 * @param {object} options
-	 * @param {function} [options.fn=(fn = v => v)] - Function to calculate weight.
-	 * @param {string[]} [options.cols=[]] - Widths of the columns.
+	 * @param {Function} [options.fn=(fn = v => v)] - Function to calculate weight.
+	 * @param {number[]} [options.cols=[]] - Widths of the columns.
 	 * @param {number} [options.padding=1] - The padding between columns.
 	 * @param {string[]} [options.aligns=[]] - The column aligns: l, r
 	 * @returns {(arr: []) => string[][]}
@@ -496,19 +556,36 @@ class Frame {
 			return arr.map(row => Frame.spaces({ cols, padding, aligns })(row))
 		}
 	}
+	/**
+	 * Move cursor up by specified lines.
+	 * @param {number} [lines=1] - Number of lines to move up.
+	 * @returns {string} ANSI escape code for cursor movement.
+	 */
 	static cursorUp(lines = 1) {
 		return `\x1b[${lines}A`
 	}
+	/**
+	 * Move cursor down by specified lines.
+	 * @param {number} [lines=1] - Number of lines to move down.
+	 * @returns {string} ANSI escape code for cursor movement.
+	 */
 	static cursorDown(lines = 1) {
 		return `\x1b[${lines}B`
 	}
+	/**
+	 * Clear the current line.
+	 * @param {string} [str="\r"] - String to append after clearing.
+	 * @returns {string} ANSI escape code for line clearing followed by the string.
+	 */
 	static clearLine(str = "\r") {
-		return '\x1b[2K' + str
+		return Frame.CLEAR_LINE + str
 	}
+	/**
+	 * Clear the entire screen.
+	 * @returns {string} ANSI escape codes for screen clearing.
+	 */
 	static clearScreen() {
 		return '\x1b[2J\x1b[0;0H'
 	}
 
 }
-
-export default Frame

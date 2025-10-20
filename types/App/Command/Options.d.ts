@@ -31,6 +31,8 @@ declare class CommandOptions {
     help: boolean;
     /** @type {string} Current working directory */
     cwd: string;
+    /** @type {Record<string, any>} */
+    get DEFAULTS(): Record<string, any>;
     /**
      * Checks if all options have their default values.
      * @returns {boolean} True if all options are at their default values, false otherwise

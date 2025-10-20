@@ -1,26 +1,30 @@
 export default UserAppCommandMessage;
-declare const UserAppCommandMessage_base: typeof import("../../Command/Message.js").default;
 /**
  * Extends Command.Message to include user-specific command options.
  */
-declare class UserAppCommandMessage extends UserAppCommandMessage_base {
+declare class UserAppCommandMessage extends CommandMessage {
     /**
      * Parses an array of strings into a UserAppCommandMessage.
-     * @param {string[]} value - Arguments to parse
+     * @param {string[] | string} value - Arguments to parse
      * @returns {UserAppCommandMessage} Parsed command message
      */
-    static parse(value?: string[]): UserAppCommandMessage;
+    static parse(value?: string[] | string): UserAppCommandMessage;
     /**
      * Creates a new UserAppCommandMessage instance.
      * @param {object} props - Command message properties
      * @param {string[]} [props.args=[]] - Command arguments
-     * @param {UserAppCommandOptions|object} [props.opts={}] - User-specific options
+     * @param {Partial<UserAppCommandOptions>} [props.opts={}] - User-specific options
      */
     constructor(props?: {
         args?: string[] | undefined;
-        opts?: UserAppCommandOptions | object;
+        opts?: Partial<UserAppCommandOptions> | undefined;
     });
-    /** @type {UserAppCommandOptions} User-specific options */
-    opts: UserAppCommandOptions;
+    /**
+     * @param {Partial<UserAppCommandOptions>} value
+     */
+    set opts(arg: UserAppCommandOptions);
+    /** @returns {UserAppCommandOptions} */
+    get opts(): UserAppCommandOptions;
 }
+import { CommandMessage } from "../../Command/index.js";
 import UserAppCommandOptions from "./Options.js";

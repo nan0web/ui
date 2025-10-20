@@ -1,5 +1,10 @@
-export default View;
-declare class View {
+/**
+ * @typedef {Object} ComponentFn
+ * @property {string} name
+ * @property {(input: InputMessage) => Promise<any>} ask
+ * @property {Function} bind
+ */
+export default class View {
     /** @type {typeof RenderOptions} */
     static RenderOptions: typeof RenderOptions;
     /** @type {typeof FrameRenderMethod} */
@@ -19,7 +24,7 @@ declare class View {
      * @param {Locale} [input.locale]
      * @param {Map} [input.vocab]
      * @param {number[]} [input.windowSize]
-     * @param {Map} [input.components]
+     * @param {Map<string, ComponentFn>} [input.components]
      * @param {string} [input.renderMethod]
      */
     constructor(input?: {
@@ -30,7 +35,7 @@ declare class View {
         locale?: Locale | undefined;
         vocab?: Map<any, any> | undefined;
         windowSize?: number[] | undefined;
-        components?: Map<any, any> | undefined;
+        components?: Map<string, ComponentFn> | undefined;
         renderMethod?: string | undefined;
     } | undefined);
     /** @type {StdIn} */
@@ -47,8 +52,8 @@ declare class View {
     vocab: Map<any, any>;
     /** @type {number[]} */
     windowSize: number[];
-    /** @type {Map} */
-    components: Map<any, any>;
+    /** @type {Map<string, ComponentFn>} */
+    components: Map<string, ComponentFn>;
     /** @type {string} */
     renderMethod: string;
     get empty(): boolean;
@@ -59,11 +64,11 @@ declare class View {
     startTimer(): void;
     spent(checkpoint?: number): number;
     /**
-     * @param {boolean|number|function} [shouldRender=0]
+     * @param {boolean | number | Function | ComponentFn} [shouldRender=0]
      * @param {RenderOptions} [options]
      * @returns {(value: Frame|string|string[], ...args: any) => Frame}
      */
-    render(shouldRender?: number | boolean | Function | undefined, options?: RenderOptions | undefined): (value: Frame | string | string[], ...args: any) => Frame;
+    render(shouldRender?: number | boolean | Function | ComponentFn | undefined, options?: RenderOptions | undefined): (value: Frame | string | string[], ...args: any) => Frame;
     clear(shouldRender?: number): Frame;
     progress(shouldRender?: boolean): (value: any) => Frame;
     t(value: any): any;
@@ -73,9 +78,9 @@ declare class View {
     error(...args: any[]): Frame;
     /**
      * @param {string} name
-     * @param {Function} component
+     * @param {ComponentFn} component
      */
-    register(name: string, component: Function): void;
+    register(name: string, component: ComponentFn): void;
     /**
      * @param {string} name
      */
@@ -87,15 +92,20 @@ declare class View {
     has(name: string): boolean;
     /**
      * @param {string} name
-     * @returns {Function}
+     * @returns {ComponentFn | undefined}
      */
-    get(name: string): Function;
+    get(name: string): ComponentFn | undefined;
     /**
      * @param {InputMessage} input
      * @returns {Promise<InputMessage | null>}
      */
     ask(input: InputMessage): Promise<InputMessage | null>;
 }
+export type ComponentFn = {
+    name: string;
+    ask: (input: InputMessage) => Promise<any>;
+    bind: Function;
+};
 import StdIn from "../StdIn.js";
 import StdOut from "../StdOut.js";
 import Frame from "../Frame/Frame.js";
