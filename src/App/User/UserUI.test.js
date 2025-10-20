@@ -3,9 +3,8 @@ import { strict as assert } from "node:assert"
 import UserApp from "./UserApp.js"
 import UserUI from "./UserUI.js"
 import View from "../../View/View.js"
-import InputMessage from "../../InputMessage.js"
+import InputMessage from "../../core/Message/InputMessage.js"
 import Welcome from "../../Component/Welcome/index.js"
-import Command from "./Command/index.js"
 
 describe("UserUI", () => {
 	it("should convert input with user.name to commands", () => {

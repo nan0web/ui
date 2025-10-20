@@ -45,6 +45,7 @@
 		"@nan0web/co": "workspace:*",
 		"@nan0web/event": "workspace:*",
 		"@nan0web/i18n": "workspace:*",
+		"@nan0web/release": "workspace:*",
 		"@nan0web/test": "workspace:*",
 		"@nan0web/types": "workspace:*",
 		"@nan0web/ui-cli": "workspace:*",

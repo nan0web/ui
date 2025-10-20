@@ -1,6 +1,6 @@
 import EventProcessor from "@nan0web/event/oop"
 import View from "../../View/View.js"
-import InputMessage from "../../InputMessage.js"
+import InputMessage from "../../core/Message/InputMessage.js"
 import { StreamEntry } from "@nan0web/db"
 
 /** @typedef {import("./UI.js").ComponentFn} ComponentFn */

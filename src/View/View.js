@@ -3,7 +3,7 @@ import Frame, { FrameRenderMethod } from "../Frame/Frame.js"
 import Locale from "../Locale.js"
 import StdOut from "../StdOut.js"
 import StdIn from "../StdIn.js"
-import InputMessage from "../InputMessage.js"
+import InputMessage from "../core/Message/InputMessage.js"
 import RenderOptions from "./RenderOptions.js"
 
 /**
@@ -269,7 +269,7 @@ export default class View {
 		do {
 			const answer = await this.stdin.read()
 			result = /** @type {typeof InputMessage} */ (input.constructor).from(answer)
-		} while (!result.isValid() && !result.escaped)
+		} while (!result.isValid && !result.escaped)
 		return result.escaped ? null : result
 	}
 

@@ -1,7 +1,7 @@
 import EventProcessor from "@nan0web/event/oop"
 import { CommandMessage } from "@nan0web/co"
 import { typeOf } from "@nan0web/types"
-import InputMessage from "./InputMessage.js"
+import InputMessage from "./core/Message/InputMessage.js"
 
 class Processor extends EventProcessor { }
 

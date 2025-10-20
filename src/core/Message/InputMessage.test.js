@@ -1,6 +1,7 @@
 import { describe, it } from "node:test"
 import { strict as assert } from "node:assert"
 import InputMessage from "./InputMessage.js"
+import { notEmpty, empty } from "@nan0web/types"
 
 describe("InputMessage", () => {
 	it("should create instance with default values", () => {

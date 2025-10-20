@@ -112,4 +112,4 @@ import Frame from "../Frame/Frame.js";
 import Locale from "../Locale.js";
 import { FrameRenderMethod } from "../Frame/Frame.js";
 import RenderOptions from "./RenderOptions.js";
-import InputMessage from "../InputMessage.js";
+import InputMessage from "../core/Message/InputMessage.js";

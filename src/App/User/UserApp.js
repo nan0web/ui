@@ -3,7 +3,7 @@ import CoreApp from "../Core/CoreApp.js"
 import Command, { CommandMessage } from "./Command/index.js"
 import User from "../../Model/User/User.js"
 import UserUI from "./UserUI.js"
-import InputMessage from "../../InputMessage.js"
+import InputMessage from "../../core/Message/InputMessage.js"
 
 /**
  * UserApp requires user name and shows Welcome view.

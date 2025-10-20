@@ -57,6 +57,6 @@ declare class StdIn extends EventProcessor {
     decode(message: InputMessage | string[] | any): InputMessage;
 }
 import EventProcessor from "@nan0web/event/oop";
-import InputMessage from "./InputMessage.js";
+import InputMessage from "./core/Message/InputMessage.js";
 declare class Processor extends EventProcessor {
 }
