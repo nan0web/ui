@@ -22,7 +22,7 @@ declare class UserAppCommandMessage extends CommandMessage {
     /**
      * @param {Partial<UserAppCommandOptions>} value
      */
-    set opts(arg: UserAppCommandOptions);
+    set opts(value: Partial<UserAppCommandOptions>);
     /** @returns {UserAppCommandOptions} */
     get opts(): UserAppCommandOptions;
 }

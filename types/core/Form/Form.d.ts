@@ -42,7 +42,7 @@ export default class UIForm extends FormMessage {
      */
     static parse(data: any, overrides?: {
         [x: string]: Partial<FormInput>;
-    } | undefined): UIForm;
+    }): UIForm;
     /**
      * Create a new UIForm.
      *
@@ -57,7 +57,7 @@ export default class UIForm extends FormMessage {
         fields?: FormInput[] | undefined;
         state?: any;
         schema?: any;
-    } | undefined);
+    });
     /** @type {FormInput[]} */ fields: FormInput[];
     /** @type {Object} */ state: any;
     /** @type {string} */ title: string;
@@ -118,6 +118,12 @@ export default class UIForm extends FormMessage {
         isValid: boolean;
         errors: any;
     };
+    /**
+     * Serialises the form to a plain JSON object.
+     *
+     * @returns {Object}
+     */
+    toJSON(): any;
 }
 import FormMessage from "./Message.js";
 import FormInput from "./Input.js";

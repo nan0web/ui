@@ -22,6 +22,6 @@ export default class UIStream {
      * @param {Function} [onComplete] - Called with (item) when done.
      * @returns {Promise<void>}
      */
-    static process(signal: AbortSignal, generator: Function, onProgress?: Function | undefined, onError?: Function | undefined, onComplete?: Function | undefined): Promise<void>;
+    static process(signal: AbortSignal, generator: Function, onProgress?: Function, onError?: Function, onComplete?: Function): Promise<void>;
 }
 import StreamEntry from "./StreamEntry.js";

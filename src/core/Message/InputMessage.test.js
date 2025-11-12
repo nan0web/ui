@@ -7,7 +7,7 @@ describe("InputMessage", () => {
 	it("should create instance with default values", () => {
 		const msg = new InputMessage()
 		assert.ok(msg instanceof InputMessage)
-		assert.equal(msg.value, "")
+		assert.deepStrictEqual({ ...msg.value }, { body: "", head: {} })
 		assert.equal(msg.waiting, false)
 		assert.deepEqual(msg.options, [])
 	})
@@ -19,7 +19,7 @@ describe("InputMessage", () => {
 			options: ["option1", "option2"]
 		}
 		const msg = new InputMessage(props)
-		assert.equal(msg.value, "user input")
+		assert.deepStrictEqual({ ...msg.value }, { body: "user input", head: {} })
 		assert.equal(msg.waiting, true)
 		assert.deepEqual(msg.options, ["option1", "option2"])
 	})

@@ -1,8 +1,8 @@
+import { Message } from "@nan0web/co"
+import { notEmpty } from "@nan0web/types"
 import View from "../../View/View.js"
 import CoreApp from "./CoreApp.js"
 import Widget from "./Widget.js"
-import { notEmpty } from "@nan0web/types"
-import { CommandMessage } from "../Command/index.js"
 
 /** @typedef {import("../../View/View.js").ComponentFn} ComponentFn */
 
@@ -25,10 +25,10 @@ class UI extends Widget {
 	}
 
 	/**
-	 * Convert raw input to CommandMessage array.
+	 * Convert raw input to Message array.
 	 * Must be implemented by subclasses.
 	 * @param {any} rawInput - Raw input to convert
-	 * @returns {CommandMessage[]} Array of command messages
+	 * @returns {Message[]} Array of command messages
 	 * @throws {Error} Always thrown as this method must be implemented by subclasses
 	 */
 	convertInput(rawInput) {
@@ -58,7 +58,7 @@ class UI extends Widget {
 			const answer = await this.app.selectCommand(this)
 			if (answer) {
 				const [input] = this.convertInput(rawInput)
-				const cmd = new CommandMessage({
+				const cmd = new Message({
 					argv: [answer],
 					opts: input?.opts ?? {},
 				})

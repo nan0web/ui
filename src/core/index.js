@@ -11,3 +11,5 @@ export { default as OutputMessage } from "./Message/OutputMessage.js"
 export { default as FormMessage } from "./Form/Message.js"
 export { default as FormInput } from "./Form/Input.js"
 export { default as UIForm } from "./Form/Form.js"
+
+export { default as Error, CancelError } from "./Error/index.js"

@@ -1,5 +1,4 @@
 import EventProcessor from "@nan0web/event/oop"
-import { CommandMessage } from "@nan0web/co"
 import { typeOf } from "@nan0web/types"
 import InputMessage from "./core/Message/InputMessage.js"
 
@@ -91,8 +90,7 @@ class StdIn extends EventProcessor {
 	decode(message) {
 		if (message instanceof InputMessage) return message
 		if (Array.isArray(message) && message.every(typeOf(String))) {
-			const parsed = CommandMessage.parse(message)
-			return new InputMessage({ value: parsed })
+			return new InputMessage({ value: message })
 		}
 		return new InputMessage(message)
 	}

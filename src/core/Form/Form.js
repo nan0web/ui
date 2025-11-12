@@ -1,5 +1,6 @@
 import FormMessage from "./Message.js"
 import FormInput from "./Input.js"
+import Message from "@nan0web/co"
 
 /**
  * Abstract form for data entry.
@@ -18,24 +19,24 @@ export default class UIForm extends FormMessage {
 	/** @type {Object} */ schema = {}
 
 	/* ------------------------------------------------------------------ */
-	/*                     static validator registry                       */
+	/*                     static validation registry                       */
 	/* ------------------------------------------------------------------ */
 
 	/** @type {Object<string,Function>} */
-	static _validators = {}
+	static _validations = {}
 
 	/**
-	 * Register a custom validator that can be referenced by name in a schema.
+	 * Register a custom validation that can be referenced by name in a schema.
 	 *
-	 * @param {string} name - Identifier used in schema.validator.
+	 * @param {string} name - Identifier used in schema.validation.
 	 * @param {(value:any)=>true|string} fn - Function returns true if valid,
 	 *   otherwise returns an error message.
 	 */
-	static addValidator(name, fn) {
+	static addValidation(name, fn) {
 		if (typeof name !== "string" || typeof fn !== "function") {
-			throw new Error("Validator name must be a string and fn must be a function")
+			throw new Error("validation name must be a string and fn must be a function")
 		}
-		UIForm._validators[name] = fn
+		UIForm._validations[name] = fn
 	}
 
 	/**
@@ -208,15 +209,15 @@ export default class UIForm extends FormMessage {
 			}
 		}
 
-		// Custom validator – can be a function or a string referencing a static validator
-		if (schema.validator) {
+		// Custom validation – can be a function or a string referencing a static validation
+		if (schema.validation) {
 			let result
-			if (typeof schema.validator === 'function') {
-				result = schema.validator(value)
-			} else if (typeof schema.validator === 'string') {
-				const fn = UIForm._validators[schema.validator]
+			if (typeof schema.validation === 'function') {
+				result = schema.validation(value)
+			} else if (typeof schema.validation === 'string') {
+				const fn = UIForm._validations[schema.validation]
 				if (!fn) {
-					throw new Error(`Validator "${schema.validator}" not registered`)
+					throw new Error(`validation "${schema.validation}" not registered`)
 				}
 				result = fn(value)
 			}
@@ -236,9 +237,7 @@ export default class UIForm extends FormMessage {
 	 */
 	toJSON() {
 		return {
-			id: this.id,
-			type: this.type,
-			time: this.time.toISOString(),
+			time: new Date(this.time).toISOString(),
 			title: this.title,
 			fields: this.fields.map(f => f.toJSON ? f.toJSON() : f),
 			state: this.state,
@@ -252,6 +251,25 @@ export default class UIForm extends FormMessage {
 	 */
 	static from(input) {
 		if (input instanceof UIForm) return input
+		if (input instanceof Message) {
+			const Class = input.constructor
+			const fields = []
+			for (const [name, value] of Object.entries(input)) {
+				fields.push(new FormInput({
+					name,
+					label: Class[name]?.label ?? Class[`${name}Label`] ?? name,
+					type: Class[name]?.type ?? Class[`${name}Type`] ?? typeof value,
+					required: Class[name]?.required ?? Class[`${name}Required`] ?? false,
+					placeholder: Class[name]?.placeholder ?? Class[`${name}Placeholder`] ?? "",
+					defaultValue: Class[name]?.defaultValue ?? Class[`${name}Default`] ?? "",
+					validation: Class[name]?.validation ?? Class[`${name}Validation`] ?? (() => true),
+				}))
+			}
+			return new UIForm({
+				title: Class.name,
+				fields
+			})
+		}
 		return new UIForm(input)
 	}
 
@@ -280,7 +298,7 @@ export default class UIForm extends FormMessage {
 				required: !!custom.required,
 				placeholder: custom.placeholder ?? "",
 				options: custom.options ?? [],
-				validator: custom.validator ?? undefined,
+				validation: custom.validation ?? undefined,
 				defaultValue: custom.defaultValue ?? "",
 			})
 		})

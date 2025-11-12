@@ -6,6 +6,8 @@
  */
 export default class InputAdapter extends Event {
     static CancelError: typeof CancelError;
+    /** @returns {typeof CancelError} */
+    get CancelError(): typeof CancelError;
     /**
      * Starts listening for input and emits an `input` event.
      *

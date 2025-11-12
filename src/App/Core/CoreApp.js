@@ -1,5 +1,5 @@
+import { Message } from "@nan0web/co"
 import { typeOf } from "@nan0web/types"
-import { CommandMessage } from "../Command/index.js"
 import UI from "./UI.js"
 
 /** @typedef {Function} CommandFn */
@@ -18,7 +18,7 @@ export default class CoreApp {
 	/** @type {object} App state */
 	state
 
-	/** @type {CommandMessage} Starting command parsed from argv */
+	/** @type {Message} Starting command parsed from argv */
 	startCommand
 
 	/**
@@ -26,18 +26,19 @@ export default class CoreApp {
 	 * @param {object} props - CoreApp properties
 	 * @param {string} [props.name="CoreApp"] - App name
 	 * @param {object} [props.state={}] - Initial state object
-	 * @param {string[]} [props.argv=[]] - Command line arguments to parse
+	 * @param {Message} [props.startCommand=new Message()] - Command line arguments to parse
 	 */
 	constructor(props = {}) {
 		const {
 			name = "CoreApp",
 			state = {},
-			argv = [],
+			startCommand = new Message(),
 		} = props
 		this.name = String(name)
 		this.state = state
 		this.commands = new Map()
-		this.startCommand = CommandMessage.parse(argv)
+		// @deprecated @todo fix the argv by moving to ui-cli.
+		this.startCommand = Message.from(startCommand ?? {})
 	}
 
 	/**
@@ -78,39 +79,33 @@ export default class CoreApp {
 
 	/**
 	 * Process a command message.
-	 * @param {CommandMessage} commandMessage - Command to process
+	 * @param {Message} msg - Command to process
 	 * @param {UI} ui - UI instance to use for rendering
 	 * @returns {Promise<any>} Output of the command
 	 * @throws {Error} If the command is not registered
 	 */
-	async processCommand(commandMessage, ui) {
-		const cmd = commandMessage.args[0]
-		const handler = this.commands.get(cmd)
+	async processCommand(msg, ui) {
+		const handler = this.commands.get(msg.constructor.name)
 		if (!handler) {
 			throw new Error([
 				"Unknown command", ": ",
-				cmd, "\n",
+				msg.constructor.name, "\n",
 				"Available commands", ": ",
 				[...this.commands.keys()].join(", "),
 			].join(""))
 		}
-		const Class = /** @type {typeof CommandMessage} */ (commandMessage.constructor)
-		const command = Class.from({
-			args: commandMessage.args.slice(1),
-			opts: commandMessage.opts,
-		})
-		return await handler.apply(this, [command, ui])
+		return await handler.apply(this, [msg, ui])
 	}
 
 	/**
 	 * Process an array of command messages sequentially.
-	 * @param {CommandMessage[]} commandMessages - Array of commands to process
+	 * @param {Message[]} Messages - Array of commands to process
 	 * @param {UI} ui - UI instance to use for rendering
 	 * @returns {Promise<any[]>} Array of command outputs
 	 */
-	async processCommands(commandMessages, ui) {
+	async processCommands(Messages, ui) {
 		const results = []
-		for (const cmdMsg of commandMessages) {
+		for (const cmdMsg of Messages) {
 			const result = await this.processCommand(cmdMsg, ui)
 			results.push(result)
 		}

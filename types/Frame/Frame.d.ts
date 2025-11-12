@@ -85,19 +85,19 @@ export default class Frame {
      * @param {number} [lines=1] - Number of lines to move up.
      * @returns {string} ANSI escape code for cursor movement.
      */
-    static cursorUp(lines?: number | undefined): string;
+    static cursorUp(lines?: number): string;
     /**
      * Move cursor down by specified lines.
      * @param {number} [lines=1] - Number of lines to move down.
      * @returns {string} ANSI escape code for cursor movement.
      */
-    static cursorDown(lines?: number | undefined): string;
+    static cursorDown(lines?: number): string;
     /**
      * Clear the current line.
      * @param {string} [str="\r"] - String to append after clearing.
      * @returns {string} ANSI escape code for line clearing followed by the string.
      */
-    static clearLine(str?: string | undefined): string;
+    static clearLine(str?: string): string;
     /**
      * Clear the entire screen.
      * @returns {string} ANSI escape codes for screen clearing.
@@ -119,7 +119,7 @@ export default class Frame {
         imprint?: string | undefined;
         renderMethod?: string | undefined;
         defaultProps?: FrameProps | undefined;
-    } | undefined);
+    });
     /**
      * @example
      * ```js
@@ -163,7 +163,7 @@ export default class Frame {
     render(options?: {
         method?: string | undefined;
         props?: FrameProps | undefined;
-    } | undefined): string;
+    }): string;
     /**
      * Convert the frame to its string representation.
      * @returns {string} The frame's imprint.

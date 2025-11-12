@@ -21,7 +21,7 @@ export default class StreamEntry {
         done?: boolean | undefined;
         cancelled?: boolean | undefined;
         error?: string | undefined;
-    } | undefined);
+    });
     /**
      * The value of the stream entry.
      * @type {any}

@@ -10,6 +10,10 @@ import CancelError from "./Error/CancelError.js"
  */
 export default class InputAdapter extends Event {
 	static CancelError = CancelError
+	/** @returns {typeof CancelError} */
+	get CancelError() {
+		return /** @type {typeof InputAdapter} */ (this.constructor).CancelError
+	}
 	/**
 	 * Starts listening for input and emits an `input` event.
 	 *

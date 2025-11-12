@@ -14,7 +14,7 @@ export default class View {
      * @param {RenderOptions} [options]
      * @returns {Frame}
      */
-    static fixFrame(frame: Frame, options?: RenderOptions | undefined): Frame;
+    static fixFrame(frame: Frame, options?: RenderOptions): Frame;
     /**
      * @param {object} [input]
      * @param {StdIn} [input.stdin]
@@ -37,7 +37,7 @@ export default class View {
         windowSize?: number[] | undefined;
         components?: Map<string, ComponentFn> | undefined;
         renderMethod?: string | undefined;
-    } | undefined);
+    });
     /** @type {StdIn} */
     stdin: StdIn;
     /** @type {StdOut} */
@@ -68,7 +68,7 @@ export default class View {
      * @param {RenderOptions} [options]
      * @returns {(value: Frame|string|string[], ...args: any) => Frame}
      */
-    render(shouldRender?: number | boolean | Function | ComponentFn | undefined, options?: RenderOptions | undefined): (value: Frame | string | string[], ...args: any) => Frame;
+    render(shouldRender?: boolean | number | Function | ComponentFn, options?: RenderOptions): (value: Frame | string | string[], ...args: any) => Frame;
     clear(shouldRender?: number): Frame;
     progress(shouldRender?: boolean): (value: any) => Frame;
     t(value: any): any;

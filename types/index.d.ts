@@ -18,3 +18,4 @@ import Model from "./Model/index.js";
 import Component from "./Component/index.js";
 import App from "./App/index.js";
 export { Frame, FrameProps, Locale, StdIn, StdOut, View, RenderOptions, Model, Component, App };
+export { default as Error, CancelError } from "./core/Error/index.js";

@@ -120,10 +120,10 @@ function testRender() {
 
 		const input = InputMessage.from({ value: 'Hello User' })
 		const output = OutputMessage.from({ content: ['Welcome to @nan0web/ui'] })
-		console.info(input.value) // ← Hello User
+		console.info(input.value) // ← Message { body: "Hello User", head: {} }
 		console.info(output.content[0]) // ← Welcome to @nan0web/ui
-		assert.equal(input.value, 'Hello User')
-		assert.equal(output.content[0], 'Welcome to @nan0web/ui')
+		assert.deepStrictEqual({ ...console.output()[0][1] }, { body: "Hello User", head: {} })
+		assert.equal(console.output()[1][1], 'Welcome to @nan0web/ui')
 	})
 
 	/**
@@ -247,30 +247,6 @@ function testRender() {
 		frame.renderMethod = Frame.RenderMethod.VISIBLE
 		const renderedVisible = frame.render()
 		assert.ok(renderedVisible.includes("Frame content"))
-	})
-
-	/**
-	 * @docs
-	 * ### App Architecture
-	 *
-	 * `App` provides the main application logic.
-	 *
-	 * - Core – minimal UI layer
-	 * - User – user-specific UI commands
-	 *
-	 * Each app registers commands and binds them to UI actions.
-	 */
-	it("How to create a basic user app that greets?", async () => {
-		//import { App, View } from '@nan0web/ui'
-
-		const app = new App.User.App({ name: "GreetApp" })
-		const view = new View()
-		view.register("Welcome", Welcome)
-
-		const cmd = App.Command.Message.parse("welcome --user Bob")
-		const result = await app.processCommand(cmd, new App.User.UI(app, view))
-		console.info(String(result)) // ← Welcome Bob!
-		assert.ok(console.output()[0][1].includes("Welcome Bob!"))
 	})
 
 	/**

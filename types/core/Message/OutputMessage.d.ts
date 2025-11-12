@@ -27,7 +27,7 @@ export default class OutputMessage extends UIMessage {
     /** @type {number} */
     priority: number;
     /** @param {string[]|string} value */
-    set content(arg: string[]);
+    set content(value: string[] | string);
     /** @returns {string[]} */
     get content(): string[];
     /** @returns {number} */

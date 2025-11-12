@@ -1,10 +1,16 @@
 /**
- * FormMessage – specialized OutputMessage for forms.
+ * FormMessage – specialized InputMessage for forms.
  *
  * @class FormMessage
- * @extends OutputMessage
+ * @extends InputMessage
  */
-export default class FormMessage extends OutputMessage {
+export default class FormMessage extends InputMessage {
+    /**
+     * Creates a FormMessage.
+     *
+     * @param {Object} [input={}] - Message properties.
+     */
+    constructor(input?: any);
     data: any;
     schema: any;
     /**
@@ -25,4 +31,4 @@ export default class FormMessage extends OutputMessage {
         errors: any;
     };
 }
-import OutputMessage from "../Message/OutputMessage.js";
+import InputMessage from "../Message/InputMessage.js";

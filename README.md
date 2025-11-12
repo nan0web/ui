@@ -1,8 +1,6 @@
 # @nan0web/ui
 
-|[Status](https://github.com/nan0web/monorepo/blob/main/system.md#написання-сценаріїв)|Documentation|Test coverage|Features|Npm version|
-|---|---|---|---|---|
- |🟢 `96.8%` |🧪 [English 🏴󠁧󠁢󠁥󠁮󠁧󠁿](https://github.com/nan0web/ui/blob/main/README.md)<br />[Українською 🇺🇦](https://github.com/nan0web/ui/blob/main/docs/uk/README.md) |🟡 `81.1%` |✅ d.ts 📜 system.md 🕹️ playground |1.0.1 |
+<!-- %PACKAGE_STATUS% -->
 
 A lightweight, agnostic UI framework designed with the **nan0web philosophy**
 — one application logic, many UI implementations.
@@ -53,10 +51,9 @@ decoupled communication systems between UI components.
 How to create input and output messages?
 ```js
 import { InputMessage, OutputMessage } from '@nan0web/ui'
-
 const input = InputMessage.from({ value: 'Hello User' })
 const output = OutputMessage.from({ content: ['Welcome to @nan0web/ui'] })
-console.info(input.value) // ← Hello User
+console.info(input.value) // ← Message { body: "Hello User", head: {} }
 console.info(output.content[0]) // ← Welcome to @nan0web/ui
 ```
 ### Forms
@@ -76,7 +73,6 @@ Field types include:
 How to define and validate a UIForm?
 ```js
 import { UIForm } from '@nan0web/ui'
-
 const form = new UIForm({
 	title: "Contact Form",
 	fields: [
@@ -88,11 +84,9 @@ const form = new UIForm({
 		message: "Hello!"
 	}
 })
-
 const result = form.validate()
 console.info(result.isValid) // ← false
 console.info(result.errors.email) // ← Invalid email format
-
 ```
 ### Components
 
@@ -104,7 +98,6 @@ Components render data as frame-ready output.
 How to render the Welcome component?
 ```js
 import { Welcome } from '@nan0web/ui'
-
 const frame = Welcome({ user: { name: "Alice" } })
 const firstLine = frame[0].join("")
 console.info(firstLine) // ← Welcome Alice!
@@ -122,7 +115,6 @@ Every view has:
 How to render frame with View?
 ```js
 import { View } from '@nan0web/ui'
-
 const view = new View()
 view.render(1)(["Hello, world"])
 console.info(String(view.frame)) // ← "\rHello, world"
@@ -141,37 +133,14 @@ Render methods:
 How to create a Frame with fixed size?
 ```js
 import { Frame } from '@nan0web/ui'
-
 const frame = new Frame({
 	value: [["Frame content"]],
 	width: 20,
 	height: 5,
 	renderMethod: Frame.RenderMethod.APPEND,
 })
-
 const rendered = frame.render()
 console.info(rendered.includes("Frame content")) // ← true
-```
-### App Architecture
-
-`App` provides the main application logic.
-
-- Core – minimal UI layer
-- User – user-specific UI commands
-
-Each app registers commands and binds them to UI actions.
-
-How to create a basic user app that greets?
-```js
-import { App, View } from '@nan0web/ui'
-
-const app = new App.User.App({ name: "GreetApp" })
-const view = new View()
-view.register("Welcome", Welcome)
-
-const cmd = App.Command.Message.parse("welcome --user Bob")
-const result = await app.processCommand(cmd, new App.User.UI(app, view))
-console.info(String(result)) // ← Welcome Bob!
 ```
 ### Models
 
@@ -182,7 +151,6 @@ UI models are plain data objects managed by `Model` classes.
 How to use a User model?
 ```js
 import { Model } from '@nan0web/ui'
-
 const user = new Model.User({ name: "Charlie", email: "charlie@example.com" })
 console.info(user.name) // ← Charlie
 console.info(user.email) // ← charlie@example.com
@@ -197,7 +165,6 @@ with minimal setup.
 How to test UI components with assertions?
 ```js
 import { Welcome, InputMessage } from '@nan0web/ui'
-
 const output = Welcome({ user: { name: "Test" } })
 const input = InputMessage.from({ value: "test" })
 console.log(output[0].join("")) // ← Welcome Test!

@@ -7,7 +7,6 @@ describe("App", () => {
 		assert.ok(App)
 		assert.ok(App.Core)
 		assert.ok(App.User)
-		assert.ok(App.Command)
 		assert.ok(App.Scenario)
 		assert.ok(App.UI)
 	})

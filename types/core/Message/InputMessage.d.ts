@@ -1,4 +1,4 @@
-/** @typedef {Message | string | null} InputMessageValue */
+/** @typedef {Partial<Message> | null} InputMessageValue */
 /**
  * Represents a message input with value, options, and metadata.
  */
@@ -13,7 +13,7 @@ export default class InputMessage {
     /**
      * Creates a new InputMessage instance.
      * @param {object} props - Input message properties
-     * @param {InputMessageValue} [props.value=""] - Input value
+     * @param {InputMessageValue} [props.value=null] - Input value
      * @param {string[]|string} [props.options=[]] - Available options
      * @param {boolean} [props.waiting=false] - Waiting state flag
      * @param {boolean} [props.escaped=false] - Sets value to escape when true
@@ -24,8 +24,8 @@ export default class InputMessage {
         waiting?: boolean | undefined;
         escaped?: boolean | undefined;
     });
-    /** @type {InputMessageValue} Input value */
-    value: InputMessageValue;
+    /** @type {Message} Input value */
+    value: Message;
     /** @type {string[]} Available options for this input */
     options: string[];
     /** @type {boolean} Whether this input is waiting for response */
@@ -67,5 +67,5 @@ export default class InputMessage {
     toString(): string;
     #private;
 }
-export type InputMessageValue = Message | string | null;
+export type InputMessageValue = Partial<Message> | null;
 import { Message } from "@nan0web/co";

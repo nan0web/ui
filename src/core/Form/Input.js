@@ -1,4 +1,13 @@
 /**
+ * @typedef {Object} Filter
+ * @property {string} [q=""]
+ * @property {number} [offset=0]
+ * @property {number} [limit=36]
+ */
+
+/** @typedef {Array<string> | ((filter: Filter) => Promise<string[]>)} InputOptions */
+
+/**
  * Form input field descriptor.
  *
  * @class FormInput
@@ -8,7 +17,7 @@
  * @property {boolean} required - Whether the field is required.
  * @property {string} placeholder - Placeholder text.
  * @property {Array<string>} options - Select options (if type is 'select').
- * @property {Function|null} validator - Custom validation function.
+ * @property {Function|null} validation - Custom validation function.
  * @property {*} defaultValue - Default value.
  */
 export default class FormInput {
@@ -17,8 +26,8 @@ export default class FormInput {
 	/** @type {string} */ type = 'text'
 	/** @type {boolean} */ required = false
 	/** @type {string} */ placeholder = ''
-	/** @type {Array<string>} */ options = []
-	/** @type {Function|null} */ validator = null
+	/** @type {InputOptions} */ options = []
+	/** @type {Function|null} */ validation = null
 	/** @type {*} */ defaultValue = null
 
 	/**
@@ -42,8 +51,8 @@ export default class FormInput {
 	 * @param {string} [props.type='text'] - Input type.
 	 * @param {boolean} [props.required=false] - Is required.
 	 * @param {string} [props.placeholder=''] - Placeholder.
-	 * @param {Array<string>} [props.options=[]] - Select options.
-	 * @param {Function} [props.validator=null] - Custom validator.
+	 * @param {InputOptions} [props.options=[]] - Select options or async function to retrieve data with the search and page.
+	 * @param {Function} [props.validation=null] - Custom validation.
 	 * @param {*} [props.defaultValue=null] - Default value.
 	 */
 	constructor(props) {
@@ -54,7 +63,7 @@ export default class FormInput {
 			required = this.required,
 			placeholder = this.placeholder,
 			options = [],
-			validator = this.validator,
+			validation = this.validation,
 			defaultValue = this.defaultValue
 		} = props
 
@@ -68,7 +77,7 @@ export default class FormInput {
 		this.required = Boolean(required)
 		this.placeholder = String(placeholder)
 		this.options = options
-		this.validator = validator
+		this.validation = validation
 		this.defaultValue = defaultValue
 
 		this.requireValidType()

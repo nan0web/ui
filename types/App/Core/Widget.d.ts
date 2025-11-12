@@ -11,7 +11,7 @@ declare class Widget extends EventProcessor {
      * Creates a new Widget instance.
      * @param {View} [view] - View instance (default: new View())
      */
-    constructor(view?: View | undefined);
+    constructor(view?: View);
     /** @type {View} The view associated with this widget */
     view: View;
     /**

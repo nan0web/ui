@@ -1,14 +1,14 @@
 import { notEmpty } from "@nan0web/types"
 import { Message } from "@nan0web/co"
 
-/** @typedef {Message | string | null} InputMessageValue */
+/** @typedef {Partial<Message> | null} InputMessageValue */
 
 /**
  * Represents a message input with value, options, and metadata.
  */
 export default class InputMessage {
 	static ESCAPE = String.fromCharCode(27)
-	/** @type {InputMessageValue} Input value */
+	/** @type {Message} Input value */
 	value
 
 	/** @type {string[]} Available options for this input */
@@ -23,17 +23,17 @@ export default class InputMessage {
 	/**
 	 * Creates a new InputMessage instance.
 	 * @param {object} props - Input message properties
-	 * @param {InputMessageValue} [props.value=""] - Input value
+	 * @param {InputMessageValue} [props.value=null] - Input value
 	 * @param {string[]|string} [props.options=[]] - Available options
 	 * @param {boolean} [props.waiting=false] - Waiting state flag
 	 * @param {boolean} [props.escaped=false] - Sets value to escape when true
 	 */
 	constructor(props = {}) {
 		if ("string" === typeof props) {
-			props = { value: props }
+			props = { value: { body: props } }
 		}
 		const {
-			value = "",
+			value = { body: "" },
 			waiting = false,
 			options = [],
 			escaped = false,
@@ -43,10 +43,7 @@ export default class InputMessage {
 
 		// Properly handle string options by converting to array
 		this.options = Array.isArray(options) ? options.map(String) : [String(options)]
-		this.value = String(value)
-		if (!this.value && escaped) {
-			this.value = this.ESCAPE
-		}
+		this.value = Message.from(escaped ? { body: this.ESCAPE } : value)
 	}
 
 	/**
@@ -54,6 +51,9 @@ export default class InputMessage {
 	 * @returns {boolean} True if value is empty or null, false otherwise
 	 */
 	get empty() {
+		if (this.value instanceof Message) {
+			return this.value.empty
+		}
 		return null === this.value || 0 === String(this.value).length
 	}
 
@@ -78,7 +78,7 @@ export default class InputMessage {
 	 * @returns {boolean} True if input value is escape sequence, false otherwise
 	 */
 	get escaped() {
-		return this.ESCAPE === this.value
+		return this.ESCAPE === this.value.body
 	}
 
 	/**
@@ -87,7 +87,7 @@ export default class InputMessage {
 	 */
 	get isValid() {
 		// An input is valid only if it has a non-empty value and is not an escape sequence
-		return notEmpty(this.value) && this.value !== this.ESCAPE
+		return notEmpty(this.value) && this.value.body !== this.ESCAPE
 	}
 
 	/**
