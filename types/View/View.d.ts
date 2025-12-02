@@ -1,7 +1,7 @@
 /**
  * @typedef {Object} ComponentFn
  * @property {string} name
- * @property {(input: InputMessage) => Promise<any>} ask
+ * @property {(input: UiMessage) => Promise<any>} ask
  * @property {Function} bind
  */
 export default class View {
@@ -96,14 +96,14 @@ export default class View {
      */
     get(name: string): ComponentFn | undefined;
     /**
-     * @param {InputMessage} input
-     * @returns {Promise<InputMessage | null>}
+     * @param {UiMessage} input
+     * @returns {Promise<UiMessage | null>}
      */
-    ask(input: InputMessage): Promise<InputMessage | null>;
+    ask(input: UiMessage): Promise<UiMessage | null>;
 }
 export type ComponentFn = {
     name: string;
-    ask: (input: InputMessage) => Promise<any>;
+    ask: (input: UiMessage) => Promise<any>;
     bind: Function;
 };
 import StdIn from "../StdIn.js";
@@ -112,4 +112,4 @@ import Frame from "../Frame/Frame.js";
 import Locale from "../Locale.js";
 import { FrameRenderMethod } from "../Frame/Frame.js";
 import RenderOptions from "./RenderOptions.js";
-import InputMessage from "../core/Message/InputMessage.js";
+import UiMessage from "../core/Message/Message.js";

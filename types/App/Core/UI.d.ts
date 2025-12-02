@@ -15,23 +15,13 @@ declare class UI extends Widget {
     /** @type {CoreApp} The app instance connected to this UI */
     app: CoreApp;
     /**
-     * Convert raw input to CommandMessage array.
+     * Convert raw input to Message array.
      * Must be implemented by subclasses.
      * @param {any} rawInput - Raw input to convert
-     * @returns {CommandMessage[]} Array of command messages
+     * @returns {Message[]} Array of command messages
      * @throws {Error} Always thrown as this method must be implemented by subclasses
      */
-    convertInput(rawInput: any): CommandMessage[];
-    /**
-     * Process input, run commands on app, and output results.
-     * Supports progress callback.
-     * @emits {start} Emitted when processing begins
-     * @emits {data} Emitted for each command being processed
-     * @emits {end} Emitted when all commands have been processed
-     * @param {any} rawInput - Raw input to process
-     * @returns {Promise<any[]>} Results of command processing
-     */
-    process(rawInput: any): Promise<any[]>;
+    convertInput(rawInput: any): Message[];
     /**
      * Sets up event handlers for UI process events.
      * @param {ComponentFn} UIProcess - Process view component
@@ -45,5 +35,5 @@ declare class UI extends Widget {
 }
 import Widget from "./Widget.js";
 import CoreApp from "./CoreApp.js";
-import { CommandMessage } from "../Command/index.js";
+import { Message } from "@nan0web/co";
 import View from "../../View/View.js";

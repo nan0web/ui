@@ -1,44 +1,30 @@
-import { CommandMessage } from "../../Command/index.js"
-import UserAppCommandOptions from "./Options.js"
+import Message from "@nan0web/co"
+import UIMessage from "../../../core/Message/Message.js"
 
-/**
- * Extends Command.Message to include user-specific command options.
- */
-class UserAppCommandMessage extends CommandMessage {
-	/**
-	 * Creates a new UserAppCommandMessage instance.
-	 * @param {object} props - Command message properties
-	 * @param {string[]} [props.args=[]] - Command arguments
-	 * @param {Partial<UserAppCommandOptions>} [props.opts={}] - User-specific options
-	 */
-	constructor(props = {}) {
-		super(props)
+class DepsCommandParams {
+	fix = false
+	static fix = {
+		help: "Fix dependencies",
+		defaultValue: false
 	}
-
-	/** @returns {UserAppCommandOptions} */
-	get opts() {
-		return UserAppCommandOptions.from(super.opts)
-	}
-
-	/**
-	 * @param {Partial<UserAppCommandOptions>} value
-	 */
-	set opts(value) {
-		super.opts = UserAppCommandOptions.from(value)
-	}
-
-	/**
-	 * Parses an array of strings into a UserAppCommandMessage.
-	 * @param {string[] | string} value - Arguments to parse
-	 * @returns {UserAppCommandMessage} Parsed command message
-	 */
-	static parse(value = []) {
-		if ("string" === typeof value) {
-			value = value.split(" ")
-		}
-		const result = super.parse(value)
-		return new this(result)
+	constructor(input = {}) {
+		const {
+			fix = this.fix
+		} = input
 	}
 }
 
-export default UserAppCommandMessage
+export class DepsCommand extends UIMessage {
+	static Body = DepsCommandParams
+	/** @type {DepsCommandParams} */
+	body
+	constructor(input = {}) {
+		const {
+			body = new DepsCommandParams()
+		} = UIMessage.parseBody(input, DepsCommandParams)
+		super(input)
+		this.body = body
+	}
+}
+
+export default DepsCommand

@@ -1,7 +1,6 @@
-import UIMessage from "./Message.js"
-import InputMessage from "./InputMessage.js"
+import UiMessage from "./Message.js"
 import OutputMessage from "./OutputMessage.js"
 
-export { UIMessage, InputMessage, OutputMessage }
+export { UiMessage, OutputMessage }
 
-export default UIMessage
+export default UiMessage

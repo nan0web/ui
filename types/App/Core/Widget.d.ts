@@ -1,12 +1,10 @@
-export default Widget;
-export type ComponentFn = import("./UI.js").ComponentFn;
 /** @typedef {import("./UI.js").ComponentFn} ComponentFn */
 /**
  * Abstract Widget class.
  * Widget is a view with ability to input data in a specific format.
  * Input and output data are typed classes.
  */
-declare class Widget extends EventProcessor {
+export default class Widget extends EventProcessor {
     /**
      * Creates a new Widget instance.
      * @param {View} [view] - View instance (default: new View())
@@ -16,10 +14,10 @@ declare class Widget extends EventProcessor {
     view: View;
     /**
      * Ask user for input data of specific class.
-     * @param {InputMessage} input - instance of InputMessage or similar
-     * @returns {Promise<InputMessage | null>} instance of InputMessage or null
+     * @param {UiMessage} input - instance of UiMessage or similar
+     * @returns {Promise<UiMessage | null>} instance of UiMessage or null
      */
-    ask(input: InputMessage): Promise<InputMessage | null>;
+    ask(input: UiMessage): Promise<UiMessage | null>;
     /**
      * @param {AsyncGenerator<StreamEntry>} stream
      * @returns {Promise<void>}
@@ -34,7 +32,8 @@ declare class Widget extends EventProcessor {
      */
     render(viewFnOrName: Function | string, outputData: object): any;
 }
+export type ComponentFn = import("./UI.js").ComponentFn;
 import EventProcessor from "@nan0web/event/oop";
 import View from "../../View/View.js";
-import InputMessage from "../../core/Message/InputMessage.js";
+import { UiMessage } from "../../core/index.js";
 import { StreamEntry } from "@nan0web/db";

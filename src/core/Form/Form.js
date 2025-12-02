@@ -1,6 +1,6 @@
+import Message from "@nan0web/co"
 import FormMessage from "./Message.js"
 import FormInput from "./Input.js"
-import Message from "@nan0web/co"
 
 /**
  * Abstract form for data entry.
@@ -112,10 +112,10 @@ export default class UIForm extends FormMessage {
 	/**
 	 * Validates the entire form.
 	 *
-	 * @returns {{isValid: boolean, errors: Object}} Validation result.
+	 * @returns {Map<string, string>} Map of validation errors, empty if valid.
 	 */
 	validate() {
-		const errors = {}
+		const errors = new Map()
 		let isValid = true
 
 		this.fields.forEach((field) => {
@@ -123,7 +123,7 @@ export default class UIForm extends FormMessage {
 
 			// Required validation based on field definition or schema
 			if (field.required && (fieldValue === '' || fieldValue === null || fieldValue === undefined)) {
-				errors[field.name] = 'This field is required'
+				errors.set(field.name, 'This field is required')
 				isValid = false
 				return
 			}
@@ -132,12 +132,14 @@ export default class UIForm extends FormMessage {
 			const { isValid: fieldValid, errors: fieldErrors } = this.validateField(field.name, fieldValue)
 
 			if (!fieldValid) {
-				Object.assign(errors, fieldErrors)
+				for (const [key, err] of Object.entries(fieldErrors)) {
+					errors.set(key, err)
+				}
 				isValid = false
 			}
 		})
 
-		return { isValid, errors }
+		return errors
 	}
 
 	/**

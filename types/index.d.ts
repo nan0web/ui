@@ -1,12 +1,12 @@
 export { default as FormMessage } from "./core/Form/Message.js";
 export { default as FormInput } from "./core/Form/Input.js";
 export { default as InputAdapter } from "./core/InputAdapter.js";
-export { default as InputMessage } from "./core/Message/InputMessage.js";
 export { default as OutputAdapter } from "./core/OutputAdapter.js";
 export { default as OutputMessage } from "./core/Message/OutputMessage.js";
-export { default as UIForm } from "./core/Form/Form.js";
-export { default as UIMessage } from "./core/Message/Message.js";
-export { default as UIStream } from "./core/Stream.js";
+export { default as UiForm } from "./core/Form/Form.js";
+export { default as UiMessage } from "./core/Message/Message.js";
+export { default as UiStream } from "./core/Stream.js";
+export { default as UiAdapter } from "./core/UiAdapter.js";
 import Frame from "./Frame/Frame.js";
 import FrameProps from "./Frame/Props.js";
 import Locale from "./Locale.js";

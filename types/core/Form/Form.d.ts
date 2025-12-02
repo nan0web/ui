@@ -10,17 +10,17 @@
  */
 export default class UIForm extends FormMessage {
     /** @type {Object<string,Function>} */
-    static _validators: {
+    static _validations: {
         [x: string]: Function;
     };
     /**
-     * Register a custom validator that can be referenced by name in a schema.
+     * Register a custom validation that can be referenced by name in a schema.
      *
-     * @param {string} name - Identifier used in schema.validator.
+     * @param {string} name - Identifier used in schema.validation.
      * @param {(value:any)=>true|string} fn - Function returns true if valid,
      *   otherwise returns an error message.
      */
-    static addValidator(name: string, fn: (value: any) => true | string): void;
+    static addValidation(name: string, fn: (value: any) => true | string): void;
     /**
      * @param {*} input
      * @returns {UIForm}
@@ -89,12 +89,9 @@ export default class UIForm extends FormMessage {
     /**
      * Validates the entire form.
      *
-     * @returns {{isValid: boolean, errors: Object}} Validation result.
+     * @returns {Map<string, string>} Map of validation errors, empty if valid.
      */
-    validate(): {
-        isValid: boolean;
-        errors: any;
-    };
+    validate(): Map<string, string>;
     /**
      * Validates a single field.
      *

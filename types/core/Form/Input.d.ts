@@ -1,4 +1,11 @@
 /**
+ * @typedef {Object} Filter
+ * @property {string} [q=""]
+ * @property {number} [offset=0]
+ * @property {number} [limit=36]
+ */
+/** @typedef {Array<string> | ((filter: Filter) => Promise<string[]>)} InputOptions */
+/**
  * Form input field descriptor.
  *
  * @class FormInput
@@ -8,7 +15,7 @@
  * @property {boolean} required - Whether the field is required.
  * @property {string} placeholder - Placeholder text.
  * @property {Array<string>} options - Select options (if type is 'select').
- * @property {Function|null} validator - Custom validation function.
+ * @property {Function|null} validation - Custom validation function.
  * @property {*} defaultValue - Default value.
  */
 export default class FormInput {
@@ -37,8 +44,8 @@ export default class FormInput {
      * @param {string} [props.type='text'] - Input type.
      * @param {boolean} [props.required=false] - Is required.
      * @param {string} [props.placeholder=''] - Placeholder.
-     * @param {Array<string>} [props.options=[]] - Select options.
-     * @param {Function} [props.validator=null] - Custom validator.
+     * @param {InputOptions} [props.options=[]] - Select options or async function to retrieve data with the search and page.
+     * @param {Function} [props.validation=null] - Custom validation.
      * @param {*} [props.defaultValue=null] - Default value.
      */
     constructor(props: {
@@ -47,8 +54,8 @@ export default class FormInput {
         type?: string | undefined;
         required?: boolean | undefined;
         placeholder?: string | undefined;
-        options?: string[] | undefined;
-        validator?: Function | undefined;
+        options?: InputOptions | undefined;
+        validation?: Function | undefined;
         defaultValue?: any;
     });
     /** @type {string} */ name: string;
@@ -56,8 +63,8 @@ export default class FormInput {
     /** @type {string} */ type: string;
     /** @type {boolean} */ required: boolean;
     /** @type {string} */ placeholder: string;
-    /** @type {Array<string>} */ options: Array<string>;
-    /** @type {Function|null} */ validator: Function | null;
+    /** @type {InputOptions} */ options: InputOptions;
+    /** @type {import("@nan0web/co").ValidateFn|null} */ validation: import("@nan0web/co").ValidateFn | null;
     /** @type {*} */ defaultValue: any;
     requireValidType(): void;
     /**
@@ -67,3 +74,9 @@ export default class FormInput {
      */
     toJSON(): any;
 }
+export type Filter = {
+    q?: string | undefined;
+    offset?: number | undefined;
+    limit?: number | undefined;
+};
+export type InputOptions = Array<string> | ((filter: Filter) => Promise<string[]>);

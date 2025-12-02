@@ -8,17 +8,13 @@ import {
 	runSpawn,
 } from "@nan0web/test"
 import {
-	App,
-	Component,
 	Frame,
-	InputMessage,
 	Model,
 	OutputMessage,
-	UIMessage,
-	UIForm,
-	UIStream,
 	View,
 	FormInput,
+	UiMessage,
+	UiForm,
 } from "./index.js"
 import { Welcome } from "./Component/index.js"
 
@@ -108,8 +104,7 @@ function testRender() {
 	 *
 	 * UI communication is built around messages:
 	 *
-	 * - **`UIMessage`** – abstract message base class
-	 * - **`InputMessage`** – user input message (value, options)
+	 * - **`UiMessage`** – abstract message base class
 	 * - **`OutputMessage`** – system output (content, error, priority)
 	 *
 	 * Messages are simple, serializable data containers. They help build
@@ -118,19 +113,22 @@ function testRender() {
 	it("How to create input and output messages?", () => {
 		//import { InputMessage, OutputMessage } from '@nan0web/ui'
 
-		const input = InputMessage.from({ value: 'Hello User' })
+		const input = UiMessage.from({ body: 'Hello User' })
 		const output = OutputMessage.from({ content: ['Welcome to @nan0web/ui'] })
-		console.info(input.value) // ← Message { body: "Hello User", head: {} }
-		console.info(output.content[0]) // ← Welcome to @nan0web/ui
-		assert.deepStrictEqual({ ...console.output()[0][1] }, { body: "Hello User", head: {} })
-		assert.equal(console.output()[1][1], 'Welcome to @nan0web/ui')
+		console.info(input) // ← Message { body: "Hello User", head: {}, id: "....", type: "" }
+		console.info(String(output)) // ← Welcome to @nan0web/ui
+		assert.deepStrictEqual(console.output()[0][1].body, "Hello User")
+		assert.deepStrictEqual(console.output()[0][1].head, {})
+		assert.deepStrictEqual(console.output()[0][1].type, "")
+		assert.ok(console.output()[0][1].id)
+		assert.ok(console.output()[1][1].endsWith('Welcome to @nan0web/ui'))
 	})
 
 	/**
 	 * @docs
 	 * ### Forms
 	 *
-	 * `UIForm` supports field definitions, data management, and schema validation.
+	 * `UiForm` supports field definitions, data management, and schema validation.
 	 * Every form includes a title, fields, and current state.
 	 *
 	 * Field types include:
@@ -142,10 +140,10 @@ function testRender() {
 	 * - `checkbox`
 	 * - `textarea`
 	 */
-	it("How to define and validate a UIForm?", () => {
-		//import { UIForm } from '@nan0web/ui'
+	it("How to define and validate a UiForm?", () => {
+		//import { UiForm } from '@nan0web/ui'
 
-		const form = new UIForm({
+		const form = new UiForm({
 			title: "Contact Form",
 			fields: [
 				FormInput.from({ name: "email", label: "Email Address", type: "email", required: true }),
@@ -157,12 +155,12 @@ function testRender() {
 			}
 		})
 
-		const result = form.validate()
-		console.info(result.isValid) // ← false
-		console.info(result.errors.email) // ← Invalid email format
+		const errors = form.validate()
+		console.info(errors.size) // ← 1
+		console.info(errors.get("email")) // ← Invalid email format
 
-		assert.equal(result.isValid, false)
-		assert.equal(result.errors.email, "Invalid email format")
+		assert.equal(console.output()[0][1], 1)
+		assert.equal(console.output()[1][1], "Invalid email format")
 	})
 
 	/**
@@ -277,13 +275,15 @@ function testRender() {
 	 * with minimal setup.
 	 */
 	it("How to test UI components with assertions?", () => {
-		//import { Welcome, InputMessage } from '@nan0web/ui'
+		//import { Welcome } from '@nan0web/ui'
 
 		const output = Welcome({ user: { name: "Test" } })
-		const input = InputMessage.from({ value: "test" })
-		console.log(output[0].join("")) // ← Welcome Test!
-		assert.equal(console.output()[0][1], "Welcome Test!")
-		assert.ok(input instanceof InputMessage)
+		console.info(output) // ← Welcome Test!
+		assert.deepStrictEqual(console.output()[0][1], [
+			["Welcome", " ", "Test", "!"],
+			["What can we do today great?"],
+			[""],
+		])
 	})
 
 	/**
@@ -292,10 +292,10 @@ function testRender() {
 	 *
 	 * The library includes rich playground demos:
 	 *
-	 * - [Registration Form](./playground/registration.form.js)
-	 * - [Currency Exchange](./playground/currency.exchange.js)
-	 * - [Mobile Top-up](./playground/topup.telephone.js)
-	 * - [Language Selector](./playground/language.form.js)
+	 * - [Registration Form](./play/registration.form.js)
+	 * - [Currency Exchange](./play/currency.exchange.js)
+	 * - [Mobile Top-up](./play/topup.telephone.js)
+	 * - [Language Selector](./play/language.form.js)
 	 *
 	 * Run to explore live functionality:
 	 */
@@ -306,10 +306,10 @@ function testRender() {
 		 * git clone https://github.com/nan0web/ui.git
 		 * cd ui
 		 * npm install
-		 * npm run playground
+		 * npm run play
 		 * ```
 		 */
-		assert.ok(String(pkg.scripts?.playground).includes("node playground"))
+		assert.ok(String(pkg.scripts?.play).includes("node play"))
 		const response = await runSpawn("git", ["remote", "get-url", "origin"])
 		assert.ok(response.code === 0, "git command fails (e.g., not in a git repo)")
 		assert.ok(response.text.trim().endsWith(":nan0web/ui.git"))

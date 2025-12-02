@@ -1,7 +1,9 @@
 import StreamEntry from "./StreamEntry.js"
 
+export { StreamEntry } // Export if needed
+
 /**
- * Agnostic UI stream for processing progress.
+ * Agnostic UI stream for processing progress using async generators.
  *
  * @class UIStream
  */
@@ -29,17 +31,17 @@ export default class UIStream {
 	}
 
 	/**
-	 * Runs a generator with progress callbacks and abort handling.
+	 * Runs an async generator with progress callbacks and abort handling.
 	 *
 	 * @param {AbortSignal} signal - Abort signal.
-	 * @param {Function} generator - Function returning an async iterator.
+	 * @param {() => AsyncGenerator<StreamEntry>} generatorFn - Function that returns an async generator.
 	 * @param {Function} [onProgress] - Called with (progress, item).
 	 * @param {Function} [onError] - Called with (errorMessage, item).
 	 * @param {Function} [onComplete] - Called with (item) when done.
 	 * @returns {Promise<void>}
 	 */
-	static async process(signal, generator, onProgress, onError, onComplete) {
-		const iter = generator()
+	static async process(signal, generatorFn, onProgress, onError, onComplete) {
+		const iter = generatorFn()
 
 		try {
 			for await (const item of iter) {
@@ -47,13 +49,11 @@ export default class UIStream {
 					throw new DOMException('Aborted', 'AbortError')
 				}
 
-				if (item.progress !== undefined) {
-					onProgress?.(item.progress, item)
-				} else if (item.error) {
-					onError?.(item.error, item)
-				} else if (item.done) {
+				if (item.done) {
 					onComplete?.(item)
 					break
+				} else if (item.error) {
+					onError?.(item.error, item)
 				} else {
 					// Intermediate results
 					onProgress?.(null, item)

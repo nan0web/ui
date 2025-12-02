@@ -41,8 +41,7 @@ yarn add @nan0web/ui
 
 UI communication is built around messages:
 
-- **`UIMessage`** – abstract message base class
-- **`InputMessage`** – user input message (value, options)
+- **`UiMessage`** – abstract message base class
 - **`OutputMessage`** – system output (content, error, priority)
 
 Messages are simple, serializable data containers. They help build
@@ -51,14 +50,14 @@ decoupled communication systems between UI components.
 How to create input and output messages?
 ```js
 import { InputMessage, OutputMessage } from '@nan0web/ui'
-const input = InputMessage.from({ value: 'Hello User' })
+const input = UiMessage.from({ body: 'Hello User' })
 const output = OutputMessage.from({ content: ['Welcome to @nan0web/ui'] })
-console.info(input.value) // ← Message { body: "Hello User", head: {} }
-console.info(output.content[0]) // ← Welcome to @nan0web/ui
+console.info(input) // ← Message { body: "Hello User", head: {}, id: "....", type: "" }
+console.info(String(output)) // ← Welcome to @nan0web/ui
 ```
 ### Forms
 
-`UIForm` supports field definitions, data management, and schema validation.
+`UiForm` supports field definitions, data management, and schema validation.
 Every form includes a title, fields, and current state.
 
 Field types include:
@@ -70,10 +69,10 @@ Field types include:
 - `checkbox`
 - `textarea`
 
-How to define and validate a UIForm?
+How to define and validate a UiForm?
 ```js
-import { UIForm } from '@nan0web/ui'
-const form = new UIForm({
+import { UiForm } from '@nan0web/ui'
+const form = new UiForm({
 	title: "Contact Form",
 	fields: [
 		FormInput.from({ name: "email", label: "Email Address", type: "email", required: true }),
@@ -84,9 +83,9 @@ const form = new UIForm({
 		message: "Hello!"
 	}
 })
-const result = form.validate()
-console.info(result.isValid) // ← false
-console.info(result.errors.email) // ← Invalid email format
+const errors = form.validate()
+console.info(errors.size) // ← 1
+console.info(errors.get("email")) // ← Invalid email format
 ```
 ### Components
 
@@ -164,19 +163,18 @@ with minimal setup.
 
 How to test UI components with assertions?
 ```js
-import { Welcome, InputMessage } from '@nan0web/ui'
+import { Welcome } from '@nan0web/ui'
 const output = Welcome({ user: { name: "Test" } })
-const input = InputMessage.from({ value: "test" })
-console.log(output[0].join("")) // ← Welcome Test!
+console.info(output) // ← Welcome Test!
 ```
 ## Playground Demos
 
 The library includes rich playground demos:
 
-- [Registration Form](./playground/registration.form.js)
-- [Currency Exchange](./playground/currency.exchange.js)
-- [Mobile Top-up](./playground/topup.telephone.js)
-- [Language Selector](./playground/language.form.js)
+- [Registration Form](./play/registration.form.js)
+- [Currency Exchange](./play/currency.exchange.js)
+- [Mobile Top-up](./play/topup.telephone.js)
+- [Language Selector](./play/language.form.js)
 
 Run to explore live functionality:
 
@@ -186,7 +184,7 @@ How to run the playground?
 git clone https://github.com/nan0web/ui.git
 cd ui
 npm install
-npm run playground
+npm run play
 ```
 
 ## API Documentation

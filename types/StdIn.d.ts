@@ -1,8 +1,7 @@
-export default StdIn;
 /**
  * Handles standard input stream with message buffering.
  */
-declare class StdIn extends EventProcessor {
+export default class StdIn extends EventProcessor {
     /** @type {number} Read interval in milliseconds */
     static READ_INTERVAL: number;
     /** @type {string[]} Messages to ignore */
@@ -17,14 +16,14 @@ declare class StdIn extends EventProcessor {
      * Creates a new StdIn instance.
      * @param {object} props - StdIn properties
      * @param {Processor} [props.processor] - Input processor
-     * @param {InputMessage[]} [props.stream=[]] - Initial input stream
+     * @param {UiMessage[]} [props.stream=[]] - Initial input stream
      */
     constructor(props?: {
         processor?: Processor | undefined;
-        stream?: InputMessage[] | undefined;
+        stream?: UiMessage[] | undefined;
     });
-    /** @type {InputMessage[]} Input message buffer */
-    stream: InputMessage[];
+    /** @type {UiMessage[]} Input message buffer */
+    stream: UiMessage[];
     /** @type {Processor} Input processor */
     processor: Processor;
     /**
@@ -40,9 +39,9 @@ declare class StdIn extends EventProcessor {
     /**
      * Reads a message from the input stream.
      * Waits until messages are available if stream is empty.
-     * @returns {Promise<InputMessage>} Next input message
+     * @returns {Promise<UiMessage>} Next input message
      */
-    read(): Promise<InputMessage>;
+    read(): Promise<UiMessage>;
     /**
      * Writes a message to the input stream.
      * @param {string} message - Message to write
@@ -50,13 +49,14 @@ declare class StdIn extends EventProcessor {
      */
     write(message: string): boolean;
     /**
-     * Decodes a message into an InputMessage instance.
-     * @param {InputMessage | string[] | any} message - Message to decode
-     * @returns {InputMessage} Decoded input message
+     * Decodes a message into an UiMessage instance.
+     * @param {UiMessage | string[] | any} message - Message to decode
+     * @returns {UiMessage} Decoded input message
      */
-    decode(message: InputMessage | string[] | any): InputMessage;
+    decode(message: UiMessage | string[] | any): UiMessage;
 }
 import EventProcessor from "@nan0web/event/oop";
-import InputMessage from "./core/Message/InputMessage.js";
+import { UiMessage } from "./core/index.js";
 declare class Processor extends EventProcessor {
 }
+export {};

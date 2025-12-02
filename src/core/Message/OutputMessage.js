@@ -1,12 +1,12 @@
-import UIMessage from "./Message.js"
+import UiMessage from "./Message.js"
 
 /**
  * OutputMessage – message sent from the system to the UI.
  *
  * @class OutputMessage
- * @extends UIMessage
+ * @extends UiMessage
  */
-export default class OutputMessage extends UIMessage {
+export default class OutputMessage extends UiMessage {
 	static PRIORITY = {
 		LOW: 0,
 		NORMAL: 1,
@@ -52,9 +52,9 @@ export default class OutputMessage extends UIMessage {
 		this.priority = Number(priority)
 
 		if (!this.type && this.error) {
-			this.type = UIMessage.TYPES.ERROR
+			this.type = UiMessage.TYPES.ERROR
 		} else if (!this.type) {
-			this.type = UIMessage.TYPES.INFO
+			this.type = UiMessage.TYPES.INFO
 		}
 	}
 
@@ -72,11 +72,11 @@ export default class OutputMessage extends UIMessage {
 	}
 	/** @returns {boolean} */
 	get isError() {
-		return this.error !== null || this.type === UIMessage.TYPES.ERROR
+		return this.error !== null || this.type === UiMessage.TYPES.ERROR
 	}
 	/** @returns {boolean} */
 	get isInfo() {
-		return this.type === UIMessage.TYPES.INFO || this.type === UIMessage.TYPES.SUCCESS
+		return this.type === UiMessage.TYPES.INFO || this.type === UiMessage.TYPES.SUCCESS
 	}
 
 	/**

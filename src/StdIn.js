@@ -1,20 +1,20 @@
 import EventProcessor from "@nan0web/event/oop"
 import { typeOf } from "@nan0web/types"
-import InputMessage from "./core/Message/InputMessage.js"
+import { UiMessage } from "./core/index.js"
 
 class Processor extends EventProcessor { }
 
 /**
  * Handles standard input stream with message buffering.
  */
-class StdIn extends EventProcessor {
+export default class StdIn extends EventProcessor {
 	/** @type {number} Read interval in milliseconds */
 	static READ_INTERVAL = 99
 
 	/** @type {string[]} Messages to ignore */
 	static IGNORE_MESSAGES = ["", "undefined"]
 
-	/** @type {InputMessage[]} Input message buffer */
+	/** @type {UiMessage[]} Input message buffer */
 	stream = []
 
 	/** @type {Processor} Input processor */
@@ -24,7 +24,7 @@ class StdIn extends EventProcessor {
 	 * Creates a new StdIn instance.
 	 * @param {object} props - StdIn properties
 	 * @param {Processor} [props.processor] - Input processor
-	 * @param {InputMessage[]} [props.stream=[]] - Initial input stream
+	 * @param {UiMessage[]} [props.stream=[]] - Initial input stream
 	 */
 	constructor(props = {}) {
 		super()
@@ -58,13 +58,13 @@ class StdIn extends EventProcessor {
 	/**
 	 * Reads a message from the input stream.
 	 * Waits until messages are available if stream is empty.
-	 * @returns {Promise<InputMessage>} Next input message
+	 * @returns {Promise<UiMessage>} Next input message
 	 */
 	async read() {
 		while (this.ended) {
 			await new Promise(resolve => setTimeout(resolve, StdIn.READ_INTERVAL))
 		}
-		return this.stream.shift() ?? new InputMessage()
+		return this.stream.shift() ?? new UiMessage()
 	}
 
 	/**
@@ -83,16 +83,16 @@ class StdIn extends EventProcessor {
 	}
 
 	/**
-	 * Decodes a message into an InputMessage instance.
-	 * @param {InputMessage | string[] | any} message - Message to decode
-	 * @returns {InputMessage} Decoded input message
+	 * Decodes a message into an UiMessage instance.
+	 * @param {UiMessage | string[] | any} message - Message to decode
+	 * @returns {UiMessage} Decoded input message
 	 */
 	decode(message) {
-		if (message instanceof InputMessage) return message
+		if (message instanceof UiMessage) return message
 		if (Array.isArray(message) && message.every(typeOf(String))) {
-			return new InputMessage({ value: message })
+			return new UiMessage({ value: message })
 		}
-		return new InputMessage(message)
+		return new UiMessage(message)
 	}
 
 	/**
@@ -106,4 +106,3 @@ class StdIn extends EventProcessor {
 	}
 }
 
-export default StdIn

@@ -1,5 +1,6 @@
+export { StreamEntry };
 /**
- * Agnostic UI stream for processing progress.
+ * Agnostic UI stream for processing progress using async generators.
  *
  * @class UIStream
  */
@@ -13,15 +14,15 @@ export default class UIStream {
      */
     static createProcessor(signal: AbortSignal, processorFn: () => Promise<StreamEntry>): () => AsyncGenerator<StreamEntry>;
     /**
-     * Runs a generator with progress callbacks and abort handling.
+     * Runs an async generator with progress callbacks and abort handling.
      *
      * @param {AbortSignal} signal - Abort signal.
-     * @param {Function} generator - Function returning an async iterator.
+     * @param {() => AsyncGenerator<StreamEntry>} generatorFn - Function that returns an async generator.
      * @param {Function} [onProgress] - Called with (progress, item).
      * @param {Function} [onError] - Called with (errorMessage, item).
      * @param {Function} [onComplete] - Called with (item) when done.
      * @returns {Promise<void>}
      */
-    static process(signal: AbortSignal, generator: Function, onProgress?: Function, onError?: Function, onComplete?: Function): Promise<void>;
+    static process(signal: AbortSignal, generatorFn: () => AsyncGenerator<StreamEntry>, onProgress?: Function, onError?: Function, onComplete?: Function): Promise<void>;
 }
 import StreamEntry from "./StreamEntry.js";

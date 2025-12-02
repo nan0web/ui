@@ -1,16 +1,11 @@
 /**
- * FormMessage – specialized InputMessage for forms.
+ * FormMessage – specialized UiMessage for forms.
+ * It carries form-specific data and schema for validation.
  *
  * @class FormMessage
- * @extends InputMessage
+ * @extends UiMessage
  */
-export default class FormMessage extends InputMessage {
-    /**
-     * Creates a FormMessage.
-     *
-     * @param {Object} [input={}] - Message properties.
-     */
-    constructor(input?: any);
+export default class FormMessage extends UiMessage {
     data: any;
     schema: any;
     /**
@@ -31,4 +26,4 @@ export default class FormMessage extends InputMessage {
         errors: any;
     };
 }
-import InputMessage from "../Message/InputMessage.js";
+import UiMessage from "../Message/Message.js";

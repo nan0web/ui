@@ -2,7 +2,15 @@ export default UserAppCommandOptions;
 /**
  * Extends CommandOptions to include user-specific options.
  */
-declare class UserAppCommandOptions extends CommandOptions {
+declare class UserAppCommandOptions {
+    /**
+     * Default option values including inherited ones.
+     * @type {object}
+     * @property {boolean} help - Whether help is requested
+     * @property {string} cwd - Current working directory
+     * @property {string} user - User name
+     */
+    static DEFAULTS: object;
     /**
      * Creates a UserAppCommandOptions instance from the given props.
      * @param {UserAppCommandOptions|object} props - The properties to create from
@@ -24,4 +32,3 @@ declare class UserAppCommandOptions extends CommandOptions {
     /** @type {string} User name */
     user: string;
 }
-import CommandOptions from "../../Command/Options.js";

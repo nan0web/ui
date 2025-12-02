@@ -25,15 +25,27 @@ export async function runTopup(t, ask, console) {
 		const list = Object.keys(rates)
 		console.info(t("Currency options:"))
 		list.forEach((c, i) => console.info(` ${i + 1}) ${c}`))
+		const prompt = `${t("Select currency")} (1-${list.length}): `
 		const input = await ask(
-			`${t("Select currency")} (1-${list.length}): `,
-			input => {
-				input.idx = Number(input.value) - 1
-				return ! (input.idx >= 0 && input.idx < list.length)
+			prompt,
+			i => {
+				const num = Number(i.value)
+				if (!isNaN(num)) {
+					const idx = num - 1
+					if (idx >= 0 && idx < list.length) {
+						i.idx = idx
+						return true
+					}
+					return false
+				}
+				i.idx = list.indexOf(i.value)
+				return i.idx >= 0
 			},
 			[t("Invalid choice."), t("Try again") + ":", ""].join(" ")
 		)
-		return list[input.idx] ?? null
+		const currency = list[i.idx]
+		console.info(`Select currency (1-4): ${currency}`)
+		return currency
 	}
 
 	/** Validate phone number */

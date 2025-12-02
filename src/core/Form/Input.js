@@ -27,7 +27,7 @@ export default class FormInput {
 	/** @type {boolean} */ required = false
 	/** @type {string} */ placeholder = ''
 	/** @type {InputOptions} */ options = []
-	/** @type {Function|null} */ validation = null
+	/** @type {import("@nan0web/co").ValidateFn|null} */ validation = null
 	/** @type {*} */ defaultValue = null
 
 	/**

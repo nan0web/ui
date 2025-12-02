@@ -2,9 +2,9 @@
  * OutputMessage – message sent from the system to the UI.
  *
  * @class OutputMessage
- * @extends UIMessage
+ * @extends UiMessage
  */
-export default class OutputMessage extends UIMessage {
+export default class OutputMessage extends UiMessage {
     static PRIORITY: {
         LOW: number;
         NORMAL: number;
@@ -50,4 +50,4 @@ export default class OutputMessage extends UIMessage {
      */
     toJSON(): any;
 }
-import UIMessage from "./Message.js";
+import UiMessage from "./Message.js";

@@ -1,11 +1,6 @@
-import Command from "../../Command/index.js"
 import CommandMessage from "./Message.js"
-import CommandOptions from "./Options.js"
+import DepsCommand from "./Message.js"
 
-export { CommandMessage, CommandOptions }
+export { CommandMessage, DepsCommand }
 
-export default {
-	...Command,
-	Message: CommandMessage,
-	Options: CommandOptions,
-}
+export default CommandMessage

@@ -1,12 +1,13 @@
-import InputMessage from "../Message/InputMessage.js"
+import UiMessage from "../Message/Message.js"
 
 /**
- * FormMessage – specialized InputMessage for forms.
+ * FormMessage – specialized UiMessage for forms.
+ * It carries form-specific data and schema for validation.
  *
  * @class FormMessage
- * @extends InputMessage
+ * @extends UiMessage
  */
-export default class FormMessage extends InputMessage {
+export default class FormMessage extends UiMessage {
 	/**
 	 * Creates a FormMessage.
 	 *

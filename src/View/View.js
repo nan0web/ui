@@ -3,13 +3,13 @@ import Frame, { FrameRenderMethod } from "../Frame/Frame.js"
 import Locale from "../Locale.js"
 import StdOut from "../StdOut.js"
 import StdIn from "../StdIn.js"
-import InputMessage from "../core/Message/InputMessage.js"
 import RenderOptions from "./RenderOptions.js"
+import UiMessage from "../core/Message/Message.js"
 
 /**
  * @typedef {Object} ComponentFn
  * @property {string} name
- * @property {(input: InputMessage) => Promise<any>} ask
+ * @property {(input: UiMessage) => Promise<any>} ask
  * @property {Function} bind
  */
 
@@ -256,8 +256,8 @@ export default class View {
 	}
 
 	/**
-	 * @param {InputMessage} input
-	 * @returns {Promise<InputMessage | null>}
+	 * @param {UiMessage} input
+	 * @returns {Promise<UiMessage | null>}
 	 */
 	async ask(input) {
 		const name = input.constructor.name.replace(/Input$/, "")
@@ -268,7 +268,7 @@ export default class View {
 		let result = null
 		do {
 			const answer = await this.stdin.read()
-			result = /** @type {typeof InputMessage} */ (input.constructor).from(answer)
+			result = /** @type {typeof UiMessage} */ (input.constructor).from(answer)
 		} while (!result.isValid && !result.escaped)
 		return result.escaped ? null : result
 	}

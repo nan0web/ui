@@ -36,52 +36,6 @@ class UI extends Widget {
 	}
 
 	/**
-	 * Process input, run commands on app, and output results.
-	 * Supports progress callback.
-	 * @emits {start} Emitted when processing begins
-	 * @emits {data} Emitted for each command being processed
-	 * @emits {end} Emitted when all commands have been processed
-	 * @param {any} rawInput - Raw input to process
-	 * @returns {Promise<any[]>} Results of command processing
-	 */
-	async process(rawInput) {
-		const commands = this.convertInput(rawInput).filter(notEmpty)
-		const results = []
-		let count = commands.length
-
-		const proc = this.view.get("UIProcess")
-		if (proc) {
-			this.show(proc)
-		}
-
-		if (0 === count && this.app.selectCommand) {
-			const answer = await this.app.selectCommand(this)
-			if (answer) {
-				const [input] = this.convertInput(rawInput)
-				const cmd = new Message({
-					argv: [answer],
-					opts: input?.opts ?? {},
-				})
-				commands.push(cmd)
-				++count
-			} else {
-				this.emit("end", { commands, results })
-				return results
-			}
-		}
-		this.emit("start", { commands })
-		for (let i = 0; i < count; i++) {
-			const command = commands[i]
-			this.emit("data", { i, count, command })
-			const result = await this.app.processCommand(command, this)
-			results.push(result)
-		}
-		this.emit("end", { commands, results })
-		// this.output(results)
-		return results
-	}
-
-	/**
 	 * Sets up event handlers for UI process events.
 	 * @param {ComponentFn} UIProcess - Process view component
 	 */
