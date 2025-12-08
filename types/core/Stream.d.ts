@@ -1,4 +1,3 @@
-export { StreamEntry };
 /**
  * Agnostic UI stream for processing progress using async generators.
  *

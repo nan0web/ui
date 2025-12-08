@@ -16,8 +16,8 @@
  * @property {string} type - Input type (text, email, number, select, etc.).
  * @property {boolean} required - Whether the field is required.
  * @property {string} placeholder - Placeholder text.
- * @property {Array<string>} options - Select options (if type is 'select').
- * @property {Function|null} validation - Custom validation function.
+ * @property {InputOptions} options - Select options (if type is 'select').
+ * @property {Function} validation - Custom validation function.
  * @property {*} defaultValue - Default value.
  */
 export default class FormInput {
@@ -27,7 +27,7 @@ export default class FormInput {
 	/** @type {boolean} */ required = false
 	/** @type {string} */ placeholder = ''
 	/** @type {InputOptions} */ options = []
-	/** @type {import("@nan0web/co").ValidateFn|null} */ validation = null
+	/** @type {Function} */ validation = () => true
 	/** @type {*} */ defaultValue = null
 
 	/**
@@ -39,7 +39,7 @@ export default class FormInput {
 		NUMBER: 'number',
 		SELECT: 'select',
 		CHECKBOX: 'checkbox',
-		TEXTAREA: 'textarea'
+		TEXTAREA: 'textarea',
 	}
 
 	/**
@@ -52,7 +52,7 @@ export default class FormInput {
 	 * @param {boolean} [props.required=false] - Is required.
 	 * @param {string} [props.placeholder=''] - Placeholder.
 	 * @param {InputOptions} [props.options=[]] - Select options or async function to retrieve data with the search and page.
-	 * @param {Function} [props.validation=null] - Custom validation.
+	 * @param {Function} [props.validation] - Custom validation.
 	 * @param {*} [props.defaultValue=null] - Default value.
 	 */
 	constructor(props) {
@@ -64,7 +64,7 @@ export default class FormInput {
 			placeholder = this.placeholder,
 			options = [],
 			validation = this.validation,
-			defaultValue = this.defaultValue
+			defaultValue = this.defaultValue,
 		} = props
 
 		if (!name) {
@@ -86,11 +86,11 @@ export default class FormInput {
 	requireValidType() {
 		if (!Object.values(FormInput.TYPES).includes(this.type)) {
 			throw new TypeError([
-				"FormInput.type is invalid!",
-				["Provided", this.type].join(": "),
-				"Available types:",
-				...Object.values(FormInput.TYPES).map(t => `  - ${t}`)
-			].join("\n"))
+				'FormInput.type is invalid!',
+				['Provided', this.type].join(': '),
+				'Available types:',
+				...Object.values(FormInput.TYPES).map((t) => `  - ${t}`),
+			].join('\n'))
 		}
 	}
 
@@ -107,7 +107,7 @@ export default class FormInput {
 			required: this.required,
 			placeholder: this.placeholder,
 			options: this.options,
-			defaultValue: this.defaultValue
+			defaultValue: this.defaultValue,
 		}
 	}
 
@@ -117,7 +117,7 @@ export default class FormInput {
 	 */
 	static from(input) {
 		if (input instanceof FormInput) return input
-		if ("string" === typeof input) {
+		if (typeof input === 'string') {
 			return new FormInput({ name: input, label: input })
 		}
 		return new FormInput(input)

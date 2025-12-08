@@ -1,9 +1,11 @@
 export { default as InputAdapter } from "./InputAdapter.js";
 export { default as OutputAdapter } from "./OutputAdapter.js";
-export { default as UIStream } from "./Stream.js";
 export { default as UiMessage } from "./Message/Message.js";
 export { default as FormMessage } from "./Form/Message.js";
 export { default as FormInput } from "./Form/Input.js";
-export { default as UIForm } from "./Form/Form.js";
 export { default as UiAdapter } from "./UiAdapter.js";
+import UIStream from "./Stream.js";
+import StreamEntry from "./StreamEntry.js";
+import UIForm from "./Form/Form.js";
+export { UIStream, UIStream as UiStream, StreamEntry, StreamEntry as UiStreamEntry, UIForm, UIForm as UiForm };
 export { default as Error, CancelError } from "./Error/index.js";

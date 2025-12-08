@@ -1,7 +1,5 @@
 import StreamEntry from "./StreamEntry.js"
 
-export { StreamEntry } // Export if needed
-
 /**
  * Agnostic UI stream for processing progress using async generators.
  *
@@ -18,6 +16,9 @@ export default class UIStream {
 	static createProcessor(signal, processorFn) {
 		return async function* () {
 			try {
+				if (signal.aborted) {
+					throw new DOMException('Aborted', 'AbortError')
+				}
 				const result = await processorFn()
 				yield result
 			} catch (/** @type {any} */ error) {

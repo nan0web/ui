@@ -14,8 +14,8 @@
  * @property {string} type - Input type (text, email, number, select, etc.).
  * @property {boolean} required - Whether the field is required.
  * @property {string} placeholder - Placeholder text.
- * @property {Array<string>} options - Select options (if type is 'select').
- * @property {Function|null} validation - Custom validation function.
+ * @property {InputOptions} options - Select options (if type is 'select').
+ * @property {Function} validation - Custom validation function.
  * @property {*} defaultValue - Default value.
  */
 export default class FormInput {
@@ -45,7 +45,7 @@ export default class FormInput {
      * @param {boolean} [props.required=false] - Is required.
      * @param {string} [props.placeholder=''] - Placeholder.
      * @param {InputOptions} [props.options=[]] - Select options or async function to retrieve data with the search and page.
-     * @param {Function} [props.validation=null] - Custom validation.
+     * @param {Function} [props.validation] - Custom validation.
      * @param {*} [props.defaultValue=null] - Default value.
      */
     constructor(props: {
@@ -64,7 +64,7 @@ export default class FormInput {
     /** @type {boolean} */ required: boolean;
     /** @type {string} */ placeholder: string;
     /** @type {InputOptions} */ options: InputOptions;
-    /** @type {import("@nan0web/co").ValidateFn|null} */ validation: import("@nan0web/co").ValidateFn | null;
+    /** @type {Function} */ validation: Function;
     /** @type {*} */ defaultValue: any;
     requireValidType(): void;
     /**

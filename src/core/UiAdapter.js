@@ -3,6 +3,8 @@ import CancelError from "./Error/CancelError.js"
 import UIMessage from "./Message/Message.js"
 import UIForm from "./Form/Form.js"
 import FormInput from "./Form/Input.js"
+import OutputAdapter from "./OutputAdapter.js"
+import OutputMessage from "./Message/OutputMessage.js"
 
 /**
  * Unified UI Adapter that handles both input and output operations.
@@ -82,6 +84,30 @@ export default class UiAdapter extends EventProcessor {
 	}
 
 	/**
+	 * Process a UIForm and return its result.
+	 *
+	 * This default implementation follows an **agnostic UI** approach:
+	 * it simply returns the form instance (with optional initial state merged)
+	 * without UI interaction. Concrete adapters (CLI, Web, etc.) can override
+	 * this method to render the form, collect user input and return a richer
+	 * result object (`{ form, cancelled }`).
+	 *
+	 * @param {UIForm} form - The UIForm instance to process.
+	 * @param {object} [initialState={}] - Pre‑filled values for the form.
+	 * @returns {Promise<{ form: UIForm, cancelled?: boolean }>} Form processing result.
+	 */
+	async processForm(form, initialState = {}) {
+		// Merge any provided initial state into the form's internal state.
+		if (initialState && typeof initialState === 'object') {
+			form.state = { ...form.state, ...initialState }
+		}
+		// In the agnostic baseline we do not perform any interactive I/O.
+		// Sub‑classes may provide a UI (render, ask, etc.) and return
+		// `{ form, cancelled: true/false, ... }`.
+		return { form }
+	}
+
+	/**
 	 * Ensures a message's body is fully and validly filled.
 	 * Generates a form from the message's static Body schema,
 	 * then iteratively collects input until all fields are valid or cancelled.
@@ -105,12 +131,12 @@ export default class UiAdapter extends EventProcessor {
 		let errors = msg.validate()
 		while (errors.size > 0) {
 			const form = generateForm(
-				/** @type {any} */ (msg.constructor).Body,
+				/** @type {any} */(msg.constructor).Body,
 				{ initialState: msg.body }
 			)
 
 			const formResult = await this.processForm ? this.processForm(form, msg.body) : {} // Assume method exists or handle differently, but error indicates missing method; perhaps remove if not used
-			if (formResult.escaped) {
+			if (formResult.cancelled) {
 				throw new CancelError("User cancelled form")
 			}
 
@@ -119,10 +145,11 @@ export default class UiAdapter extends EventProcessor {
 
 			if (updatedErrors.size > 0) {
 				if (this.output) {
-					await this.output.render("Alert", {
+					this.output.render(new OutputMessage({
+						type: "Alert",
 						variant: "error",
-						content: Array.from(updatedErrors.values()).join("\n")
-					})
+						body: Array.from(updatedErrors.values()).join("\n")
+					}))
 				}
 				errors = updatedErrors
 				continue

@@ -1,5 +1,4 @@
 import { Message } from "@nan0web/co"
-import { notEmpty } from "@nan0web/types"
 import View from "../../View/View.js"
 import CoreApp from "./CoreApp.js"
 import Widget from "./Widget.js"
@@ -10,7 +9,7 @@ import Widget from "./Widget.js"
  * Abstract UI class to connect apps and widgets.
  * Supports input/output data typed classes and views.
  */
-class UI extends Widget {
+export default class UI extends Widget {
 	/** @type {CoreApp} The app instance connected to this UI */
 	app
 
@@ -66,5 +65,3 @@ class UI extends Widget {
 		})
 	}
 }
-
-export default UI

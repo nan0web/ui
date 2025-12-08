@@ -6,7 +6,7 @@ import UserUI from "./UserUI.js"
 import UserAppCommandMessage from "./Command/Message.js"
 import DepsCommand from "./Command/Message.js"
 import UIStream from "../../core/Stream.js"
-import { UiMessage } from "../../core/index.js"
+import { StreamEntry, UiMessage } from "../../core/index.js"
 
 /**
  * UserApp requires user name and shows Welcome view.
@@ -33,11 +33,11 @@ export default class UserApp extends CoreApp {
 	 */
 	async handleDeps(cmd, ui) {
 		// Example: Use async generator to stream deps processing
-		const processorFn = async () => new UIStream.StreamEntry({ value: { message: `Deps command executed with fix: ${cmd.body.fix}` }, done: true })
+		const processorFn = async () => new StreamEntry({ value: { message: `Deps command executed with fix: ${cmd.body.fix}` }, done: true })
 		const generatorFn = UIStream.createProcessor(new AbortController().signal, processorFn)
 		await UIStream.process(new AbortController().signal, generatorFn,
 			(progress, item) => ui.output && ui.output(item.value), // Fix to output the value
-			(error) => ui.output && ui.output({ error }), // Assume ui has output method
+			(error) => ui.output && ui.output([error]), // Assume ui has output method
 			(item) => ui.output && ui.output(item.value) // Fix complete callback
 		)
 		return { completed: true }
@@ -72,7 +72,7 @@ export default class UserApp extends CoreApp {
 			return ui.render("Welcome", { user: this.user })
 		}
 		const answer = await ui.ask(UiMessage.from("What is your name?"))
-		this.user = User.from(answer?.value)
+		this.user = User.from(answer?.body)
 		return ui.render("Welcome", { user: this.user })
 	}
 }

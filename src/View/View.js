@@ -269,8 +269,8 @@ export default class View {
 		do {
 			const answer = await this.stdin.read()
 			result = /** @type {typeof UiMessage} */ (input.constructor).from(answer)
-		} while (!result.isValid && !result.escaped)
-		return result.escaped ? null : result
+		} while (!result.isValid && !result.head.cancelled)
+		return result.head.cancelled ? null : result
 	}
 
 	/**

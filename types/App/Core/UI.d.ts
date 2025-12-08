@@ -1,11 +1,9 @@
-export default UI;
-export type ComponentFn = import("../../View/View.js").ComponentFn;
 /** @typedef {import("../../View/View.js").ComponentFn} ComponentFn */
 /**
  * Abstract UI class to connect apps and widgets.
  * Supports input/output data typed classes and views.
  */
-declare class UI extends Widget {
+export default class UI extends Widget {
     /**
      * Creates a new UI instance.
      * @param {CoreApp} app - The app to connect to this UI
@@ -33,6 +31,7 @@ declare class UI extends Widget {
      */
     output(results: any[]): void;
 }
+export type ComponentFn = import("../../View/View.js").ComponentFn;
 import Widget from "./Widget.js";
 import CoreApp from "./CoreApp.js";
 import { Message } from "@nan0web/co";

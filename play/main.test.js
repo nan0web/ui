@@ -6,7 +6,7 @@
 
 import { describe, it } from "node:test"
 import assert from "node:assert/strict"
-import { PlaygroundTest } from "@nan0web/ui-cli/test"
+// import { PlaygroundTest } from "@nan0web/ui-cli/test"
 import { Readable } from "node:stream"
 
 const baseOutput = [
@@ -32,6 +32,7 @@ function createStdin(lines) {
 
 /**
  * @todo fix the tests
+ * PlaygroundTest is not published yet.
  */
 describe.skip("playground demo flow", () => {
 	it("runs language selection then exits (sequence 1,uk,5)", async () => {

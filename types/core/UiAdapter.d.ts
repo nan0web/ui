@@ -75,6 +75,23 @@ export default class UiAdapter extends EventProcessor {
         value: string | null;
     }>;
     /**
+     * Process a UIForm and return its result.
+     *
+     * This default implementation follows an **agnostic UI** approach:
+     * it simply returns the form instance (with optional initial state merged)
+     * without UI interaction. Concrete adapters (CLI, Web, etc.) can override
+     * this method to render the form, collect user input and return a richer
+     * result object (`{ form, cancelled }`).
+     *
+     * @param {UIForm} form - The UIForm instance to process.
+     * @param {object} [initialState={}] - Pre‑filled values for the form.
+     * @returns {Promise<{ form: UIForm, cancelled?: boolean }>} Form processing result.
+     */
+    processForm(form: UIForm, initialState?: object): Promise<{
+        form: UIForm;
+        cancelled?: boolean;
+    }>;
+    /**
      * Ensures a message's body is fully and validly filled.
      * Generates a form from the message's static Body schema,
      * then iteratively collects input until all fields are valid or cancelled.
@@ -101,4 +118,5 @@ export default class UiAdapter extends EventProcessor {
 import UIForm from "./Form/Form.js";
 import EventProcessor from "@nan0web/event/oop";
 import CancelError from "./Error/CancelError.js";
+import OutputAdapter from "./OutputAdapter.js";
 import UIMessage from "./Message/Message.js";
