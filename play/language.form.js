@@ -10,14 +10,16 @@
  *   - Input "0" on any prompt to cancel.
  *   - Empty input on final confirmation submits.
  */
-import { localesMap } from "./i18n/index.js"
-import { select } from "@nan0web/ui-cli"
+import { localesMap } from './i18n/index.js'
+import { select } from '@nan0web/ui-cli'
 
 /** Main exchange flow */
 export async function runLanguage(t, ask, console, prompt, invalidPrompt) {
 	const lang = await select({
-		title: "\n=== " + t("Language Selector") + " ===",
-		prompt, invalidPrompt, console,
+		title: '\n=== ' + t('Language Selector') + ' ===',
+		prompt,
+		invalidPrompt,
+		console,
 		options: Array.from(localesMap.keys()),
 	})
 	console.success(`\n${lang.value}\n`)

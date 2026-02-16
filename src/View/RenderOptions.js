@@ -1,4 +1,4 @@
-import Frame from "../Frame/Frame.js"
+import Frame from '../Frame/Frame.js'
 
 class RenderOptions {
 	static DEFAULTS = {

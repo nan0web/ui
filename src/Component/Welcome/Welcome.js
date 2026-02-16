@@ -1,5 +1,5 @@
-import { empty } from "@nan0web/types"
-import WelcomeInput from "./Input.js"
+import { empty } from '@nan0web/types'
+import WelcomeInput from './Input.js'
 
 /**
  * Renders a welcome message for a user.
@@ -10,17 +10,13 @@ import WelcomeInput from "./Input.js"
 function Welcome(props = {}) {
 	const input = WelcomeInput.from(props)
 	if (empty(input)) {
-		throw new Error("User is required")
+		throw new Error('User is required')
 	}
 
-	return [
-		["Welcome", " ", input.user.name, "!"],
-		["What can we do today great?"],
-		[""],
-	]
+	return [['Welcome', ' ', input.user.name, '!'], ['What can we do today great?'], ['']]
 }
 
 Welcome.Input = WelcomeInput
-Welcome.ask = async () => ""
+Welcome.ask = async () => ''
 
 export default Welcome

@@ -4,10 +4,10 @@
  * @module play/main.test
  */
 
-import { describe, it } from "node:test"
-import assert from "node:assert/strict"
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 // import { PlaygroundTest } from "@nan0web/ui-cli/test"
-import { Readable } from "node:stream"
+import { Readable } from 'node:stream'
 
 const baseOutput = [
 	'| \\  | |_____| | \\  |     |  |  | |______ |_____] ',
@@ -18,7 +18,7 @@ const baseOutput = [
  * Створює stdin з автоматичним закриттям після останнього вводу.
  */
 function createStdin(lines) {
-	const stream = Readable.from(lines.map(line => line + "\n"))
+	const stream = Readable.from(lines.map((line) => line + '\n'))
 	// Закриваємо потік після всіх даних
 	const originalPush = stream._read
 	stream._read = function (size) {
@@ -34,21 +34,21 @@ function createStdin(lines) {
  * @todo fix the tests
  * PlaygroundTest is not published yet.
  */
-describe.skip("playground demo flow", () => {
-	it("runs language selection then exits (sequence 1,uk,5)", async () => {
+describe.skip('playground demo flow', () => {
+	it('runs language selection then exits (sequence 1,uk,5)', async () => {
 		const pt = new PlaygroundTest(process.env, { includeDebugger: false })
-		pt.stdin = createStdin(["1", "uk", "5"])
-		const result = await pt.run(["play/main.js"])
+		pt.stdin = createStdin(['1', 'uk', '5'])
+		const result = await pt.run(['play/main.js'])
 
 		assert.strictEqual(result.exitCode, 0, `Process exited with ${result.exitCode}`)
-		assert.equal(result.stderr, "", "No stderr expected")
+		assert.equal(result.stderr, '', 'No stderr expected')
 
 		const lines = result.stdout
-			.split("\n")
+			.split('\n')
 			.slice(1)
-			.filter(l => !/\x1b\[.*?m/.test(l))
-			.map(l => l.trim())
-			.filter(l => l !== "")
+			.filter((l) => !/\x1b\[.*?m/.test(l))
+			.map((l) => l.trim())
+			.filter((l) => l !== '')
 
 		let i = 0
 		assert.match(lines[i++], /^Select demo:$/)
@@ -64,7 +64,7 @@ describe.skip("playground demo flow", () => {
 		assert.match(lines[i++], /^ 2\) uk$/)
 
 		assert.match(lines[i++], /^\[me\]: uk$/)
-		assert.strictEqual(lines[i++], "uk")
+		assert.strictEqual(lines[i++], 'uk')
 
 		// Back to menu – now in Ukrainian
 		assert.match(lines[i++], /^Оберіть демонстрацію:$/)
@@ -75,23 +75,23 @@ describe.skip("playground demo flow", () => {
 		assert.match(lines[i++], /^ 5\) ← Exit$/)
 
 		assert.match(lines[i++], /^\[me\]: 5$/)
-		assert.strictEqual(lines[i++], "До побачення.")
+		assert.strictEqual(lines[i++], 'До побачення.')
 	})
 
-	it("runs registration form then exits (sequence 1,John,pa$$w0rd,pa$$w0rd,email@example.com,0)", async () => {
+	it('runs registration form then exits (sequence 1,John,pa$$w0rd,pa$$w0rd,email@example.com,0)', async () => {
 		const pt = new PlaygroundTest(process.env, { includeDebugger: false })
-		pt.stdin = createStdin(["1", "John", "pa$$w0rd", "pa$$w0rd", "email@example.com", "", "0"])
-		const result = await pt.run(["play/main.js"])
+		pt.stdin = createStdin(['1', 'John', 'pa$$w0rd', 'pa$$w0rd', 'email@example.com', '', '0'])
+		const result = await pt.run(['play/main.js'])
 
 		assert.strictEqual(result.exitCode, 0, `Process exited with ${result.exitCode}`)
-		assert.equal(result.stderr, "", "No stderr expected")
+		assert.equal(result.stderr, '', 'No stderr expected')
 
 		const lines = result.stdout
-			.split("\n")
+			.split('\n')
 			.slice(1)
-			.filter(l => !/\x1b/.test(l))
-			.map(l => l.trim())
-			.filter(l => l !== "")
+			.filter((l) => !/\x1b/.test(l))
+			.map((l) => l.trim())
+			.filter((l) => l !== '')
 
 		let i = 0
 		assert.match(lines[i++], /^Select demo:$/)
@@ -120,20 +120,20 @@ describe.skip("playground demo flow", () => {
 		assert.match(lines[i++], /^Good‑bye.$/)
 	})
 
-	it("runs currency exchange with valid inputs then exits (sequence 2,USD,EUR,100,0)", async () => {
+	it('runs currency exchange with valid inputs then exits (sequence 2,USD,EUR,100,0)', async () => {
 		const pt = new PlaygroundTest(process.env, { includeDebugger: false })
-		pt.stdin = createStdin(["2", "USD", "EUR", "100", "0"])
-		const result = await pt.run(["play/main.js"])
+		pt.stdin = createStdin(['2', 'USD', 'EUR', '100', '0'])
+		const result = await pt.run(['play/main.js'])
 
 		assert.strictEqual(result.exitCode, 0, `Process exited with ${result.exitCode}`)
-		assert.equal(result.stderr, "", "No stderr expected")
+		assert.equal(result.stderr, '', 'No stderr expected')
 
 		const lines = result.stdout
-			.split("\n")
+			.split('\n')
 			.slice(1)
-			.filter(l => !/\x1b/.test(l))
-			.map(l => l.trim())
-			.filter(l => l !== "")
+			.filter((l) => !/\x1b/.test(l))
+			.map((l) => l.trim())
+			.filter((l) => l !== '')
 
 		let i = 0
 		assert.match(lines[i++], /^Select demo:$/)
@@ -146,7 +146,10 @@ describe.skip("playground demo flow", () => {
 		assert.match(lines[i++], /^Amount: 100$/)
 
 		const resultLine = lines[i++]
-		assert.ok(/100 USD = 90\.00 EUR/.test(resultLine), `Expected exchange result, got: ${resultLine}`)
+		assert.ok(
+			/100 USD = 90\.00 EUR/.test(resultLine),
+			`Expected exchange result, got: ${resultLine}`,
+		)
 
 		// Back to menu
 		assert.match(lines[i++], /^Select demo:$/)
@@ -160,21 +163,21 @@ describe.skip("playground demo flow", () => {
 /**
  * @todo fix the tests
  */
-describe.skip("playground cancel handling", () => {
-	it("cancels registration form and returns to menu (sequence 1,0)", async () => {
+describe.skip('playground cancel handling', () => {
+	it('cancels registration form and returns to menu (sequence 1,0)', async () => {
 		const pt = new PlaygroundTest(process.env, { includeDebugger: false })
-		pt.stdin = createStdin(["1", "0"])
-		const result = await pt.run(["play/main.js"])
+		pt.stdin = createStdin(['1', '0'])
+		const result = await pt.run(['play/main.js'])
 
 		assert.strictEqual(result.exitCode, 0)
-		assert.equal(result.stderr, "⨉ Cancelled.")
+		assert.equal(result.stderr, '⨉ Cancelled.')
 
 		const lines = result.stdout
-			.split("\n")
+			.split('\n')
 			.slice(1)
-			.filter(l => !/\x1b/.test(l))
-			.map(l => l.trim())
-			.filter(l => l !== "")
+			.filter((l) => !/\x1b/.test(l))
+			.map((l) => l.trim())
+			.filter((l) => l !== '')
 
 		let i = 0
 		assert.match(lines[i++], /^Select demo:$/)

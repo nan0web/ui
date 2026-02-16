@@ -1,4 +1,4 @@
-import StreamEntry from "./StreamEntry.js"
+import StreamEntry from './StreamEntry.js'
 
 /**
  * Agnostic UI stream for processing progress using async generators.

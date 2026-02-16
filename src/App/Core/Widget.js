@@ -1,7 +1,7 @@
-import EventProcessor from "@nan0web/event/oop"
-import View from "../../View/View.js"
-import { StreamEntry } from "@nan0web/db"
-import { UiMessage } from "../../core/index.js"
+import EventProcessor from '@nan0web/event/oop'
+import View from '../../View/View.js'
+import { StreamEntry } from '@nan0web/db'
+import { UiMessage } from '../../core/index.js'
 
 /** @typedef {import("./UI.js").ComponentFn} ComponentFn */
 
@@ -51,14 +51,10 @@ export default class Widget extends EventProcessor {
 	 */
 	render(viewFnOrName, outputData) {
 		/** @type {Function | ComponentFn | undefined} */
-		const viewFn = typeof viewFnOrName === "string"
-			? this.view.get(viewFnOrName)
-			: viewFnOrName
+		const viewFn = typeof viewFnOrName === 'string' ? this.view.get(viewFnOrName) : viewFnOrName
 
 		if (!viewFn) {
-			throw new Error([
-				"View component not found", ": ", viewFnOrName
-			].join(""))
+			throw new Error(['View component not found', ': ', viewFnOrName].join(''))
 		}
 		return this.view.render(viewFn)(outputData)
 	}

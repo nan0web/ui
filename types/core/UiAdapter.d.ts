@@ -115,8 +115,8 @@ export default class UiAdapter extends EventProcessor {
      */
     render(message: UIMessage): void;
 }
-import UIForm from "./Form/Form.js";
-import EventProcessor from "@nan0web/event/oop";
-import CancelError from "./Error/CancelError.js";
-import OutputAdapter from "./OutputAdapter.js";
-import UIMessage from "./Message/Message.js";
+import UIForm from './Form/Form.js';
+import EventProcessor from '@nan0web/event/oop';
+import CancelError from './Error/CancelError.js';
+import OutputAdapter from './OutputAdapter.js';
+import UIMessage from './Message/Message.js';

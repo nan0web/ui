@@ -1,4 +1,4 @@
-import { User } from "../../Model/index.js"
+import { User } from '../../Model/index.js'
 
 /**
  * Represents input data for the Welcome component.
@@ -14,9 +14,7 @@ class WelcomeInput {
 	 * @param {User|object} [props.user=new User()] - User data
 	 */
 	constructor(props = {}) {
-		const {
-			user = new User(),
-		} = props
+		const { user = new User() } = props
 		this.user = user
 	}
 

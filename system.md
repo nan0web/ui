@@ -1,5 +1,7 @@
 # System intructions `system.md` / NaN•Web UI
 
+Read the [nan0web instructions](../../system.md)
+
 Vanilla javascript UI interfaces with no platform dependencies.  
 Must work for nodejs, browser and other compilers that supports ESM.
 
@@ -12,6 +14,7 @@ Must work for nodejs, browser and other compilers that supports ESM.
 1.3. Minimum dependency as possible.  
 1.4. Classes  
 1.4.1. Order of the class elements:
+
 - static properties
 - properties
 - constructor
@@ -22,10 +25,11 @@ Must work for nodejs, browser and other compilers that supports ESM.
 - static base functions
 - static async functions
 
-1.5. Views, every must:  
-1.5.1. Have a separate file and test file `View/AppView.js` and `View/AppView.test.js`.  
-1.6. Components, every must:
-1.6.1. Have a separate directory in `View/Component/*` or registered from any other directory with files:
+  1.5. Views, every must:  
+  1.5.1. Have a separate file and test file `View/AppView.js` and `View/AppView.test.js`.  
+  1.6. Components, every must:
+  1.6.1. Have a separate directory in `View/Component/*` or registered from any other directory with files:
+
 - `Component.js`
 - `Component.test.js`
 - `ComponentInput.js`
@@ -65,8 +69,9 @@ For `React` apps and any that uses `.jsx` components `vitest` must be used for t
 Інтерфейси клієнти, у випадку коли є окремий `api` сервер, можуть розширювати свій `ClientUI`.
 
 Приклад успадкування:
+
 ```js
-import UI from "@nan0web/ui"
+import UI from '@nan0web/ui'
 
 class BaseUI extends UI {}
 
@@ -96,22 +101,19 @@ Widget is a control alement including a view with and ask() ability to input dat
 #### Output
 
 Output data is passed to the view but also in specific format:
+
 ```js
 function UserDocumentsView(input = {}) {
   input = UserDocumentsInput.from(input)
   if (empty(input)) {
-    throw new Error("Input data required in a format off UserDocumentsInput")
+    throw new Error('Input data required in a format off UserDocumentsInput')
   }
 
-  return Frame.from([
-    ['Documents'],
-    ...input.documents.map(d => d.name),
-  ])
+  return Frame.from([['Documents'], ...input.documents.map((d) => d.name)])
 }
 ```
 
 In this scenario I can easily define Input classes for the every View and Widget to be sure all the input pass, and easily require the proper input from the app before running a job.
-
 
 #### Input
 
@@ -122,13 +124,13 @@ The input might be a command line `node start.js -user.name root` or, if not pro
 ```js
 class App {
   async requireUser() {
-    const user = await this.view.ask("User")()
+    const user = await this.view.ask('User')()
     if (user instanceof User) return user
-    throw new TypeError("User is required to continue")
+    throw new TypeError('User is required to continue')
   }
   async run() {
     const user = await this.requireUser()
-    this.view.render("Welcome")({ user })
+    this.view.render('Welcome')({ user })
   }
 }
 ```
@@ -136,24 +138,29 @@ class App {
 ## Cross platform
 
 Very important that I can extend basic UI with different apps, for instance:
+
 ```jsx
 // apps/web/src/components/User/DocumentsView.jsx
-import React from "react"
+import React from 'react'
 /** the very basic component **/
-import UserDocumentsInput from "src/components/User/DocumentsInput.js"
+import UserDocumentsInput from 'src/components/User/DocumentsInput.js'
 
 function UserDocumentsView(input = {}) {
   input = UserDocumentsInput.from(input)
   if (empty(input)) {
-    throw new Error("Input data required in a format off UserDocumentsInput")
+    throw new Error('Input data required in a format off UserDocumentsInput')
   }
 
-  return <div>
-    <h3>Documents</h3>
-    <ul>
-      {input.documents.map((d, i) => <li key={i}>{d.name}</li>)}
-    </ul>
-  </div>
+  return (
+    <div>
+      <h3>Documents</h3>
+      <ul>
+        {input.documents.map((d, i) => (
+          <li key={i}>{d.name}</li>
+        ))}
+      </ul>
+    </div>
+  )
 }
 ```
 
@@ -162,6 +169,7 @@ function UserDocumentsView(input = {}) {
 #### Core application
 
 Core application s with the minimum stdin, stdout
+
 - `src/*`
 - `src/App.js`
 - `bin/start.js`

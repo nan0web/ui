@@ -1,10 +1,10 @@
-import EventProcessor from "@nan0web/event/oop"
-import CancelError from "./Error/CancelError.js"
-import UIMessage from "./Message/Message.js"
-import UIForm from "./Form/Form.js"
-import FormInput from "./Form/Input.js"
-import OutputAdapter from "./OutputAdapter.js"
-import OutputMessage from "./Message/OutputMessage.js"
+import EventProcessor from '@nan0web/event/oop'
+import CancelError from './Error/CancelError.js'
+import UIMessage from './Message/Message.js'
+import UIForm from './Form/Form.js'
+import FormInput from './Form/Input.js'
+import OutputAdapter from './OutputAdapter.js'
+import OutputMessage from './Message/OutputMessage.js'
 
 /**
  * Unified UI Adapter that handles both input and output operations.
@@ -36,7 +36,7 @@ export default class UiAdapter extends EventProcessor {
 	 * @returns {void}
 	 */
 	start() {
-		this.emit('input', UIMessage.from({ body: "Adapter started" }))
+		this.emit('input', UIMessage.from({ body: 'Adapter started' }))
 	}
 
 	/**
@@ -122,22 +122,21 @@ export default class UiAdapter extends EventProcessor {
 	 */
 	async requireInput(msg) {
 		if (!msg) {
-			throw new Error("Message instance is required")
+			throw new Error('Message instance is required')
 		}
 		if (!(msg instanceof UIMessage)) {
-			throw new TypeError("Message must be an instance of UIMessage")
+			throw new TypeError('Message must be an instance of UIMessage')
 		}
 		/** @type {Map<string,string>} */
 		let errors = msg.validate()
 		while (errors.size > 0) {
-			const form = generateForm(
-				/** @type {any} */(msg.constructor).Body,
-				{ initialState: msg.body }
-			)
+			const form = generateForm(/** @type {any} */ (msg.constructor).Body, {
+				initialState: msg.body,
+			})
 
-			const formResult = await this.processForm ? this.processForm(form, msg.body) : {} // Assume method exists or handle differently, but error indicates missing method; perhaps remove if not used
+			const formResult = (await this.processForm) ? this.processForm(form, msg.body) : {} // Assume method exists or handle differently, but error indicates missing method; perhaps remove if not used
 			if (formResult.cancelled) {
-				throw new CancelError("User cancelled form")
+				throw new CancelError('User cancelled form')
 			}
 
 			const updatedBody = { ...msg.body, ...formResult.form.state }
@@ -145,11 +144,13 @@ export default class UiAdapter extends EventProcessor {
 
 			if (updatedErrors.size > 0) {
 				if (this.output) {
-					this.output.render(new OutputMessage({
-						type: "Alert",
-						variant: "error",
-						body: Array.from(updatedErrors.values()).join("\n")
-					}))
+					this.output.render(
+						new OutputMessage({
+							type: 'Alert',
+							variant: 'error',
+							body: Array.from(updatedErrors.values()).join('\n'),
+						}),
+					)
 				}
 				errors = updatedErrors
 				continue
@@ -169,8 +170,8 @@ export default class UiAdapter extends EventProcessor {
 	 * @throws {Error} If not implemented in subclass.
 	 */
 	render(message) {
-		throw new Error("render() must be implemented by subclass")
-		this.emit("rendered", message)
+		throw new Error('render() must be implemented by subclass')
+		this.emit('rendered', message)
 	}
 }
 
@@ -184,14 +185,14 @@ export default class UiAdapter extends EventProcessor {
  * @returns {UIForm} Form instance ready for input.
  */
 export function generateForm(BodyClass, options = {}) {
-	const { initialState = {}, t = v => v } = options
+	const { initialState = {}, t = (v) => v } = options
 	const fields = []
 
 	for (const [name, schema] of Object.entries(BodyClass)) {
-		if (typeof schema !== "object" || schema === null || !name || !schema.help) continue
+		if (typeof schema !== 'object' || schema === null || !name || !schema.help) continue
 
 		const label = t(schema.help) || name
-		const placeholder = t(schema.placeholder || schema.defaultValue || "")
+		const placeholder = t(schema.placeholder || schema.defaultValue || '')
 		const isRequired = !!schema.required
 
 		fields.push(
@@ -201,12 +202,12 @@ export function generateForm(BodyClass, options = {}) {
 				type: schema.type || FormInput.TYPES.TEXT,
 				required: isRequired,
 				placeholder,
-				options: schema.options ? schema.options.map(o => String(o)) : [],
+				options: schema.options ? schema.options.map((o) => String(o)) : [],
 				validation: schema.validate
 					? (value) => {
-						const res = schema.validate(value)
-						return res === true ? true : typeof res === "string" ? res : `Invalid ${name}`
-					}
+							const res = schema.validate(value)
+							return res === true ? true : typeof res === 'string' ? res : `Invalid ${name}`
+						}
 					: () => true,
 			}),
 		)

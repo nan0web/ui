@@ -1,9 +1,9 @@
-import { describe, it } from "node:test"
-import { strict as assert } from "node:assert"
-import { App } from "@nan0web/ui"
+import { describe, it } from 'node:test'
+import { strict as assert } from 'node:assert'
+import { App } from '@nan0web/ui'
 
-describe("App", () => {
-	it("should be defined", () => {
+describe('App', () => {
+	it('should be defined', () => {
 		assert.ok(App)
 		assert.ok(App.Core)
 		assert.ok(App.User)

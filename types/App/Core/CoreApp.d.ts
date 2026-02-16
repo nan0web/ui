@@ -66,5 +66,5 @@ export default class CoreApp {
     selectCommand(ui: UI): Promise<string>;
 }
 export type CommandFn = Function;
-import { Message } from "@nan0web/co";
-import UI from "./UI.js";
+import { Message } from '@nan0web/co';
+import UI from './UI.js';

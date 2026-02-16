@@ -33,7 +33,7 @@ export default class Widget extends EventProcessor {
     render(viewFnOrName: Function | string, outputData: object): any;
 }
 export type ComponentFn = import("./UI.js").ComponentFn;
-import EventProcessor from "@nan0web/event/oop";
-import View from "../../View/View.js";
-import { UiMessage } from "../../core/index.js";
-import { StreamEntry } from "@nan0web/db";
+import EventProcessor from '@nan0web/event/oop';
+import View from '../../View/View.js';
+import { UiMessage } from '../../core/index.js';
+import { StreamEntry } from '@nan0web/db';

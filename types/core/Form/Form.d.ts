@@ -122,5 +122,5 @@ export default class UIForm extends FormMessage {
      */
     toJSON(): any;
 }
-import FormMessage from "./Message.js";
-import FormInput from "./Input.js";
+import FormMessage from './Message.js';
+import FormInput from './Input.js';

@@ -18,6 +18,7 @@
  * @property {string} placeholder - Placeholder text.
  * @property {InputOptions} options - Select options (if type is 'select').
  * @property {Function} validation - Custom validation function.
+ * @property {string} mask - Mask pattern (e.g. '###-###').
  * @property {*} defaultValue - Default value.
  */
 export default class FormInput {
@@ -28,6 +29,7 @@ export default class FormInput {
 	/** @type {string} */ placeholder = ''
 	/** @type {InputOptions} */ options = []
 	/** @type {Function} */ validation = () => true
+	/** @type {string} */ mask = ''
 	/** @type {*} */ defaultValue = null
 
 	/**
@@ -40,6 +42,13 @@ export default class FormInput {
 		SELECT: 'select',
 		CHECKBOX: 'checkbox',
 		TEXTAREA: 'textarea',
+		PASSWORD: 'password',
+		SECRET: 'secret',
+		MASK: 'mask',
+		CONFIRM: 'confirm',
+		TOGGLE: 'toggle',
+		MULTISELECT: 'multiselect',
+		AUTOCOMPLETE: 'autocomplete',
 	}
 
 	/**
@@ -53,6 +62,7 @@ export default class FormInput {
 	 * @param {string} [props.placeholder=''] - Placeholder.
 	 * @param {InputOptions} [props.options=[]] - Select options or async function to retrieve data with the search and page.
 	 * @param {Function} [props.validation] - Custom validation.
+	 * @param {string} [props.mask=''] - Mask pattern.
 	 * @param {*} [props.defaultValue=null] - Default value.
 	 */
 	constructor(props) {
@@ -64,6 +74,7 @@ export default class FormInput {
 			placeholder = this.placeholder,
 			options = [],
 			validation = this.validation,
+			mask = '',
 			defaultValue = this.defaultValue,
 		} = props
 
@@ -78,6 +89,7 @@ export default class FormInput {
 		this.placeholder = String(placeholder)
 		this.options = options
 		this.validation = validation
+		this.mask = String(mask)
 		this.defaultValue = defaultValue
 
 		this.requireValidType()
@@ -85,12 +97,14 @@ export default class FormInput {
 
 	requireValidType() {
 		if (!Object.values(FormInput.TYPES).includes(this.type)) {
-			throw new TypeError([
-				'FormInput.type is invalid!',
-				['Provided', this.type].join(': '),
-				'Available types:',
-				...Object.values(FormInput.TYPES).map((t) => `  - ${t}`),
-			].join('\n'))
+			throw new TypeError(
+				[
+					'FormInput.type is invalid!',
+					['Provided', this.type].join(': '),
+					'Available types:',
+					...Object.values(FormInput.TYPES).map((t) => `  - ${t}`),
+				].join('\n'),
+			)
 		}
 	}
 
@@ -107,6 +121,7 @@ export default class FormInput {
 			required: this.required,
 			placeholder: this.placeholder,
 			options: this.options,
+			mask: this.mask,
 			defaultValue: this.defaultValue,
 		}
 	}

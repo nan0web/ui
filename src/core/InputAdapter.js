@@ -1,6 +1,6 @@
-import Event from "@nan0web/event/oop"
-import CancelError from "./Error/CancelError.js"
-import UiMessage from "./Message/Message.js"
+import Event from '@nan0web/event/oop'
+import CancelError from './Error/CancelError.js'
+import UiMessage from './Message/Message.js'
 
 /**
  * Abstract input adapter for UI implementations.
@@ -20,9 +20,7 @@ export default class InputAdapter extends Event {
 	 * @returns {void}
 	 */
 	start() {
-		this.emit('input',
-			UiMessage.from({ body: "Adapter started" })
-		)
+		this.emit('input', UiMessage.from({ body: 'Adapter started' }))
 	}
 
 	/**

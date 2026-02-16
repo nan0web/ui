@@ -50,4 +50,4 @@ export default class OutputMessage extends UiMessage {
      */
     toJSON(): any;
 }
-import UiMessage from "./Message.js";
+import UiMessage from './Message.js';

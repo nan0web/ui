@@ -73,19 +73,24 @@ How to define and validate a UiForm?
 ```js
 import { UiForm } from '@nan0web/ui'
 const form = new UiForm({
-	title: "Contact Form",
+	title: 'Contact Form',
 	fields: [
-		FormInput.from({ name: "email", label: "Email Address", type: "email", required: true }),
-		FormInput.from({ name: "message", label: "Your Message", type: "textarea", required: true })
+		FormInput.from({ name: 'email', label: 'Email Address', type: 'email', required: true }),
+		FormInput.from({
+			name: 'message',
+			label: 'Your Message',
+			type: 'textarea',
+			required: true,
+		}),
 	],
 	state: {
-		email: "invalid-email",
-		message: "Hello!"
-	}
+		email: 'invalid-email',
+		message: 'Hello!',
+	},
 })
 const errors = form.validate()
 console.info(errors.size) // ← 1
-console.info(errors.get("email")) // ← Invalid email format
+console.info(errors.get('email')) // ← Invalid email format
 ```
 ### Components
 
@@ -97,8 +102,8 @@ Components render data as frame-ready output.
 How to render the Welcome component?
 ```js
 import { Welcome } from '@nan0web/ui'
-const frame = Welcome({ user: { name: "Alice" } })
-const firstLine = frame[0].join("")
+const frame = Welcome({ user: { name: 'Alice' } })
+const firstLine = frame[0].join('')
 console.info(firstLine) // ← Welcome Alice!
 ```
 ### View Manager
@@ -115,7 +120,7 @@ How to render frame with View?
 ```js
 import { View } from '@nan0web/ui'
 const view = new View()
-view.render(1)(["Hello, world"])
+view.render(1)(['Hello, world'])
 console.info(String(view.frame)) // ← "\rHello, world"
 ```
 ### Frame Rendering
@@ -133,13 +138,13 @@ How to create a Frame with fixed size?
 ```js
 import { Frame } from '@nan0web/ui'
 const frame = new Frame({
-	value: [["Frame content"]],
+	value: [['Frame content']],
 	width: 20,
 	height: 5,
 	renderMethod: Frame.RenderMethod.APPEND,
 })
 const rendered = frame.render()
-console.info(rendered.includes("Frame content")) // ← true
+console.info(rendered.includes('Frame content')) // ← true
 ```
 ### Models
 
@@ -150,7 +155,7 @@ UI models are plain data objects managed by `Model` classes.
 How to use a User model?
 ```js
 import { Model } from '@nan0web/ui'
-const user = new Model.User({ name: "Charlie", email: "charlie@example.com" })
+const user = new Model.User({ name: 'Charlie', email: 'charlie@example.com' })
 console.info(user.name) // ← Charlie
 console.info(user.email) // ← charlie@example.com
 ```
@@ -164,7 +169,7 @@ with minimal setup.
 How to test UI components with assertions?
 ```js
 import { Welcome } from '@nan0web/ui'
-const output = Welcome({ user: { name: "Test" } })
+const output = Welcome({ user: { name: 'Test' } })
 console.info(output) // ← Welcome Test!
 ```
 ## Playground Demos

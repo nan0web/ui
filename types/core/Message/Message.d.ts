@@ -90,4 +90,4 @@ export type MessageBodySchema = {
     defaultValue?: any;
     validate?: Function | undefined;
 };
-import { Message } from "@nan0web/co";
+import { Message } from '@nan0web/co';

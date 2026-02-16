@@ -4,26 +4,26 @@
  * This model must be used in all interfaces: core, cli, api, react, etc.
  */
 export default class User {
-	username = ""
+	username = ''
 	static username = {
-		help: "User name",
-		placeholder: "Enter user name",
+		help: 'User name',
+		placeholder: 'Enter user name',
 		required: true,
-		defaultValue: "",
+		defaultValue: '',
 	}
 
-	email = ""
+	email = ''
 	static email = {
-		help: "E-mail",
-		type: "email",
-		placeholder: "example@domain.com",
-		defaultValue: "",
+		help: 'E-mail',
+		type: 'email',
+		placeholder: 'example@domain.com',
+		defaultValue: '',
 	}
 
 	age = 0
 	static age = {
-		help: "Age",
-		placeholder: "Optional",
+		help: 'Age',
+		placeholder: 'Optional',
 		defaultValue: 0,
 	}
 	/**

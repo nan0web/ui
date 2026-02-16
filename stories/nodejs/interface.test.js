@@ -9,19 +9,19 @@
  *
  * Frames and Views must follow the blessed interface as for flexibility.
  */
-import { describe, it, expect } from "vitest"
+import { describe, it, expect } from 'vitest'
 
-describe("Interface", () => {
-	it("should read text from stdin", () => {
-		expect("").toBe("")
+describe('Interface', () => {
+	it('should read text from stdin', () => {
+		expect('').toBe('')
 	})
-	it("should write text to stdout", () => {
-		expect("").toBe("")
+	it('should write text to stdout', () => {
+		expect('').toBe('')
 	})
-	it("should read an option from a selectbox with the bordered frame", () => {
-		expect("").toBe("")
+	it('should read an option from a selectbox with the bordered frame', () => {
+		expect('').toBe('')
 	})
-	it("should write result to stdout with the bordered frame", () => {
-		expect("").toBe("")
+	it('should write result to stdout with the bordered frame', () => {
+		expect('').toBe('')
 	})
 })

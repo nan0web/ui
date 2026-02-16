@@ -15,10 +15,7 @@ class User {
 	 * @param {string} [props.email=""] - User email
 	 */
 	constructor(props = {}) {
-		const {
-			name = "",
-			email = "",
-		} = props
+		const { name = '', email = '' } = props
 		this.name = String(name)
 		this.email = String(email)
 	}
@@ -36,7 +33,7 @@ class User {
 	 * @returns {string} User name and email (if exists)
 	 */
 	toString() {
-		return [this.name, this.email ? `<${this.email}>` : ""].filter(Boolean).join(" ")
+		return [this.name, this.email ? `<${this.email}>` : ''].filter(Boolean).join(' ')
 	}
 
 	/**
@@ -46,7 +43,7 @@ class User {
 	 */
 	static from(props) {
 		if (props instanceof User) return props
-		if ("string" === typeof props) {
+		if ('string' === typeof props) {
 			return new User({ name: props })
 		}
 		return new User(props)

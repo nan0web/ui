@@ -1,5 +1,5 @@
-import App from "./index.js"
-import UI from "./Core/UI.js"
+import App from './index.js'
+import UI from './Core/UI.js'
 
 /** @typedef {import("./Core/CoreApp.js").default} CoreApp */
 
@@ -19,7 +19,7 @@ export default class Scenario {
 	 */
 	constructor(app, ui) {
 		if (!(app instanceof App.Core.App)) {
-			throw new TypeError("Scenario requires a App.Core.App instance")
+			throw new TypeError('Scenario requires a App.Core.App instance')
 		}
 		this.app = app
 		this.ui = ui
@@ -32,7 +32,7 @@ export default class Scenario {
 	 * @returns {Promise<boolean>} True if all outputs match expected
 	 */
 	async run(inputCommands, expectedOutputs) {
-		const commandMessages = inputCommands.map(arr => App.Command.Message.parse(arr))
+		const commandMessages = inputCommands.map((arr) => App.Command.Message.parse(arr))
 		const outputs = await this.app.processCommands(commandMessages, this.ui)
 		if (outputs.length !== expectedOutputs.length) return false
 		for (let i = 0; i < outputs.length; i++) {

@@ -23,4 +23,4 @@ export default class Scenario {
     run(inputCommands: Array<any[]>, expectedOutputs: Array<any>): Promise<boolean>;
 }
 export type CoreApp = import("./Core/CoreApp.js").default;
-import UI from "./Core/UI.js";
+import UI from './Core/UI.js';

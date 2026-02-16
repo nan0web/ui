@@ -183,4 +183,4 @@ export default class Frame {
     setWindowSize(width: number, height: number): void;
     #private;
 }
-import FrameProps from "./Props.js";
+import FrameProps from './Props.js';

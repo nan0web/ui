@@ -31,4 +31,4 @@ declare class WelcomeInput {
      */
     toString(): string;
 }
-import { User } from "../../Model/index.js";
+import { User } from '../../Model/index.js';

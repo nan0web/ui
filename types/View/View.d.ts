@@ -106,10 +106,10 @@ export type ComponentFn = {
     ask: (input: UiMessage) => Promise<any>;
     bind: Function;
 };
-import StdIn from "../StdIn.js";
-import StdOut from "../StdOut.js";
-import Frame from "../Frame/Frame.js";
-import Locale from "../Locale.js";
-import { FrameRenderMethod } from "../Frame/Frame.js";
-import RenderOptions from "./RenderOptions.js";
-import UiMessage from "../core/Message/Message.js";
+import StdIn from '../StdIn.js';
+import StdOut from '../StdOut.js';
+import Frame from '../Frame/Frame.js';
+import Locale from '../Locale.js';
+import { FrameRenderMethod } from '../Frame/Frame.js';
+import RenderOptions from './RenderOptions.js';
+import UiMessage from '../core/Message/Message.js';

@@ -3,6 +3,6 @@ declare namespace _default {
     export { Process };
 }
 export default _default;
-import Welcome from "./Welcome/index.js";
-import Process from "./Process/index.js";
+import Welcome from './Welcome/index.js';
+import Process from './Process/index.js';
 export { Welcome, Process };

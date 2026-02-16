@@ -49,4 +49,4 @@ declare class StdOut extends EventProcessor {
      */
     getWindowSize(): number[];
 }
-import EventProcessor from "@nan0web/event/oop";
+import EventProcessor from '@nan0web/event/oop';

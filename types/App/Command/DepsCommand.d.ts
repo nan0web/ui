@@ -5,7 +5,7 @@ export class DepsCommand extends UiMessage {
     body: DepsCommandBody;
 }
 export default DepsCommand;
-import UiMessage from "../../core/Message/Message.js";
+import UiMessage from '../../core/Message/Message.js';
 declare class DepsCommandBody {
     static fix: {
         help: string;

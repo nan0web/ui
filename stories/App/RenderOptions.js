@@ -1,4 +1,4 @@
-import RenderOptions from "../../src/View/RenderOptions.js"
+import RenderOptions from '../../src/View/RenderOptions.js'
 
 class AppRenderOptions extends RenderOptions {
 	static DEFAULTS = {

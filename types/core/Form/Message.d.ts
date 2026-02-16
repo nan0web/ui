@@ -26,4 +26,4 @@ export default class FormMessage extends UiMessage {
         errors: any;
     };
 }
-import UiMessage from "../Message/Message.js";
+import UiMessage from '../Message/Message.js';

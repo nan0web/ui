@@ -24,7 +24,7 @@ export default class StreamEntry {
 	 * Error message associated with the stream entry.
 	 * @type {string}
 	 */
-	error = ""
+	error = ''
 
 	/**
 	 * Creates a new StreamEntry instance.

@@ -42,5 +42,5 @@ export default class InputAdapter extends Event {
         value: string | null;
     }>;
 }
-import Event from "@nan0web/event/oop";
-import CancelError from "./Error/CancelError.js";
+import Event from '@nan0web/event/oop';
+import CancelError from './Error/CancelError.js';

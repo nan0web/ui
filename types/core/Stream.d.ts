@@ -24,4 +24,4 @@ export default class UIStream {
      */
     static process(signal: AbortSignal, generatorFn: () => AsyncGenerator<StreamEntry>, onProgress?: Function, onError?: Function, onComplete?: Function): Promise<void>;
 }
-import StreamEntry from "./StreamEntry.js";
+import StreamEntry from './StreamEntry.js';

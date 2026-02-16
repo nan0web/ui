@@ -1,4 +1,4 @@
-import { Message } from "@nan0web/co"
+import { Message } from '@nan0web/co'
 
 /**
  * @typedef {Object} MessageBodySchema
@@ -40,13 +40,13 @@ export default class UiMessage extends Message {
 		SUCCESS: 'success',
 		WARNING: 'warning',
 		COMMAND: 'command',
-		NAVIGATION: 'navigation'
+		NAVIGATION: 'navigation',
 	}
 
 	/** @type {string} */
-	type = ""
+	type = ''
 	/** @type {string} */
-	id = ""
+	id = ''
 
 	/**
 	 * Creates a UiMessage.
@@ -56,10 +56,7 @@ export default class UiMessage extends Message {
 	constructor(input = {}) {
 		super(input)
 
-		const {
-			type = this.type,
-			id = this.id,
-		} = input
+		const { type = this.type, id = this.id } = input
 		this.id = id || `ui-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 		this.type = String(type)
 
@@ -96,7 +93,7 @@ export default class UiMessage extends Message {
 		for (const [field, schema] of entries) {
 			const value = body[field]
 			const fn = schema?.validate
-			if ("function" === typeof fn) {
+			if ('function' === typeof fn) {
 				const ok = fn.apply(body, [value])
 				if (ok !== true) {
 					result.set(field, String(ok))
@@ -105,7 +102,7 @@ export default class UiMessage extends Message {
 			}
 			const required = schema?.required ?? false
 			if (required && !value) {
-				result.set(field, "Required")
+				result.set(field, 'Required')
 				continue
 			}
 			if (schema?.pattern && schema.pattern instanceof RegExp) {
@@ -116,10 +113,10 @@ export default class UiMessage extends Message {
 			}
 			if (schema?.options) {
 				if (!Array.isArray(schema.options)) {
-					throw new Error("Schema options must be an array of possible values")
+					throw new Error('Schema options must be an array of possible values')
 				}
 				if (!schema.options.includes(value)) {
-					result.set(field, "Enumeration must have one value")
+					result.set(field, 'Enumeration must have one value')
 					continue
 				}
 			}

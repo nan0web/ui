@@ -1,8 +1,8 @@
-import EventProcessor from "@nan0web/event/oop"
-import { typeOf } from "@nan0web/types"
-import { UiMessage } from "./core/index.js"
+import EventProcessor from '@nan0web/event/oop'
+import { typeOf } from '@nan0web/types'
+import { UiMessage } from './core/index.js'
 
-class Processor extends EventProcessor { }
+class Processor extends EventProcessor {}
 
 /**
  * Handles standard input stream with message buffering.
@@ -12,7 +12,7 @@ export default class StdIn extends EventProcessor {
 	static READ_INTERVAL = 99
 
 	/** @type {string[]} Messages to ignore */
-	static IGNORE_MESSAGES = ["", "undefined"]
+	static IGNORE_MESSAGES = ['', 'undefined']
 
 	/** @type {UiMessage[]} Input message buffer */
 	stream = []
@@ -28,13 +28,10 @@ export default class StdIn extends EventProcessor {
 	 */
 	constructor(props = {}) {
 		super()
-		const {
-			processor = new Processor(),
-			stream = [],
-		} = props
+		const { processor = new Processor(), stream = [] } = props
 		this.processor = processor
 		this.stream = stream
-		this.processor?.on("data", (data) => {
+		this.processor?.on('data', (data) => {
 			this.write(data)
 		})
 	}
@@ -62,7 +59,7 @@ export default class StdIn extends EventProcessor {
 	 */
 	async read() {
 		while (this.ended) {
-			await new Promise(resolve => setTimeout(resolve, StdIn.READ_INTERVAL))
+			await new Promise((resolve) => setTimeout(resolve, StdIn.READ_INTERVAL))
 		}
 		return this.stream.shift() ?? new UiMessage()
 	}
@@ -105,4 +102,3 @@ export default class StdIn extends EventProcessor {
 		return new this(input)
 	}
 }
-

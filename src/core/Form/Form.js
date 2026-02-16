@@ -1,6 +1,6 @@
-import Message from "@nan0web/co"
-import FormMessage from "./Message.js"
-import FormInput from "./Input.js"
+import Message from '@nan0web/co'
+import FormMessage from './Message.js'
+import FormInput from './Input.js'
 
 /**
  * Abstract form for data entry.
@@ -33,8 +33,8 @@ export default class UIForm extends FormMessage {
 	 *   otherwise returns an error message.
 	 */
 	static addValidation(name, fn) {
-		if (typeof name !== "string" || typeof fn !== "function") {
-			throw new Error("validation name must be a string and fn must be a function")
+		if (typeof name !== 'string' || typeof fn !== 'function') {
+			throw new Error('validation name must be a string and fn must be a function')
 		}
 		UIForm._validations[name] = fn
 	}
@@ -51,16 +51,10 @@ export default class UIForm extends FormMessage {
 	constructor(props = {}) {
 		super(props)
 
-		const {
-			title = '',
-			fields = [],
-			state = {},
-			schema = {},
-			...rest
-		} = props
+		const { title = '', fields = [], state = {}, schema = {}, ...rest } = props
 
 		// Normalise fields
-		this.fields = fields.map(f => FormInput.from(f))
+		this.fields = fields.map((f) => FormInput.from(f))
 		this.title = title
 		this.state = { ...state }
 		this.schema = schema
@@ -68,8 +62,8 @@ export default class UIForm extends FormMessage {
 		// Update meta with form data
 		this.meta = {
 			title: this.title,
-			fields: this.fields.map(f => f.toJSON ? f.toJSON() : f),
-			initialState: this.state
+			fields: this.fields.map((f) => (f.toJSON ? f.toJSON() : f)),
+			initialState: this.state,
 		}
 	}
 
@@ -86,7 +80,7 @@ export default class UIForm extends FormMessage {
 	setData(data) {
 		return new UIForm({
 			...this,
-			state: { ...this.state, ...data }
+			state: { ...this.state, ...data },
 		})
 	}
 
@@ -97,7 +91,7 @@ export default class UIForm extends FormMessage {
 	 * @returns {FormInput|undefined}
 	 */
 	getField(name) {
-		return this.fields.find(f => f.name === name)
+		return this.fields.find((f) => f.name === name)
 	}
 
 	/**
@@ -122,14 +116,20 @@ export default class UIForm extends FormMessage {
 			const fieldValue = this.state[field.name]
 
 			// Required validation based on field definition or schema
-			if (field.required && (fieldValue === '' || fieldValue === null || fieldValue === undefined)) {
+			if (
+				field.required &&
+				(fieldValue === '' || fieldValue === null || fieldValue === undefined)
+			) {
 				errors.set(field.name, 'This field is required')
 				isValid = false
 				return
 			}
 
 			// Validation via schema (if provided) or field type
-			const { isValid: fieldValid, errors: fieldErrors } = this.validateField(field.name, fieldValue)
+			const { isValid: fieldValid, errors: fieldErrors } = this.validateField(
+				field.name,
+				fieldValue,
+			)
 
 			if (!fieldValid) {
 				for (const [key, err] of Object.entries(fieldErrors)) {
@@ -241,9 +241,9 @@ export default class UIForm extends FormMessage {
 		return {
 			time: new Date(this.time).toISOString(),
 			title: this.title,
-			fields: this.fields.map(f => f.toJSON ? f.toJSON() : f),
+			fields: this.fields.map((f) => (f.toJSON ? f.toJSON() : f)),
 			state: this.state,
-			meta: this.meta
+			meta: this.meta,
 		}
 	}
 
@@ -257,19 +257,21 @@ export default class UIForm extends FormMessage {
 			const Class = input.constructor
 			const fields = []
 			for (const [name, value] of Object.entries(input)) {
-				fields.push(new FormInput({
-					name,
-					label: Class[name]?.label ?? Class[`${name}Label`] ?? name,
-					type: Class[name]?.type ?? Class[`${name}Type`] ?? typeof value,
-					required: Class[name]?.required ?? Class[`${name}Required`] ?? false,
-					placeholder: Class[name]?.placeholder ?? Class[`${name}Placeholder`] ?? "",
-					defaultValue: Class[name]?.defaultValue ?? Class[`${name}Default`] ?? "",
-					validation: Class[name]?.validation ?? Class[`${name}Validation`] ?? (() => true),
-				}))
+				fields.push(
+					new FormInput({
+						name,
+						label: Class[name]?.label ?? Class[`${name}Label`] ?? name,
+						type: Class[name]?.type ?? Class[`${name}Type`] ?? typeof value,
+						required: Class[name]?.required ?? Class[`${name}Required`] ?? false,
+						placeholder: Class[name]?.placeholder ?? Class[`${name}Placeholder`] ?? '',
+						defaultValue: Class[name]?.defaultValue ?? Class[`${name}Default`] ?? '',
+						validation: Class[name]?.validation ?? Class[`${name}Validation`] ?? (() => true),
+					}),
+				)
 			}
 			return new UIForm({
 				title: Class.name,
-				fields
+				fields,
 			})
 		}
 		return new UIForm(input)
@@ -298,10 +300,10 @@ export default class UIForm extends FormMessage {
 				label,
 				type: custom.type ?? FormInput.TYPES.TEXT,
 				required: !!custom.required,
-				placeholder: custom.placeholder ?? "",
+				placeholder: custom.placeholder ?? '',
 				options: custom.options ?? [],
 				validation: custom.validation ?? undefined,
-				defaultValue: custom.defaultValue ?? "",
+				defaultValue: custom.defaultValue ?? '',
 			})
 		})
 		return new UIForm({ fields })

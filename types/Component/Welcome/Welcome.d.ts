@@ -10,4 +10,4 @@ declare namespace Welcome {
     export { WelcomeInput as Input };
     export function ask(): Promise<string>;
 }
-import WelcomeInput from "./Input.js";
+import WelcomeInput from './Input.js';

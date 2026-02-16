@@ -1,6 +1,6 @@
 export default class CancelError extends Error {
-	constructor(message = "Operation cancelled by user") {
+	constructor(message = 'Operation cancelled by user') {
 		super(message)
-		this.name = "CancelError"
+		this.name = 'CancelError'
 	}
 }

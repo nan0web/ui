@@ -1,35 +1,24 @@
-import Frame from "./Frame/Frame.js"
-import Locale from "./Locale.js"
-import StdIn from "./StdIn.js"
-import StdOut from "./StdOut.js"
-import View from "./View/View.js"
-import RenderOptions from "./View/RenderOptions.js"
-import FrameProps from "./Frame/Props.js"
-import Model from "./Model/index.js"
-import Component from "./Component/index.js"
-import App from "./App/index.js"
+import Frame from './Frame/Frame.js'
+import Locale from './Locale.js'
+import StdIn from './StdIn.js'
+import StdOut from './StdOut.js'
+import View from './View/View.js'
+import RenderOptions from './View/RenderOptions.js'
+import FrameProps from './Frame/Props.js'
+import Model from './Model/index.js'
+import Component from './Component/index.js'
+import App from './App/index.js'
 
-export {
-	Frame,
-	FrameProps,
-	Locale,
-	StdIn,
-	StdOut,
-	View,
-	RenderOptions,
-	Model,
-	Component,
-	App,
-}
+export { Frame, FrameProps, Locale, StdIn, StdOut, View, RenderOptions, Model, Component, App }
 
 // export default App
-export { default as FormMessage } from "./core/Form/Message.js"
-export { default as FormInput } from "./core/Form/Input.js"
-export { default as InputAdapter } from "./core/InputAdapter.js"
-export { default as OutputAdapter } from "./core/OutputAdapter.js"
-export { default as OutputMessage } from "./core/Message/OutputMessage.js"
-export { default as UiForm } from "./core/Form/Form.js"
-export { default as UiMessage } from "./core/Message/Message.js"
-export { default as UiStream } from "./core/Stream.js"
-export { default as Error, CancelError } from "./core/Error/index.js"
-export { default as UiAdapter } from "./core/UiAdapter.js"
+export { default as FormMessage } from './core/Form/Message.js'
+export { default as FormInput } from './core/Form/Input.js'
+export { default as InputAdapter } from './core/InputAdapter.js'
+export { default as OutputAdapter } from './core/OutputAdapter.js'
+export { default as OutputMessage } from './core/Message/OutputMessage.js'
+export { default as UiForm } from './core/Form/Form.js'
+export { default as UiMessage } from './core/Message/Message.js'
+export { default as UiStream } from './core/Stream.js'
+export { default as Error, CancelError } from './core/Error/index.js'
+export { default as UiAdapter } from './core/UiAdapter.js'

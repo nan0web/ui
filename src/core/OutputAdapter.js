@@ -16,7 +16,7 @@ class OutputAdapter extends Event {
 	 * @throws {Error} If not overridden by a subclass.
 	 */
 	render(message) {
-		throw new Error("render() must be implemented by subclass")
+		throw new Error('render() must be implemented by subclass')
 	}
 
 	/**
@@ -27,14 +27,16 @@ class OutputAdapter extends Event {
 	 * @returns {void}
 	 */
 	progress(progress, metadata = {}) {
-		this.render(OutputMessage.from({
-			content: [],
-			metadata: {
-				...metadata,
-				progress,
-				elementType: "progress"
-			}
-		}))
+		this.render(
+			OutputMessage.from({
+				content: [],
+				metadata: {
+					...metadata,
+					progress,
+					elementType: 'progress',
+				},
+			}),
+		)
 	}
 
 	/**

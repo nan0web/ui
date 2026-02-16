@@ -1,15 +1,13 @@
-import UiMessage from "../../core/Message/Message.js"
+import UiMessage from '../../core/Message/Message.js'
 
 class DepsCommandBody {
 	fix = false
 	static fix = {
-		help: "Fix dependencies",
-		defaultValue: false
+		help: 'Fix dependencies',
+		defaultValue: false,
 	}
 	constructor(input = {}) {
-		const {
-			fix = this.fix
-		} = input
+		const { fix = this.fix } = input
 	}
 }
 
@@ -18,9 +16,7 @@ export class DepsCommand extends UiMessage {
 	/** @type {DepsCommandBody} */
 	body
 	constructor(input = {}) {
-		const {
-			body = new DepsCommandBody()
-		} = UiMessage.parseBody(input, DepsCommandBody)
+		const { body = new DepsCommandBody() } = UiMessage.parseBody(input, DepsCommandBody)
 		super(input)
 		this.body = body
 	}

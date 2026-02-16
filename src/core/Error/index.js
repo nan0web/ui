@@ -1,9 +1,7 @@
-import CancelError from "./CancelError.js"
+import CancelError from './CancelError.js'
 
-export {
-	CancelError
-}
+export { CancelError }
 
 export default {
-	CancelError
+	CancelError,
 }

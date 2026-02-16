@@ -1,7 +1,7 @@
-import { Message } from "@nan0web/co"
-import View from "../../View/View.js"
-import CoreApp from "./CoreApp.js"
-import Widget from "./Widget.js"
+import { Message } from '@nan0web/co'
+import View from '../../View/View.js'
+import CoreApp from './CoreApp.js'
+import Widget from './Widget.js'
 
 /** @typedef {import("../../View/View.js").ComponentFn} ComponentFn */
 
@@ -31,7 +31,7 @@ export default class UI extends Widget {
 	 * @throws {Error} Always thrown as this method must be implemented by subclasses
 	 */
 	convertInput(rawInput) {
-		throw new Error("convertInput must be implemented by subclass")
+		throw new Error('convertInput must be implemented by subclass')
 	}
 
 	/**
@@ -43,16 +43,12 @@ export default class UI extends Widget {
 		const onStart = () => {
 			// this.view.render(UIProcess)
 		}
-		const onData = () => {
+		const onData = () => {}
+		const onEnd = () => {}
 
-		}
-		const onEnd = () => {
-
-		}
-
-		this.on("start", onStart)
-		this.on("data", onData)
-		this.on("end", onEnd)
+		this.on('start', onStart)
+		this.on('data', onData)
+		this.on('end', onEnd)
 	}
 
 	/**
@@ -60,7 +56,7 @@ export default class UI extends Widget {
 	 * @param {any[]} results - Results to output
 	 */
 	output(results) {
-		results.forEach(result => {
+		results.forEach((result) => {
 			this.view.info(JSON.stringify(result))
 		})
 	}

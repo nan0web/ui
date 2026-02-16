@@ -32,7 +32,7 @@ export default class UI extends Widget {
     output(results: any[]): void;
 }
 export type ComponentFn = import("../../View/View.js").ComponentFn;
-import Widget from "./Widget.js";
-import CoreApp from "./CoreApp.js";
-import { Message } from "@nan0web/co";
-import View from "../../View/View.js";
+import Widget from './Widget.js';
+import CoreApp from './CoreApp.js';
+import { Message } from '@nan0web/co';
+import View from '../../View/View.js';

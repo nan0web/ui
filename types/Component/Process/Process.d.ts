@@ -9,5 +9,5 @@ declare function Process(this: View, props?: ProcessInput | object): string[][];
 declare namespace Process {
     export { ProcessInput as Input };
 }
-import ProcessInput from "./Input.js";
-import View from "../../View/View.js";
+import ProcessInput from './Input.js';
+import View from '../../View/View.js';

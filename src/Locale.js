@@ -1,4 +1,4 @@
-import { typeOf, notEmpty } from "@nan0web/types"
+import { typeOf, notEmpty } from '@nan0web/types'
 
 /**
  * Handles locale-specific formatting for different data types.
@@ -42,14 +42,14 @@ export default class Locale {
 	 */
 	constructor(props = {}) {
 		const {
-			lang = "",
-			collate = "",
-			ctype = "",
-			messages = "",
-			monetary = "",
-			numeric = "",
-			time = "",
-			all = "uk_UA.UTF-8",
+			lang = '',
+			collate = '',
+			ctype = '',
+			messages = '',
+			monetary = '',
+			numeric = '',
+			time = '',
+			all = 'uk_UA.UTF-8',
 		} = props
 		this.lang = lang
 		this.collate = collate
@@ -70,9 +70,9 @@ export default class Locale {
 	format(type, options) {
 		if (Number === type || typeOf(Number)(type)) {
 			/**
-				* new (locales?: LocalesArgument, options?: NumberFormatOptions): NumberFormat;
-				* (locales?: LocalesArgument, options?: NumberFormatOptions): NumberFormat;
-				* supportedLocalesOf(locales: LocalesArgument, options?: NumberFormatOptions): string[];
+			 * new (locales?: LocalesArgument, options?: NumberFormatOptions): NumberFormat;
+			 * (locales?: LocalesArgument, options?: NumberFormatOptions): NumberFormat;
+			 * supportedLocalesOf(locales: LocalesArgument, options?: NumberFormatOptions): string[];
 			 */
 			/**
 			 * localeMatcher?: "lookup" | "best fit" | undefined;
@@ -85,18 +85,18 @@ export default class Locale {
 			 * maximumFractionDigits?: number | undefined;
 			 * minimumSignificantDigits?: number | undefined;
 			 * maximumSignificantDigits?: number | undefined;
-			*/
+			 */
 			const locales = [this.numeric, this.all, this.lang].filter(notEmpty)
 			return (value) => {
 				return new Intl.NumberFormat(locales, options).format(value)
 			}
 		}
-		if ("string" === typeof type) {
+		if ('string' === typeof type) {
 			const locales = [this.monetary, this.numeric, this.all, this.lang].filter(notEmpty)
 			return (value) => {
 				return new Intl.NumberFormat(locales, {
-					style: "currency",
-					currency: type === "currency" ? options.currency : type,
+					style: 'currency',
+					currency: type === 'currency' ? options.currency : type,
 					...options,
 				}).format(value)
 			}
@@ -110,10 +110,9 @@ export default class Locale {
 	 */
 	static from(input) {
 		if (input instanceof Locale) return input
-		if ("string" === typeof input) {
+		if ('string' === typeof input) {
 			return new Locale({ all: input })
 		}
 		return new Locale(input)
 	}
 }
-

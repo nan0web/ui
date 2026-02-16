@@ -1,10 +1,10 @@
-import { empty, equal, typeOf } from "@nan0web/types"
-import Frame, { FrameRenderMethod } from "../Frame/Frame.js"
-import Locale from "../Locale.js"
-import StdOut from "../StdOut.js"
-import StdIn from "../StdIn.js"
-import RenderOptions from "./RenderOptions.js"
-import UiMessage from "../core/Message/Message.js"
+import { empty, equal, typeOf } from '@nan0web/types'
+import Frame, { FrameRenderMethod } from '../Frame/Frame.js'
+import Locale from '../Locale.js'
+import StdOut from '../StdOut.js'
+import StdIn from '../StdIn.js'
+import RenderOptions from './RenderOptions.js'
+import UiMessage from '../core/Message/Message.js'
 
 /**
  * @typedef {Object} ComponentFn
@@ -54,7 +54,7 @@ export default class View {
 			stdout = new StdOut(),
 			startedAt = Date.now(),
 			frame = new Frame(),
-			locale = Locale.from("uk-UA"),
+			locale = Locale.from('uk-UA'),
 			vocab = new Map(),
 			windowSize = [0, 0],
 			components = new Map(),
@@ -103,14 +103,18 @@ export default class View {
 		const [width, height] = this.getWindowSize()
 		options = this.RenderOptions.from({
 			...options,
-			renderMethod: this.renderMethod, width, height,
+			renderMethod: this.renderMethod,
+			width,
+			height,
 			// @ts-ignore
 		})
-		const renderFn = "function" === typeof shouldRender // no errors.
-			// const renderFn = typeOf(Function)(shouldRender) // Property 'bind' does not exist on type 'number | boolean | Function'.
-			? shouldRender.bind(this) : "string" === typeof shouldRender
-				? this.components.get(shouldRender)?.bind(this)
-				: null
+		const renderFn =
+			'function' === typeof shouldRender // no errors.
+				? // const renderFn = typeOf(Function)(shouldRender) // Property 'bind' does not exist on type 'number | boolean | Function'.
+					shouldRender.bind(this)
+				: 'string' === typeof shouldRender
+					? this.components.get(shouldRender)?.bind(this)
+					: null
 
 		return (value, ...args) => {
 			if (renderFn) {
@@ -137,7 +141,7 @@ export default class View {
 			let frame = Frame.from({ ...options, value })
 			frame = View.fixFrame(frame, options)
 			let clearFrame = false
-			if (String(frame.value[0] ?? "") === Frame.BOF) {
+			if (String(frame.value[0] ?? '') === Frame.BOF) {
 				frame.value = frame.value.slice(1)
 				clearFrame = true
 			}
@@ -179,9 +183,9 @@ export default class View {
 
 	t(value) {
 		if (typeOf(Array)(value)) {
-			value = value.map(row => {
+			value = value.map((row) => {
 				if (typeOf(Array)(row)) {
-					return row.map(col => {
+					return row.map((col) => {
 						return this.vocab.has(col) ? this.vocab.get(col) : col
 					})
 				}
@@ -193,31 +197,32 @@ export default class View {
 	}
 
 	debug(...args) {
-		return this.render(1)(
-			[StdOut.STYLES.dim,
-				"Debug: ", args.join(" "), Frame.EOL, StdOut.RESET],
-		)
+		return this.render(1)([StdOut.STYLES.dim, 'Debug: ', args.join(' '), Frame.EOL, StdOut.RESET])
 	}
 
 	info(...args) {
-		return this.render(1)(
-			[StdOut.COLORS.green,
-				"Info : ", args.join(" "), Frame.EOL, StdOut.RESET],
-		)
+		return this.render(1)([StdOut.COLORS.green, 'Info : ', args.join(' '), Frame.EOL, StdOut.RESET])
 	}
 
 	warn(...args) {
-		return this.render(1)(
-			[StdOut.COLORS.yellow,
-				"Warn : ", args.join(" "), Frame.EOL, StdOut.RESET],
-		)
+		return this.render(1)([
+			StdOut.COLORS.yellow,
+			'Warn : ',
+			args.join(' '),
+			Frame.EOL,
+			StdOut.RESET,
+		])
 	}
 
 	error(...args) {
-		return this.render(1)(
-			[StdOut.COLORS.red, StdOut.STYLES.bold,
-				"Error: ", args.join(" "), Frame.EOL, StdOut.RESET],
-		)
+		return this.render(1)([
+			StdOut.COLORS.red,
+			StdOut.STYLES.bold,
+			'Error: ',
+			args.join(' '),
+			Frame.EOL,
+			StdOut.RESET,
+		])
 	}
 
 	/**
@@ -225,7 +230,7 @@ export default class View {
 	 * @param {ComponentFn} component
 	 */
 	register(name, component) {
-		if (undefined === component && "function" === typeof name) {
+		if (undefined === component && 'function' === typeof name) {
 			component = name
 			name = component.name
 		}
@@ -260,7 +265,7 @@ export default class View {
 	 * @returns {Promise<UiMessage | null>}
 	 */
 	async ask(input) {
-		const name = input.constructor.name.replace(/Input$/, "")
+		const name = input.constructor.name.replace(/Input$/, '')
 		const component = this.get(name)
 		if (component) {
 			return await component.ask.apply(this, [input])
@@ -285,5 +290,4 @@ export default class View {
 		// @todo add multiline visibility, for instance extended frame row into rows if it's wider than width.
 		return frame
 	}
-
 }

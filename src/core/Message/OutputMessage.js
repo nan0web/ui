@@ -1,4 +1,4 @@
-import UiMessage from "./Message.js"
+import UiMessage from './Message.js'
 
 /**
  * OutputMessage – message sent from the system to the UI.
@@ -11,7 +11,7 @@ export default class OutputMessage extends UiMessage {
 		LOW: 0,
 		NORMAL: 1,
 		HIGH: 2,
-		CRITICAL: 3
+		CRITICAL: 3,
 	}
 
 	/** @type {string[]} */
@@ -36,19 +36,19 @@ export default class OutputMessage extends UiMessage {
 			body = [],
 			meta = {},
 			error = null,
-			priority = OutputMessage.PRIORITY.NORMAL
+			priority = OutputMessage.PRIORITY.NORMAL,
 		} = input
 
-		const contentSource = 'body' in input ? body :
-			'content' in input ? content : []
+		const contentSource = 'body' in input ? body : 'content' in input ? content : []
 
-		this.body = Array.isArray(contentSource) ?
-			contentSource :
-			(contentSource ? [String(contentSource)] : [])
+		this.body = Array.isArray(contentSource)
+			? contentSource
+			: contentSource
+				? [String(contentSource)]
+				: []
 
 		this.meta = meta
-		this.error = error instanceof Error ? error :
-			error ? new Error(String(error)) : null
+		this.error = error instanceof Error ? error : error ? new Error(String(error)) : null
 		this.priority = Number(priority)
 
 		if (!this.type && this.error) {
@@ -91,7 +91,7 @@ export default class OutputMessage extends UiMessage {
 		let combinedError = this.error
 		let combinedPriority = this.priority
 
-		messages.forEach(msg => {
+		messages.forEach((msg) => {
 			if (msg instanceof OutputMessage) {
 				combinedContent.push(...msg.content)
 				combinedMeta = { ...combinedMeta, ...msg.meta }
@@ -105,7 +105,7 @@ export default class OutputMessage extends UiMessage {
 			meta: combinedMeta,
 			error: combinedError,
 			priority: combinedPriority,
-			type: this.type
+			type: this.type,
 		})
 	}
 
@@ -122,11 +122,13 @@ export default class OutputMessage extends UiMessage {
 			type: this.type,
 			id: this.id,
 			time: this.time.toISOString(),
-			error: this.error ? {
-				message: this.error.message,
-				stack: this.error.stack
-			} : null,
-			priority: this.priority
+			error: this.error
+				? {
+						message: this.error.message,
+						stack: this.error.stack,
+					}
+				: null,
+			priority: this.priority,
 		}
 	}
 

@@ -1,6 +1,6 @@
-import { Message } from "@nan0web/co"
-import { typeOf } from "@nan0web/types"
-import UI from "./UI.js"
+import { Message } from '@nan0web/co'
+import { typeOf } from '@nan0web/types'
+import UI from './UI.js'
 
 /** @typedef {Function} CommandFn */
 
@@ -29,11 +29,7 @@ export default class CoreApp {
 	 * @param {Message} [props.startCommand=new Message()] - Command line arguments to parse
 	 */
 	constructor(props = {}) {
-		const {
-			name = "CoreApp",
-			state = {},
-			startCommand = new Message(),
-		} = props
+		const { name = 'CoreApp', state = {}, startCommand = new Message() } = props
 		this.name = String(name)
 		this.state = state
 		this.commands = new Map()
@@ -48,7 +44,7 @@ export default class CoreApp {
 	 * @returns {object} Updated state
 	 */
 	set(state, value) {
-		if ("string" === typeof state) {
+		if ('string' === typeof state) {
 			this.state[state] = value
 		} else {
 			Object.assign(this.state, state)
@@ -64,7 +60,7 @@ export default class CoreApp {
 	 */
 	registerCommand(commandName, handler) {
 		if (!typeOf(Function)(handler)) {
-			throw new TypeError("Handler must be a function")
+			throw new TypeError('Handler must be a function')
 		}
 		this.commands.set(commandName, handler)
 	}
@@ -87,12 +83,17 @@ export default class CoreApp {
 	async processCommand(msg, ui) {
 		const handler = this.commands.get(msg.constructor.name)
 		if (!handler) {
-			throw new Error([
-				"Unknown command", ": ",
-				msg.constructor.name, "\n",
-				"Available commands", ": ",
-				[...this.commands.keys()].join(", "),
-			].join(""))
+			throw new Error(
+				[
+					'Unknown command',
+					': ',
+					msg.constructor.name,
+					'\n',
+					'Available commands',
+					': ',
+					[...this.commands.keys()].join(', '),
+				].join(''),
+			)
 		}
 		return await handler.apply(this, [msg, ui])
 	}
@@ -119,6 +120,6 @@ export default class CoreApp {
 	 * @throws {Error} Always thrown as this method must be implemented by subclasses
 	 */
 	async selectCommand(ui) {
-		throw new Error("Not implemented, must be implemented by subclass")
+		throw new Error('Not implemented, must be implemented by subclass')
 	}
 }

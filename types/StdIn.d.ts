@@ -55,8 +55,8 @@ export default class StdIn extends EventProcessor {
      */
     decode(message: UiMessage | string[] | any): UiMessage;
 }
-import EventProcessor from "@nan0web/event/oop";
-import { UiMessage } from "./core/index.js";
+import EventProcessor from '@nan0web/event/oop';
+import { UiMessage } from './core/index.js';
 declare class Processor extends EventProcessor {
 }
 export {};

@@ -16,6 +16,7 @@
  * @property {string} placeholder - Placeholder text.
  * @property {InputOptions} options - Select options (if type is 'select').
  * @property {Function} validation - Custom validation function.
+ * @property {string} mask - Mask pattern (e.g. '###-###').
  * @property {*} defaultValue - Default value.
  */
 export default class FormInput {
@@ -29,6 +30,13 @@ export default class FormInput {
         SELECT: string;
         CHECKBOX: string;
         TEXTAREA: string;
+        PASSWORD: string;
+        SECRET: string;
+        MASK: string;
+        CONFIRM: string;
+        TOGGLE: string;
+        MULTISELECT: string;
+        AUTOCOMPLETE: string;
     };
     /**
      * @param {*} input
@@ -46,6 +54,7 @@ export default class FormInput {
      * @param {string} [props.placeholder=''] - Placeholder.
      * @param {InputOptions} [props.options=[]] - Select options or async function to retrieve data with the search and page.
      * @param {Function} [props.validation] - Custom validation.
+     * @param {string} [props.mask=''] - Mask pattern.
      * @param {*} [props.defaultValue=null] - Default value.
      */
     constructor(props: {
@@ -56,6 +65,7 @@ export default class FormInput {
         placeholder?: string | undefined;
         options?: InputOptions | undefined;
         validation?: Function | undefined;
+        mask?: string | undefined;
         defaultValue?: any;
     });
     /** @type {string} */ name: string;
@@ -65,6 +75,7 @@ export default class FormInput {
     /** @type {string} */ placeholder: string;
     /** @type {InputOptions} */ options: InputOptions;
     /** @type {Function} */ validation: Function;
+    /** @type {string} */ mask: string;
     /** @type {*} */ defaultValue: any;
     requireValidType(): void;
     /**

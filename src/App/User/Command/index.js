@@ -1,4 +1,4 @@
-import CommandMessage from "./Message.js"
+import CommandMessage from './Message.js'
 
 export { CommandMessage }
 

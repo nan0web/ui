@@ -1,4 +1,4 @@
-import UiMessage from "../Message/Message.js"
+import UiMessage from '../Message/Message.js'
 
 /**
  * FormMessage – specialized UiMessage for forms.
@@ -15,10 +15,7 @@ export default class FormMessage extends UiMessage {
 	 */
 	constructor(input = {}) {
 		super(input)
-		const {
-			data = {},
-			schema = {},
-		} = input
+		const { data = {}, schema = {} } = input
 
 		// Store data and schema for easy access
 		this.data = data

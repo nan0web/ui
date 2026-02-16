@@ -74,4 +74,4 @@ declare class FrameProps extends ObjectWithAlias {
     /** @type {boolean} Strikethrough text flag */
     strikethrough: boolean;
 }
-import { ObjectWithAlias } from "@nan0web/types";
+import { ObjectWithAlias } from '@nan0web/types';

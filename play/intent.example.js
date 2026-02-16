@@ -1,5 +1,5 @@
-import Intent from "../src/core/Intent.js";
-import { CancelError } from "../src/core/Error/index.js";
+import Intent from '../src/core/Intent.js'
+import { CancelError } from '../src/core/Error/index.js'
 
 /**
  * Example: User expresses intent to log in.
@@ -9,24 +9,23 @@ import { CancelError } from "../src/core/Error/index.js";
 class LoginBody {
 	static username = {
 		required: true,
-		help: "Username",
+		help: 'Username',
 		pattern: /^[a-z0-9_]{3,20}$/,
-	};
+	}
 
 	static password = {
 		required: true,
-		help: "Password",
+		help: 'Password',
 		validate: (value) => {
-			if (value.length < 8) return "too short (min 8)";
-			if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value))
-				return "must include upper, lower, digit";
-			return true;
+			if (value.length < 8) return 'too short (min 8)'
+			if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) return 'must include upper, lower, digit'
+			return true
 		},
-	};
+	}
 }
 
 class LoginMessage {
-	static Body = LoginBody;
+	static Body = LoginBody
 
 	/**
 	 * @param {object} input
@@ -34,9 +33,9 @@ class LoginMessage {
 	 * @param {string} [input.password]
 	 */
 	constructor(input = {}) {
-		const { username = "", password = "" } = input;
-		this.username = String(username);
-		this.password = String(password);
+		const { username = '', password = '' } = input
+		this.username = String(username)
+		this.password = String(password)
 	}
 }
 
@@ -44,14 +43,14 @@ class LoginMessage {
 const intent = new Intent({
 	target: LoginMessage,
 	body: {
-		username: "al", // too short → error
-		password: "123", // invalid → error
+		username: 'al', // too short → error
+		password: '123', // invalid → error
 	},
-	context: { ip: "192.168.1.1" },
-});
+	context: { ip: '192.168.1.1' },
+})
 
-console.log("Intent ready?", intent.isReady()); // false
-console.log("Validation errors:", Object.fromEntries(intent.validateIntent()));
+console.log('Intent ready?', intent.isReady()) // false
+console.log('Validation errors:', Object.fromEntries(intent.validateIntent()))
 
 // --- Intent Handler ---
 /**
@@ -64,70 +63,70 @@ console.log("Validation errors:", Object.fromEntries(intent.validateIntent()));
  */
 async function handleIntent(intent, inputAdapter) {
 	if (intent.isReady()) {
-		return intent.execute();
+		return intent.execute()
 	}
 
-	const schema = intent.target.Body;
-	const completedBody = { ...intent.body };
-	const errors = intent.validateIntent();
+	const schema = intent.target.Body
+	const completedBody = { ...intent.body }
+	const errors = intent.validateIntent()
 
 	// Re-ask until all errors are fixed
 	for (const field of Object.keys(errors)) {
-		const schemaField = schema[field];
-		const prompt = schemaField.help + ": ";
+		const schemaField = schema[field]
+		const prompt = schemaField.help + ': '
 
 		while (true) {
-			const answer = await inputAdapter.ask(prompt);
+			const answer = await inputAdapter.ask(prompt)
 
 			if (answer.cancelled) {
-				throw new CancelError("User cancelled action");
+				throw new CancelError('User cancelled action')
 			}
 
-			completedBody[field] = answer.value;
+			completedBody[field] = answer.value
 
 			// Rebuild intent to revalidate
 			const tempIntent = new Intent({
 				...intent,
 				body: completedBody,
-			});
+			})
 
-			const newErrors = tempIntent.validateIntent();
-			if (!newErrors.has(field)) break; // valid → move to next
+			const newErrors = tempIntent.validateIntent()
+			if (!newErrors.has(field)) break // valid → move to next
 
-			const errorMsg = newErrors.get(field);
-			console.error(`❌ Invalid ${field}: ${errorMsg}`);
+			const errorMsg = newErrors.get(field)
+			console.error(`❌ Invalid ${field}: ${errorMsg}`)
 		}
 	}
 
-	const finalIntent = new Intent({ ...intent, body: completedBody });
-	return finalIntent.execute();
+	const finalIntent = new Intent({ ...intent, body: completedBody })
+	return finalIntent.execute()
 }
 
 // --- Test Adapter ---
 const mockInputAdapter = {
 	async ask(prompt) {
 		const fakeInput = {
-			"Username: ": "alice_wonder",
-			"Password: ": "Secret123",
-		};
-		const value = fakeInput[prompt] || "";
+			'Username: ': 'alice_wonder',
+			'Password: ': 'Secret123',
+		}
+		const value = fakeInput[prompt] || ''
 
 		return {
 			value,
-			cancelled: value === "",
-		};
+			cancelled: value === '',
+		}
 	},
-};
+}
 
 // --- Run ---
 handleIntent(intent, mockInputAdapter)
 	.then((result) => {
-		console.log("✅ Login successful as:", result.username);
+		console.log('✅ Login successful as:', result.username)
 	})
 	.catch((err) => {
 		if (err instanceof CancelError) {
-			console.log("🚫 Action cancelled.");
+			console.log('🚫 Action cancelled.')
 		} else {
-			console.error("💥 Error:", err);
+			console.error('💥 Error:', err)
 		}
-	});
+	})

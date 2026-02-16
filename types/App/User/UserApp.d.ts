@@ -34,8 +34,8 @@ export default class UserApp extends CoreApp {
     welcome(cmd: UserAppCommandMessage, ui: UserUI): Promise<string[][]>;
     user: User | undefined;
 }
-import CoreApp from "../Core/CoreApp.js";
-import DepsCommand from "./Command/Message.js";
-import UserUI from "./UserUI.js";
-import UserAppCommandMessage from "./Command/Message.js";
-import User from "../../Model/User/User.js";
+import CoreApp from '../Core/CoreApp.js';
+import DepsCommand from './Command/Message.js';
+import UserUI from './UserUI.js';
+import UserAppCommandMessage from './Command/Message.js';
+import User from '../../Model/User/User.js';

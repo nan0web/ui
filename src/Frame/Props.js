@@ -1,4 +1,4 @@
-import { typeOf, ObjectWithAlias } from "@nan0web/types"
+import { typeOf, ObjectWithAlias } from '@nan0web/types'
 
 /**
  * Represents default styling properties for Frame rendering.
@@ -7,7 +7,7 @@ import { typeOf, ObjectWithAlias } from "@nan0web/types"
  * If you want to apply different props to multiple values, you can use an object with the props.
  * If you want to apply props to a single value, you can use a string with the props in XML format.
  * Parser checks every atom for its beginning and end and if it's a tag, it applies the props to the value.
- * 
+ *
  * @example
  * const defaultProps = new FrameProps({
  * 	color: "red",
@@ -40,34 +40,34 @@ import { typeOf, ObjectWithAlias } from "@nan0web/types"
  * const defaultProps = new FrameProps(rows)
  */
 class FrameProps extends ObjectWithAlias {
-	/** 
+	/**
 	 * Property aliases for shorthand notation.
 	 * @type {Record<string, string>}
 	 */
 	static ALIAS = {
-		fg: "color",
-		bg: "bgColor",
-		b: "bold",
-		i: "italic",
-		u: "underline",
-		s: "strikethrough",
+		fg: 'color',
+		bg: 'bgColor',
+		b: 'bold',
+		i: 'italic',
+		u: 'underline',
+		s: 'strikethrough',
 	}
-	
+
 	/** @type {string} Text color */
-	color = ""
-	
+	color = ''
+
 	/** @type {string} Background color */
-	bgColor = ""
-	
+	bgColor = ''
+
 	/** @type {boolean} Bold text flag */
 	bold = false
-	
+
 	/** @type {boolean} Italic text flag */
 	italic = false
-	
+
 	/** @type {boolean} Underline text flag */
 	underline = false
-	
+
 	/** @type {boolean} Strikethrough text flag */
 	strikethrough = false
 
@@ -83,8 +83,8 @@ class FrameProps extends ObjectWithAlias {
 	constructor(props = {}) {
 		super()
 		const {
-			color = "",
-			bgColor = "",
+			color = '',
+			bgColor = '',
 			bold = false,
 			italic = false,
 			underline = false,

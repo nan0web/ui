@@ -1,5 +1,5 @@
-import ProcessInput from "./Input.js"
-import View from "../../View/View.js"
+import ProcessInput from './Input.js'
+import View from '../../View/View.js'
 
 /**
  * Renders a progress bar based on input configuration.
@@ -16,9 +16,7 @@ function Process(props = {}) {
 	// Provide empty options object to satisfy Locale.format signature
 	const format = this.locale.format(Number, {})
 	const num = format ? format(100 * per) : 100 * per
-	return [
-		[`I am ${input.name} ${bar} ${num}`]
-	]
+	return [[`I am ${input.name} ${bar} ${num}`]]
 }
 
 Process.Input = ProcessInput
