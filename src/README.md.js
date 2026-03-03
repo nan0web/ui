@@ -320,6 +320,10 @@ function testRender() {
 	 * - [App](./src/App/)
 	 * - [Models](./src/Model/)
 	 *
+	 * ## Project Architecture & Specs
+	 *
+	 * How the universal block spec is designed? - [check Universal Blocks Spec (`project.md`)](./project.md)
+	 *
 	 * ## Contributing
 	 */
 	it('How to contribute? - [check here](./CONTRIBUTING.md)', async () => {
