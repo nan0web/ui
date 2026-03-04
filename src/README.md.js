@@ -288,9 +288,29 @@ function testRender() {
 	 * - **NaN0 Spec** — a concise YAML-based shorthand for declaring component variations.
 	 * - **OlmuiInspector** — unified UI for exploring component models and props.
 	 * - **Live Preview** — real-time rendering of component states.
-	 * - **i18n UI** — fully localized interface for global developers.
+	 * - **i18n UI** — fully localized interface (UK/EN) for global developers.
+	 * - **Theme Editor** — Bootstrap-like CSS variable system with live preview.
 	 *
 	 * It follows the **Olmui** core pattern: *One Logic — Many UI* (same manifest powers both CLI and Web).
+	 *
+	 * #### Theme Editor (CSS Variables)
+	 *
+	 * Professional-grade theming with live preview. Supports:
+	 *
+	 * - **Palette**: primary, secondary, success, warning, danger, info
+	 * - **Geometry**: border-radius (sm/md/lg/pill/circle), spacing (sm/md/lg)
+	 * - **Type-safe inputs**: `type="color"` for colors, number inputs for dimensions
+	 *
+	 * #### Component Rendering Architecture
+	 *
+	 * The IDE handles data transformation between YAML models and web components:
+	 *
+	 * - **Table**: `rows[][] + columns[]` → `data[]` (array of objects)
+	 * - **Tree**: `data` → `items` mapping with 4-level taxonomy
+	 * - **Markdown**: Raw markdown → HTML via `_md2html()` converter
+	 * - **ProgressBar**: Tag alias (`ui-progress-bar` → `ui-progress`), variant colors
+	 * - **LangSelect**: `string[]` → `{code,title}[]` conversion
+	 * - **Hyphenated props**: Auto `camelCase` conversion (`show-label` → `showLabel`)
 	 *
 	 * #### NaN0 Spec (YAML)
 	 *
@@ -305,6 +325,27 @@ function testRender() {
 		 * ```
 		 */
 		assert.ok(pkg.name === '@nan0web/ui')
+	})
+
+	/**
+	 * @docs
+	 * #### Documentation Site
+	 *
+	 * The IDE includes an auto-generated documentation site.
+	 * HTML pages are generated from `ide.html` template via `generate-pages.js`:
+	 *
+	 * - Per-language pages (`/uk/Data/Table.html`, `/en/Feedback/Alert.html`)
+	 * - SEO-optimized with `<title>` and `<meta>` per component
+	 * - Category-based URL routing (`/Data/`, `/Feedback/`, `/Forms/`, `/Actions/`, `/System/`)
+	 * - i18n navbar with `data-i18n` attributes
+	 */
+	it('How to run the documentation site?', () => {
+		/**
+		 * ```bash
+		 * npm run docs:dev
+		 * ```
+		 */
+		assert.ok(pkg.scripts?.['docs:dev'])
 	})
 
 	/**

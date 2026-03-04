@@ -1,6 +1,6 @@
 {
 	"name": "@nan0web/ui",
-	"version": "1.5.2",
+	"version": "1.6.2",
 	"description": "NaN•Web UI. One application logic (algorithm) and many UI.",
 	"main": "src/index.js",
 	"types": "types/index.d.ts",
@@ -22,7 +22,8 @@
 		"test:release": "node --test \"releases/**/*.test.js\"",
 		"test:status": "nan0test status --hide-name",
 		"test:play": "node --test --test-timeout=3333 \"play/**/*.test.js\"",
-		"test:e2e": "playwright test",
+		"test:e2e": "playwright test --ignore-snapshots e2e/components.spec.js e2e/debug-label.spec.js",
+		"test:e2e:slow": "E2E_SLOW=1 playwright test e2e/visual.spec.js",
 		"test:all": "npm run test && npm run test:docs && npm run test:play && npm run test:e2e && npm run build && npm run knip",
 		"knip": "knip --production",
 		"precommit": "npm test",

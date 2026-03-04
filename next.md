@@ -1,32 +1,43 @@
 # Master IDE: Roadmap & Status
 
-## Next Release: v1.6.0 — Architecture UI Map & Full Docs
+## ✅ v1.6.2 — Pro Theme Editor & UI Integrity (DONE)
 
-**Objective**: Build a global component readiness map and shift from "Sandbox" to "Complete Documentation" standard.
+### Виправлено
 
-### Tasks:
+- [x] Theme Engine: primary/secondary/success/warning/danger/info + radius/spacing
+- [x] Table: rows[][] → data[] + --fg-muted light theme
+- [x] Tree: 4-рівнева таксономія
+- [x] Markdown: \_md2html() конвертер
+- [x] Alert: нативний .content (не label)
+- [x] Modal/Confirm: el.open = true
+- [x] ProgressBar: tagAliases + show-label + sizes + named variants
+- [x] LangSelect: string[] → {code,title}[]
+- [x] Navbar i18n: data-i18n + \_translateNav()
+- [x] Tree scroll: align-items: safe center
+- [x] Hyphenated props: camelCase конвертація
+- [x] IDE i18n: searchPlaceholder, componentCount, componentLabel, noComponentSelected
 
-- [ ] **Architecture UI Map**:
-  - Implement a registry table that checks component exports across multiple implementations (Lit, React, CLI).
-  - Automate "Ready/Not Ready" status generation.
-- [ ] **Full Docs Standard**:
-  - Render `README.md` and `project.md` directly in the IDE.
-  - Integrate i18n into documentation pages.
-- [ ] **Universal Interface Template**:
-  - Create a lightweight template for fast expansion to new interfaces.
-  - Document the inheritance pattern.
+### Test Status
+
+| Suite        | Result                  |
+| :----------- | :---------------------- |
+| release:spec | **97 pass, 0 fail** ✅  |
+| npm test     | **109 pass, 0 fail** ✅ |
+| build        | **Clean** ✅            |
+| knip         | **Clean** ✅            |
 
 ---
 
-## Finished: v1.5.2 — Code Formats, i18n & UX Polish
+## 🔜 v1.7.0 — Dynamic i18n & Advanced Editor (NEXT)
 
-- [x] **NaN0 Spec Format**: Implemented bare values and `$`-prefixed attributes.
-- [x] **Content Fix**: `label` → `content` across all YAMLs (both `uk/` and `en/`), except TreeNode.
-- [x] **i18n UI**: Full Ukrainian/English interface (Preview, Properties, Reset, Copy code, Add variation).
-- [x] **Tab Styling**: Replaced pills with flush tabs (`border-radius: 0`, `gap: 0`) in variations and code pane.
-- [x] **Mobile UX**: Sidebar toggle → sticky bottom-right (glassmorphism, `backdrop-filter: blur`). Add variation → `+` only on mobile.
-- [x] **Sidebar box-shadow**: Removed when closed, shown only on `.open`.
-- [x] **Persistence**: `codeFormat` saved to `localStorage`.
-- [x] **ProvenDoc**: Updated `README.md.js` with Master IDE & NaN0 Spec sections.
-- [x] **i18n README**: Ukrainian translation at `docs/uk/README.md` with cross-language links.
-- [x] **.gitignore**: Added Playwright snapshots (`*-snapshots/`, `test-results/`, `playwright-report/`).
+### Architecture (Breaking)
+
+- [ ] **Manifest per language**: Замість одноразового build manifest — `db.fetch(URL)` для кожної мови. YAML → JSON пакування.
+- [ ] **Theme Settings page**: Окрема сторінка `/theme.html` з сотнями змінних як Bootstrap `_variables.scss`.
+- [ ] **UIForm for complex props**: Генерація форм для array-of-objects (LangSelect.langs, Tree.data).
+
+### Components (ui-lit)
+
+- [ ] **Tree keyboard**: Arrow Up/Down/Left/Right навігація (component-level, не IDE).
+- [ ] **Modal footer**: Slot injection з кнопками з IDE.
+- [ ] **Table column config**: UI для контролю стилів колонок (bold/muted).

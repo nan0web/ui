@@ -23,10 +23,19 @@ me.md
 
 # Temporary
 /apps/
-.agent/
+.agent
 
 # Playwright
 *-snapshots/
 test-results/
 playwright-report/
 blob-report/
+
+# Generated docs pages (from generate-pages.js)
+docs/site/uk/
+docs/site/en/
+docs/site/Actions/
+docs/site/Data/
+docs/site/Feedback/
+docs/site/Forms/
+docs/site/System/

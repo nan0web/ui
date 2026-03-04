@@ -16,6 +16,7 @@ export class MasterIDE extends LitElement {
 		codeFormat: { type: String },
 		lang: { type: String },
 		sidebarOpen: { type: Boolean },
+		docsContent: { type: String },
 	}
 
 	static styles = css`
@@ -248,8 +249,8 @@ export class MasterIDE extends LitElement {
 		.preview-area {
 			flex: 1;
 			display: flex;
-			align-items: center;
-			justify-content: center;
+			align-items: safe center;
+			justify-content: safe center;
 			padding: 32px;
 			overflow: auto;
 		}
@@ -614,6 +615,60 @@ export class MasterIDE extends LitElement {
 				display: none;
 			}
 		}
+		/* UX Fixes */
+		:host(.theme-light) .preview-canvas {
+			background: #fdfdfd;
+		}
+		ui-toggle {
+			border: 0 !important;
+		}
+		ui-toggle::part(switch) {
+			border: 1px solid var(--ide-border-bright);
+			border-radius: 99px;
+		}
+
+		ui-lang-select {
+			min-width: 140px;
+			margin-left: 10px;
+		}
+
+		/* Theme Editor */
+		.theme-editor {
+			margin-top: auto;
+			padding: 16px 12px;
+			border-top: 1px solid var(--ide-border);
+			background: var(--ide-surface);
+		}
+		.theme-title {
+			font-size: 0.65rem;
+			font-weight: 700;
+			text-transform: uppercase;
+			color: var(--ide-text-muted);
+			margin-bottom: 12px;
+		}
+		.theme-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 8px;
+			margin-bottom: 8px;
+			font-size: 0.75rem;
+		}
+		.theme-input {
+			width: 60px;
+			height: 24px;
+			border: 1px solid var(--ide-border-bright);
+			border-radius: 4px;
+			background: var(--ide-bg);
+			color: var(--ide-text);
+			padding: 0 4px;
+		}
+		.theme-color-preview {
+			width: 16px;
+			height: 16px;
+			border-radius: 3px;
+			border: 1px solid var(--ide-border-bright);
+		}
 
 		/* ── Modal ───────────────────────────────── */
 		.modal-overlay {
@@ -738,6 +793,7 @@ export class MasterIDE extends LitElement {
 			--ba-surface: var(--ide-surface-2);
 			--fg: var(--ide-text);
 			--fg-dim: var(--ide-text-muted);
+			--fg-muted: var(--ide-text-muted);
 			--border: var(--ide-border-bright);
 			--co-text: var(--ide-text);
 			--co: var(--ide-accent);
@@ -751,7 +807,7 @@ export class MasterIDE extends LitElement {
 	/** i18n translations for IDE UI labels */
 	static _i18n = {
 		uk: {
-			preview: 'Попередній перегляд',
+			preview: 'Прев’ю',
 			properties: 'Властивості',
 			reset: 'Скинути',
 			resetIde: 'Скинути IDE',
@@ -760,6 +816,16 @@ export class MasterIDE extends LitElement {
 			copyCode: 'Копіювати код',
 			addVariation: 'Додати варіацію',
 			selectComponent: 'Оберіть компонент',
+			docs: 'Документація',
+			map: 'Карта інтерфейсів',
+			modalTriggerDesc: 'Натисніть кнопку, щоб побачити вікно',
+			themeSettings: 'Налаштування теми (CSS)',
+			openModal: 'Відкрити модальне вікно',
+			openConfirm: 'Відкрити підтвердження',
+			searchPlaceholder: 'Пошук компонентів...',
+			componentCount: 'компонентів',
+			componentLabel: 'Компонент',
+			noComponentSelected: 'Компонент не обрано',
 		},
 		en: {
 			preview: 'Preview',
@@ -771,6 +837,19 @@ export class MasterIDE extends LitElement {
 			copyCode: 'Copy code',
 			addVariation: 'Add variation',
 			selectComponent: 'Select a component',
+			docs: 'Documentation',
+			map: 'Interface Map',
+			docsLoading: 'Loading documentation...',
+			docsNotFound: 'Documentation not found',
+			open: 'Open',
+			modalTriggerDesc: 'Click the button to open the modal',
+			themeSettings: 'Theme Settings (CSS)',
+			openModal: 'Open Modal',
+			openConfirm: 'Open Confirm',
+			searchPlaceholder: 'Search components...',
+			componentCount: 'components',
+			componentLabel: 'Component',
+			noComponentSelected: 'No component selected',
 		},
 	}
 
@@ -787,10 +866,29 @@ export class MasterIDE extends LitElement {
 		this.activeComponent = 'Alert'
 		this.activeVariant = null
 		this.editableProps = {}
+		this.cssVars = {
+			'--ui-primary': '#0d6efd',
+			'--ui-secondary': '#6c757d',
+			'--ui-success': '#198754',
+			'--ui-info': '#0dcaf0',
+			'--ui-warning': '#ffc107',
+			'--ui-danger': '#dc3545',
+			'--ui-light': '#f8f9fa',
+			'--ui-dark': '#212529',
+			'--ui-radius-sm': '0.2rem',
+			'--ui-radius-md': '0.375rem',
+			'--ui-radius-lg': '0.5rem',
+			'--ui-radius-pill': '50rem',
+			'--ui-radius-circle': '50%',
+			'--ui-space-sm': '0.5rem',
+			'--ui-space-md': '1rem',
+			'--ui-space-lg': '1.5rem',
+		}
 		this.searchQuery = ''
 		this.theme = localStorage.getItem('ui-theme') || 'auto'
 		this.codeFormat = localStorage.getItem('ui-code-format') || 'html'
 		this.lang = 'uk'
+		this.docsContent = ''
 		this.sidebarOpen = false
 		const savedSections = localStorage.getItem('ui-open-sections')
 		this._openSections = new Set(savedSections ? JSON.parse(savedSections) : ['Core'])
@@ -858,10 +956,32 @@ export class MasterIDE extends LitElement {
 					}
 				}
 			}
+
+			// Auto-select first component if no URL match found (e.g. /ide.html)
+			if (!match) {
+				this._autoSelectFirst()
+			}
 		}
 		this._syncProps()
 		this._restoreVariationsForActive()
 		this._scrollToActive()
+	}
+
+	/** Auto-select the first component from the manifest (for /ide.html without specific component) */
+	_autoSelectFirst() {
+		for (const [app, manifest] of Object.entries(this.components)) {
+			const firstComponent = Object.keys(manifest)[0]
+			if (firstComponent) {
+				this.activeApp = app
+				this.activeComponent = firstComponent
+				this.activeVariant = null
+				if (!this._openSections.has(app)) {
+					this._openSections.add(app)
+					localStorage.setItem('ui-open-sections', JSON.stringify([...this._openSections]))
+				}
+				return
+			}
+		}
 	}
 
 	_toggleSection(app) {
@@ -1137,7 +1257,7 @@ export class MasterIDE extends LitElement {
 
 			// $-prefixed props — bare values, no quotes
 			for (const [k, v] of propsWithoutContent) {
-				const val = typeof v === 'boolean' || typeof v === 'number' ? v : v
+				const val = typeof v === 'object' ? JSON.stringify(v) : v
 				res += `  \$${k}: ${val}\n`
 			}
 			return res.trimEnd()
@@ -1159,8 +1279,156 @@ export class MasterIDE extends LitElement {
 	}
 
 	_copyCode(code) {
-		navigator.clipboard.writeText(code)
-		alert('Код скопійовано!')
+		navigator.clipboard?.writeText(code)
+	}
+
+	/** Load markdown documentation for the package with language support */
+	async _loadDocs() {
+		const lang = this.lang === 'en' ? 'en' : 'uk'
+		// Supported doc paths: docs/uk/README.md, docs/en/README.md, README.md (fallback)
+		// Static files served from Vite public/ directory
+		const paths = lang === 'uk' ? ['docs-readme-uk.md', 'docs-readme.md'] : ['docs-readme.md']
+
+		for (const docPath of paths) {
+			try {
+				const resp = await fetch(docPath)
+				if (resp.ok && !resp.headers.get('content-type')?.includes('html')) {
+					const text = await resp.text()
+					this.docsContent = text
+					return
+				}
+			} catch {
+				/* try next path */
+			}
+		}
+		this.docsContent = this._t('docsNotFound')
+	}
+
+	/** Render the docs pane content */
+	_renderDocs() {
+		if (!this.docsContent) {
+			return html`<div style="color: var(--ide-text-muted); padding: 16px; font-size: 0.85rem;">
+				${this._t('docsLoading')}
+			</div>`
+		}
+		return html`<div class="docs-pane">
+			<pre
+				style="white-space: pre-wrap; word-break: break-word; font-family: inherit; font-size: 0.85rem; line-height: 1.65; padding: 20px; margin: 0; color: var(--ide-text);"
+			>
+${this.docsContent}</pre
+			>
+		</div>`
+	}
+
+	_renderThemeEditor() {
+		const varEntries = Object.entries(this.cssVars)
+		const colors = varEntries.filter(([k]) => !k.includes('radius') && !k.includes('space'))
+		const sizes = varEntries.filter(([k]) => k.includes('radius') || k.includes('space'))
+
+		const renderRow = ([key, val]) => {
+			const type = val.startsWith('#') ? 'color' : 'text'
+			return html`
+				<div
+					class="prop-group"
+					style="margin-bottom: 12px; display: grid; grid-template-columns: 1fr 140px; align-items: center; gap: 16px;"
+				>
+					<div
+						class="prop-label"
+						style="margin-bottom: 0; font-family: monospace; font-size: 0.7rem;"
+					>
+						${key}
+					</div>
+					<div style="display: flex; gap: 8px; align-items: center;">
+						${type === 'color'
+							? html`<div
+									style="width:16px; height:16px; border-radius:3px; background: ${val}; flex-shrink: 0; border: 1px solid var(--ide-border-bright);"
+								></div>`
+							: ''}
+						<input
+							class="prop-input"
+							type="${type}"
+							.value=${val}
+							@input=${(e) => {
+								this.cssVars = { ...this.cssVars, [key]: e.target.value }
+								this.requestUpdate()
+							}}
+							style="flex: 1; height: 28px; padding: 2px 6px;"
+						/>
+					</div>
+				</div>
+			`
+		}
+
+		const styleStr = Object.entries(this.cssVars)
+			.map(([k, v]) => `${k}:${v}`)
+			.join(';')
+
+		return html`
+			<div
+				class="theme-page"
+				style="padding: 32px; max-width: 800px; overflow-y: auto; height: 100%; ${styleStr}"
+			>
+				<h2 style="margin-bottom: 32px;">${this._t('themeSettings')}</h2>
+
+				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px;">
+					<div>
+						<h3
+							style="font-size: 0.75rem; text-transform: uppercase; color: var(--ide-text-muted); margin-bottom: 16px; border-bottom: 1px solid var(--ide-border); padding-bottom: 8px; letter-spacing: 0.05em;"
+						>
+							Палітра (Palette)
+						</h3>
+						${colors.map(renderRow)}
+					</div>
+
+					<div>
+						<h3
+							style="font-size: 0.75rem; text-transform: uppercase; color: var(--ide-text-muted); margin-bottom: 16px; border-bottom: 1px solid var(--ide-border); padding-bottom: 8px; letter-spacing: 0.05em;"
+						>
+							Геометрія (Geometry)
+						</h3>
+						${sizes.map(renderRow)}
+					</div>
+				</div>
+
+				<div
+					style="margin-top: 48px; padding: 32px; border: 1px solid var(--ide-border); border-radius: var(--ui-radius-md, 8px); background: var(--ide-surface-2); text-align: center;"
+				>
+					<div
+						style="font-size: 0.8rem; margin-bottom: 24px; color: var(--ide-text-muted); font-weight: 600;"
+					>
+						Попередній перегляд теми:
+					</div>
+					<div style="display: flex; gap: 16px; justify-content: center; align-items: center;">
+						<ui-button style="--co: var(--ui-primary)">Головна кнопка</ui-button>
+						<ui-button style="--co: var(--ui-secondary)">Другорядна</ui-button>
+						<ui-badge style="--co: var(--ui-success); color: #fff;">Success</ui-badge>
+						<ui-badge style="--co: var(--ui-danger); color: #fff;">Danger</ui-badge>
+					</div>
+				</div>
+			</div>
+		`
+	}
+
+	/**
+	 * Minimal markdown → HTML converter for preview.
+	 * Handles: headings, bold, italic, inline code, code blocks, paragraphs.
+	 * @param {string} md
+	 * @returns {string}
+	 */
+	_md2html(md) {
+		if (!md) return ''
+		return md
+			.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+			.replace(/`([^`]+)`/g, '<code>$1</code>')
+			.replace(/^######\s+(.+)$/gm, '<h6>$1</h6>')
+			.replace(/^#####\s+(.+)$/gm, '<h5>$1</h5>')
+			.replace(/^####\s+(.+)$/gm, '<h4>$1</h4>')
+			.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
+			.replace(/^##\s+(.+)$/gm, '<h2>$1</h2>')
+			.replace(/^#\s+(.+)$/gm, '<h1>$1</h1>')
+			.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+			.replace(/\*(.+?)\*/g, '<em>$1</em>')
+			.replace(/(?:^|\n\n)([^<\n][^\n]+)(?:\n\n|$)/g, '<p>$1</p>')
 	}
 
 	_renderPreview() {
@@ -1168,12 +1436,109 @@ export class MasterIDE extends LitElement {
 		if (!meta)
 			return html`<div style="color: var(--ide-text-muted)">${this._t('selectComponent')}</div>`
 
-		const el = document.createElement(meta.tag)
-		for (const [k, v] of Object.entries(this.editableProps)) {
-			// Map content → label for DOM (web components use label as their text prop)
-			const prop = k === 'content' ? 'label' : k
+		// Tag alias: some YAML names generate wrong tag names
+		const tagAliases = { 'ui-progress-bar': 'ui-progress' }
+		const tag = tagAliases[meta.tag] || meta.tag
+
+		// Simple components that use `label` for text content
+		// (ui-alert uses .content natively, NOT label)
+		const labelComponents = new Set([
+			'ui-badge',
+			'ui-button',
+			'ui-toast',
+			'ui-toggle',
+			'ui-spinner',
+		])
+		const usesLabel = labelComponents.has(tag)
+
+		const el = document.createElement(tag)
+		const props = this.editableProps
+
+		// ── Table: convert rows[][] + columns[] → data[] (array of objects) ──
+		if (tag === 'ui-table') {
+			const columns = props.columns || []
+			const rows = props.rows || []
+			el.columns = columns
+			el.data = rows.map((row) => {
+				const obj = {}
+				columns.forEach((col, i) => {
+					obj[col] = Array.isArray(row) ? row[i] : row
+				})
+				return obj
+			})
+			return html`${el}`
+		}
+
+		// ── Tree: map data → items (ui-tree expects .items) ──
+		if (tag === 'ui-tree') {
+			el.items = props.data || []
+			return html`${el}`
+		}
+
+		// ── Markdown: convert raw markdown → HTML ──
+		if (tag === 'ui-markdown') {
+			el.content = this._md2html(props.content || '')
+			return html`${el}`
+		}
+
+		// ── LangSelect: convert string[] → {code,title}[] ──
+		if (tag === 'ui-lang-select') {
+			const langs = props.langs || ['uk', 'en']
+			const titles = { uk: 'Українська', en: 'English', de: 'Deutsch', pl: 'Polski' }
+			el.langs = langs.map((l) =>
+				typeof l === 'string' ? { code: l, title: titles[l] || l.toUpperCase() } : l,
+			)
+			if (props.current) el.locale = props.current
+			return html`${el}`
+		}
+
+		// ── ProgressBar: map variant → --ui-progress-fill color ──
+		if (tag === 'ui-progress') {
+			const variantColors = {
+				primary: 'var(--ui-primary, #0099dc)',
+				secondary: 'var(--ui-secondary, #6c757d)',
+				success: 'var(--ui-success, #22c55e)',
+				danger: 'var(--ui-danger, #ef4444)',
+				warning: 'var(--ui-warning, #f59e0b)',
+				info: 'var(--ui-info, #06b6d4)',
+			}
+			for (const [k, v] of Object.entries(props)) {
+				if (k === 'variant') continue // skip, handled via CSS
+				const prop = k.replace(/-([a-z])/g, (_, c) => c.toUpperCase())
+				el[prop] = v
+			}
+			const fill = variantColors[props.variant] || ''
+			if (fill) el.style.setProperty('--ui-progress-fill', fill)
+			return html`${el}`
+		}
+
+		for (const [k, v] of Object.entries(props)) {
+			// Map content -> label only for simple text components
+			const mapped = k === 'content' && usesLabel ? 'label' : k
+			// Convert hyphenated attribute names to camelCase JS properties
+			const prop = mapped.replace(/-([a-z])/g, (_, c) => c.toUpperCase())
 			el[prop] = v
 		}
+
+		// Handle empty states/triggers for specific components
+		if (tag === 'ui-modal' || tag === 'ui-confirm') {
+			const i18nKey = tag === 'ui-modal' ? 'openModal' : 'openConfirm'
+			return html`
+				<div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+					<ui-button
+						@click=${() => {
+							el.open = true
+						}}
+						>${this._t(i18nKey)}</ui-button
+					>
+					<div style="font-size:0.7rem; color:var(--ide-text-muted)">
+						${this._t('modalTriggerDesc')}
+					</div>
+					${el}
+				</div>
+			`
+		}
+
 		return html`${el}`
 	}
 
@@ -1373,7 +1738,7 @@ export class MasterIDE extends LitElement {
 				<div class="search-box">
 					<input
 						type="text"
-						placeholder="Пошук компонентів..."
+						placeholder="${this._t('searchPlaceholder')}"
 						.value=${this.searchQuery}
 						@input=${(e) => {
 							this.searchQuery = e.target.value
@@ -1381,6 +1746,18 @@ export class MasterIDE extends LitElement {
 					/>
 				</div>
 				<div class="comp-list">
+					<div
+						class="comp-item ${this.activeComponent === '__THEME__' ? 'active' : ''}"
+						style="margin-bottom: 8px; font-weight: 600;"
+						@click=${() => {
+							this.activeComponent = '__THEME__'
+							this.activeApp = 'System'
+						}}
+					>
+						<span class="comp-dot" style="background: var(--ide-accent)"></span>
+						${this._t('themeSettings')}
+					</div>
+
 					${Object.entries(filtered).map(
 						([app, manifest], idx) => html`
 							<div
@@ -1411,74 +1788,66 @@ export class MasterIDE extends LitElement {
 						`,
 					)}
 				</div>
-				<div class="comp-count">${this._totalCount} компонентів</div>
+				<div class="comp-count">${this._totalCount} ${this._t('componentCount')}</div>
 			</aside>
 
 			<!-- Main -->
 			<main class="main">
 				<div class="toolbar">
-					<h2>${this.activeComponent}</h2>
+					<h2>
+						${this.activeComponent === '__THEME__'
+							? this._t('themeSettings')
+							: this.activeComponent}
+					</h2>
 					${meta ? html`<span class="tag-name">&lt;${meta.tag}&gt;</span>` : ''}
-					${meta ? html`<span class="desc">${meta.description}</span>` : ''}
-
-					<!-- Toolbar Utilities -->
-					<div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
-						<ui-lang-select
-							.langs=${[
-								{ code: 'uk', title: 'Українська' },
-								{ code: 'en', title: 'English' },
-							]}
-							locale=${this.lang}
-							@locale-change=${(e) => {
-								if (e.detail.locale !== this.lang) {
-									this.lang = e.detail.locale
-									const newUrl = `../../${this.lang}/${this.activeApp}/${this.activeComponent}.html`
-									history.pushState(null, '', newUrl)
-									this._syncFromUrl()
-								}
-							}}
-						></ui-lang-select>
-						<select class="theme-select" @change=${(e) => this._applyTheme(e.target.value)}>
-							<option value="auto" ?selected=${this.theme === 'auto'}>Авто</option>
-							<option value="dark" ?selected=${this.theme === 'dark'}>Темна</option>
-							<option value="light" ?selected=${this.theme === 'light'}>Світла</option>
-						</select>
-					</div>
+					${meta
+						? html`<span class="desc">${this._t('componentLabel')} ${this.activeComponent}</span>`
+						: ''}
 				</div>
 
-				${meta
-					? html`
-							<div class="variants-list">
-								${(meta.variants || []).map(
-									(v) => html`
-										<div
-											class="variant-pill ${this.activeVariant === v.name ? 'active' : ''}"
-											@click=${() => this._loadVariant(v.name, v.props)}
-										>
-											${v.name}
-										</div>
-									`,
-								)}
-								<div
-									class="variant-pill add-btn"
-									@click=${this._saveVariant}
-									title="${this._t('addVariation')}"
-								>
-									+<span class="add-btn-text"> ${this._t('addVariation')}</span>
+				${this.activeComponent === '__THEME__'
+					? this._renderThemeEditor()
+					: meta
+						? html`
+								<div class="variants-list">
+									${(meta.variants || []).map(
+										(v) => html`
+											<div
+												class="variant-pill ${this.activeVariant === v.name ? 'active' : ''}"
+												@click=${() => this._loadVariant(v.name, v.props)}
+											>
+												${v.name}
+											</div>
+										`,
+									)}
+									<div
+										class="variant-pill add-btn"
+										@click=${this._saveVariant}
+										title="${this._t('addVariation')}"
+									>
+										+<span class="add-btn-text"> ${this._t('addVariation')}</span>
+									</div>
 								</div>
-							</div>
-						`
-					: ''}
-
-				<div class="content">
-					<!-- Live Preview -->
-					<div class="preview-pane">
-						<div class="pane-label">${this._t('preview')}</div>
-						<div class="preview-area">
-							<div class="preview-canvas">${this._renderPreview()}</div>
-						</div>
-						${meta
-							? html`
+							`
+						: ''}
+				${this.activeComponent === '__THEME__'
+					? ''
+					: html` <div class="content">
+							<!-- Live Preview -->
+							<div class="preview-pane">
+								<div class="pane-label">${this._t('preview')}</div>
+								<div class="preview-area">
+									<div
+										class="preview-canvas"
+										style="${Object.entries(this.cssVars)
+											.map(([k, v]) => `${k}:${v}`)
+											.join(';')}"
+									>
+										${this._renderPreview()}
+									</div>
+								</div>
+								${meta
+									? html`
 									<div class="code-pane">
 										<div class="code-tabs">
 											<button
@@ -1507,7 +1876,6 @@ export class MasterIDE extends LitElement {
 												}}
 											>
 												NaN0 Spec
-											</button>
 											<button
 												class="code-copy"
 												@click=${() => this._copyCode(this._generateCode(meta))}
@@ -1518,65 +1886,65 @@ export class MasterIDE extends LitElement {
 										<pre class="code-content">${this._generateCode(meta)}</pre>
 									</div>
 								`
-							: ''}
-					</div>
+									: ''}
+							</div>
 
-					<!-- Props Editor -->
-					<div class="props-pane">
-						<div
-							class="pane-label"
-							style="display: flex; justify-content: space-between; align-items: center;"
-						>
-							<span>${this._t('properties')}</span>
-							${meta &&
-							this.activeVariant &&
-							!this._builtInVariantNames.get(this.activeComponent)?.has(this.activeVariant)
-								? html`
-										<div style="display: flex; gap: 12px; margin-right: 4px;">
-											<button
-												style="all: unset; cursor: pointer; color: var(--ide-text-muted); font-size: 0.8rem; transition: color 0.2s;"
-												onmouseover="this.style.color='var(--ide-text)'"
-												onmouseout="this.style.color='var(--ide-text-muted)'"
-												@click=${() => this._renameVariant(this.activeVariant)}
-												title="Перейменувати варіацію"
+							<!-- Props Editor -->
+							<div class="props-pane">
+								<div
+									class="pane-label"
+									style="display: flex; justify-content: space-between; align-items: center;"
+								>
+									<span>${this._t('properties')}</span>
+									${meta &&
+									this.activeVariant &&
+									!this._builtInVariantNames.get(this.activeComponent)?.has(this.activeVariant)
+										? html`
+												<div style="display: flex; gap: 12px; margin-right: 4px;">
+													<button
+														style="all: unset; cursor: pointer; color: var(--ide-text-muted); font-size: 0.8rem; transition: color 0.2s;"
+														onmouseover="this.style.color='var(--ide-text)'"
+														onmouseout="this.style.color='var(--ide-text-muted)'"
+														@click=${() => this._renameVariant(this.activeVariant)}
+														title="Перейменувати варіацію"
+													>
+														✎
+													</button>
+													<button
+														style="all: unset; cursor: pointer; color: var(--ide-err, #f87171); font-size: 0.8rem; opacity: 0.7; transition: opacity 0.2s;"
+														onmouseover="this.style.opacity=1"
+														onmouseout="this.style.opacity=0.7"
+														@click=${() => this._deleteVariant(this.activeVariant)}
+														title="Видалити варіацію"
+													>
+														🗑
+													</button>
+												</div>
+											`
+										: ''}
+								</div>
+								<div class="props-scroll">
+									${meta
+										? Object.entries(this.editableProps).map(([key, value]) =>
+												this._renderPropEditor(key, value, meta.propTypes?.[key]),
+											)
+										: html`<div
+												style="color: var(--ide-text-muted); font-size: 0.82rem; padding: 8px 0;"
 											>
-												✎
-											</button>
-											<button
-												style="all: unset; cursor: pointer; color: var(--ide-err, #f87171); font-size: 0.8rem; opacity: 0.7; transition: opacity 0.2s;"
-												onmouseover="this.style.opacity=1"
-												onmouseout="this.style.opacity=0.7"
-												@click=${() => this._deleteVariant(this.activeVariant)}
-												title="Видалити варіацію"
+												${this._t('noComponentSelected')}
+											</div>`}
+									${meta
+										? html`<button
+												class="btn-reset"
+												@click=${this._resetProps}
+												title="${this._t('resetToDefault')}"
 											>
-												🗑
-											</button>
-										</div>
-									`
-								: ''}
-						</div>
-						<div class="props-scroll">
-							${meta
-								? Object.entries(this.editableProps).map(([key, value]) =>
-										this._renderPropEditor(key, value, meta.propTypes?.[key]),
-									)
-								: html`<div
-										style="color: var(--ide-text-muted); font-size: 0.82rem; padding: 8px 0;"
-									>
-										Компонент не обрано
-									</div>`}
-							${meta
-								? html`<button
-										class="btn-reset"
-										@click=${this._resetProps}
-										title="${this._t('resetToDefault')}"
-									>
-										↺ ${this._t('reset')}
-									</button>`
-								: ''}
-						</div>
-					</div>
-				</div>
+												↺ ${this._t('reset')}
+											</button>`
+										: ''}
+								</div>
+							</div>
+						</div>`}
 			</main>
 		`
 	}

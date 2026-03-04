@@ -8,8 +8,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const siteDir = path.resolve(__dirname, '../../../../docs/site')
 const ideJsPath = path.join(siteDir, 'src/ide.js')
 const mainJsPath = path.join(siteDir, 'src/main.js')
-const dataDir = path.join(siteDir, 'src/data/uk')
-const dataEnDir = path.join(siteDir, 'src/data/en')
+const dataDir = path.resolve(__dirname, '../../../../docs/data/uk')
+const dataEnDir = path.resolve(__dirname, '../../../../docs/data/en')
 
 // ─── Task 1: Content vs Label ─────────────────────────────────
 

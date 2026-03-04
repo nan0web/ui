@@ -1,14 +1,14 @@
 import '@nan0web/ui-lit/theme'
 import './ide.js'
 
-// Load all YAML schemas dynamically
-const yamlModules = import.meta.glob('./data/**/*.yaml', { eager: true })
+// Load all YAML schemas dynamically (docs/data/{lang}/{Component}.yaml)
+const yamlModules = import.meta.glob('../../data/**/*.yaml', { eager: true })
 
 const coreManifest = {}
 
 for (const path in yamlModules) {
-	// path is like ./data/uk/Alert.yaml or ./data/en/Badge.yaml
-	const match = path.match(/\.\/data\/([^/]+)\/([^/.]+)\.yaml$/)
+	// path is like ../../data/uk/Alert.yaml or ../../data/en/Badge.yaml
+	const match = path.match(/\/data\/([^/]+)\/([^/.]+)\.yaml$/)
 	if (!match) continue
 
 	const lang = match[1]
