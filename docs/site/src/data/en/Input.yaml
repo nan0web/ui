@@ -1,0 +1,39 @@
+$Input:
+  content:
+    default: Username
+  type:
+    - text
+    - email
+    - password
+    - number
+    - tel
+    - url
+  placeholder:
+    default: Enter text...
+  required:
+    default: false
+content:
+  - Input:
+      type: text
+      content: Text
+  - Input:
+      type: email
+      content: Email
+      placeholder: your@email.com
+  - Input:
+      type: password
+      content: Password
+      placeholder: your password
+  - Input:
+      type: slider
+      content: Number
+      default: 50
+      placeholder: 123
+  - Input:
+      type: tel
+      content: Tel
+      placeholder: '+1234567890'
+  - Input:
+      type: url
+      content: URL
+      placeholder: https://example.com

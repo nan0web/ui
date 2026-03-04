@@ -1,0 +1,9 @@
+$Tree:
+  data:
+    default:
+      - label: Root
+        children:
+          - label: Child A
+    type: Tree.Models.Node[]
+content:
+  - Tree: true

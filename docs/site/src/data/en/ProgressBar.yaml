@@ -1,0 +1,7 @@
+$ProgressBar:
+  value:
+    default: 65
+  max:
+    default: 100
+content:
+  - ProgressBar: true

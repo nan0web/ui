@@ -1,0 +1,10 @@
+$Confirm:
+  $search: "підтвердження діалог запит"
+  message:
+    default: Are you sure?
+  confirmText:
+    default: 'Yes'
+  cancelText:
+    default: 'No'
+content:
+  - Confirm: true

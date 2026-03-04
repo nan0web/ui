@@ -1,0 +1,8 @@
+$ProgressBar:
+  $search: "прогрес бар завантаження індикатор стан"
+  value:
+    default: 65
+  max:
+    default: 100
+content:
+  - ProgressBar: true

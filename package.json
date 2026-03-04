@@ -18,17 +18,21 @@
 		"test:coverage": "node --experimental-test-coverage --test-coverage-include=\"src/**/*.js\" --test-coverage-exclude=\"src/**/*.test.js\" --test \"src/**/*.test.js\"",
 		"test:coverage:collect": "nan0test coverage",
 		"test:docs": "node --test src/README.md.js",
+		"release:spec": "node --test \"releases/**/*.spec.js\"",
 		"test:release": "node --test \"releases/**/*.test.js\"",
 		"test:status": "nan0test status --hide-name",
 		"test:play": "node --test --test-timeout=3333 \"play/**/*.test.js\"",
-		"test:all": "npm run test && npm run test:docs && npm run test:play && npm run build && npm run knip",
+		"test:e2e": "playwright test",
+		"test:all": "npm run test && npm run test:docs && npm run test:play && npm run test:e2e && npm run build && npm run knip",
 		"knip": "knip --production",
 		"precommit": "npm test",
 		"prepush": "npm test",
 		"prepare": "husky",
 		"release": "nan0release publish",
 		"clean": "rm -rf .cache/ && rm -rf dist/",
-		"clean:modules": "rm -rf node_modules"
+		"clean:modules": "rm -rf node_modules",
+		"docs:dev": "node docs/site/scripts/generate-pages.js && vite docs/site",
+		"docs:build": "node docs/site/scripts/generate-pages.js && vite build docs/site"
 	},
 	"exports": {
 		".": {
@@ -60,9 +64,15 @@
 		"@nan0web/release": "*",
 		"@nan0web/test": "*",
 		"@nan0web/ui-cli": "*",
+		"@nan0web/ui-lit": "workspace:*",
+		"@playwright/test": "^1.58.2",
+		"@rollup/plugin-yaml": "^4.1.2",
 		"@vitest/coverage-v8": "^3.2.4",
 		"husky": "^9.1.7",
+		"js-yaml": "^4.1.1",
 		"knip": "^5.83.1",
+		"lit": "^3.3.2",
+		"vite": "^6.0.0",
 		"vitest": "^3.2.4"
 	},
 	"dependencies": {

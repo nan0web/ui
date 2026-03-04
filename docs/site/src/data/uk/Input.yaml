@@ -1,0 +1,17 @@
+$Input:
+  $search: 'введення поле текст інпут форма'
+  content:
+    default: Username
+  type:
+    - text
+    - email
+    - password
+    - number
+    - tel
+    - url
+  placeholder:
+    default: Enter text...
+  required:
+    default: false
+content:
+  - Input: true

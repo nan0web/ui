@@ -3,6 +3,7 @@
 
 /.datasets/
 /.cache/
+/dist/
 
 # Coverage
 coverage/
@@ -22,3 +23,10 @@ me.md
 
 # Temporary
 /apps/
+.agent/
+
+# Playwright
+*-snapshots/
+test-results/
+playwright-report/
+blob-report/

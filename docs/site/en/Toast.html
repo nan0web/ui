@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Toast Component — NaN•Web UI (en)</title>
+	<meta name="description" content="Interactive Component Sandbox & Documentation for the NaN•Web UI ecosystem">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<style>
+		*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+		/* Base Dark Theme Tokens (Default) */
+		:root {
+			--ide-bg: #0a0a0f;
+			--ide-surface: #12121a;
+			--ide-surface-2: #1a1a26;
+			--ide-border: rgba(255, 255, 255, 0.06);
+			--ide-border-bright: rgba(255, 255, 255, 0.12);
+			--ide-text: #e4e4e7;
+			--ide-text-muted: #71717a;
+			--ide-accent: #818cf8;
+			--ide-accent-dim: rgba(129, 140, 248, 0.12);
+			--ide-success: #22c55e;
+			--ide-danger: #ef4444;
+			--ide-warning: #f59e0b;
+			--ide-sidebar-w: 260px;
+			--ide-radius: 10px;
+			--ide-font: 'Inter', system-ui, -apple-system, sans-serif;
+			/* Component Tokens */
+			--ba: #121212;
+			--ba-surface: #1e1e1e;
+			--fg: #e4e4e7;
+			color-scheme: dark;
+		}
+
+		/* Auto Light Theme */
+		@media (prefers-color-scheme: light) {
+			:root:not(.theme-dark) {
+				--ide-bg: #f8f9fa;
+				--ide-surface: #ffffff;
+				--ide-surface-2: #f1f5f9;
+				--ide-border: rgba(0, 0, 0, 0.1);
+				--ide-border-bright: rgba(0, 0, 0, 0.15);
+				--ide-text: #18181b;
+				--ide-text-muted: #64748b;
+				--ide-accent: #6366f1;
+				--ide-accent-dim: rgba(99, 102, 241, 0.1);
+				/* Component Tokens */
+				--ba: #ffffff;
+				--ba-surface: #f8f9fa;
+				--fg: #18181b;
+				color-scheme: light;
+			}
+		}
+
+		/* Forced Light Theme */
+		.theme-light {
+			--ide-bg: #f8f9fa;
+			--ide-surface: #ffffff;
+			--ide-surface-2: #f1f5f9;
+			--ide-border: rgba(0, 0, 0, 0.1);
+			--ide-border-bright: rgba(0, 0, 0, 0.15);
+			--ide-text: #18181b;
+			--ide-text-muted: #64748b;
+			--ide-accent: #6366f1;
+			--ide-accent-dim: rgba(99, 102, 241, 0.1);
+			/* Component Tokens */
+			--ba: #ffffff;
+			--ba-surface: #f8f9fa;
+			--fg: #18181b;
+			color-scheme: light;
+		}
+
+		/* Forced Dark Theme */
+		.theme-dark {
+			--ide-bg: #0a0a0f;
+			--ide-surface: #12121a;
+			--ide-surface-2: #1a1a26;
+			--ide-border: rgba(255, 255, 255, 0.06);
+			--ide-border-bright: rgba(255, 255, 255, 0.12);
+			--ide-text: #e4e4e7;
+			--ide-text-muted: #71717a;
+			--ide-accent: #818cf8;
+			--ide-accent-dim: rgba(129, 140, 248, 0.12);
+			/* Component Tokens */
+			--ba: #121212;
+			--ba-surface: #1e1e1e;
+			--fg: #e4e4e7;
+			color-scheme: dark;
+		}
+		html, body { height: 100%; }
+		body {
+			font-family: var(--ide-font);
+			background: var(--ide-bg);
+			color: var(--ide-text);
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<master-ide lang="en" active-component="Toast"></master-ide>
+	<script type="module" src="../src/main.js"></script>
+</body>
+</html>
