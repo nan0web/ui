@@ -1,5 +1,7 @@
 # @nan0web/ui
 
+🏴󠁧󠁢󠁥󠁮󠁧󠁿 [English](./README.md) | 🇺🇦 [Українською](./docs/uk/README.md)
+
 <!-- %PACKAGE_STATUS% -->
 
 A lightweight, agnostic UI framework designed with the **nan0web philosophy**
@@ -172,6 +174,29 @@ import { Welcome } from '@nan0web/ui'
 const output = Welcome({ user: { name: 'Test' } })
 console.info(output) // ← Welcome Test!
 ```
+### Master IDE (Component Sandbox)
+
+The Master IDE (OlmuiInspector) provides a unified environment for testing and documenting
+web components across platforms. It supports:
+
+- **NaN0 Spec** — a concise YAML-based shorthand for declaring component variations.
+- **OlmuiInspector** — unified UI for exploring component models and props.
+- **Live Preview** — real-time rendering of component states.
+- **i18n UI** — fully localized interface for global developers.
+
+It follows the **Olmui** core pattern: *One Logic — Many UI* (same manifest powers both CLI and Web).
+
+#### NaN0 Spec (YAML)
+
+Concise format for defining variations:
+
+How to define a component variation using NaN0 Spec?
+```yaml
+- Button: Primary
+  $variant: brand
+  $outline: true
+```
+
 ## Playground Demos
 
 The library includes rich playground demos:
