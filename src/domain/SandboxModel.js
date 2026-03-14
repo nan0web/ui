@@ -52,68 +52,98 @@ export class SandboxModel {
 	// ==========================================
 
 	async *run() {
-		// 1. List available components and ask user to select one
-		const listResponse = yield {
-			type: 'ask',
-			field: 'selectedComponent',
-			schema: {
-				help: 'Select a component to inspect and theme',
-				options: this.components || [],
-				validate: (val) => (this.components || []).includes(val) || 'Component not found in sandbox registry',
-			},
-			component: 'Select',
-			model: /** @type {any} */ (this),
-		}
+		let targetInstance = null
 
-		this.selectedComponent = listResponse.value
+		while (true) {
+			// 1. List available components and ask user to select one
+			if (!this.selectedComponent) {
+				const listResponse = yield {
+					type: 'ask',
+					field: 'selectedComponent',
+					schema: {
+						help: 'Select a component to inspect and theme',
+						options: this.components || [],
+						validate: (val) => (this.components || []).includes(val) || 'Component not found in sandbox registry',
+					},
+					component: 'Select',
+					model: /** @type {any} */ (this),
+				}
+				this.selectedComponent = listResponse.value
+				
+				// Reset target instance when changing component
+				const TargetModelConstructor = ComponentModels[`${this.selectedComponent}Model`]
+				targetInstance = TargetModelConstructor ? new TargetModelConstructor() : this
+			}
 
-		// Dynamically instantiate the selected model class to inspect its properties
-		const TargetModelConstructor = ComponentModels[`${this.selectedComponent}Model`]
-		const targetInstance = TargetModelConstructor ? new TargetModelConstructor() : this
+			// 2. Wrap the selected component in a Sandbox IDE editor to configure properties
+			let configResponse
+			try {
+				configResponse = yield {
+					type: 'ask',
+					field: 'componentThemeConfig',
+					schema: ComponentModels[`${this.selectedComponent}Model`] || {
+						help: `Configure properties for ${this.selectedComponent} to create a theme variation`,
+					},
+					component: 'SandboxWrapper',
+					model: true,
+					instance: /** @type {any} */ (targetInstance), // pass the instance explicitly to persist edits
+				}
+			} catch (e) {
+				const err = /** @type {Error} */ (e)
+				// Level 2 -> Level 1 Back Navigation
+				if (err.name === 'CancelError') {
+					this.selectedComponent = undefined
+					continue
+				}
+				throw e
+			}
 
-		// 2. Wrap the selected component in a Sandbox IDE editor to configure properties
-		const configResponse = yield {
-			type: 'ask',
-			field: 'componentThemeConfig',
-			schema: TargetModelConstructor || {
-				help: `Configure properties for ${this.selectedComponent} to create a theme variation`,
-			},
-			component: 'SandboxWrapper',
-			model: true,
-			instance: /** @type {any} */ (targetInstance), // pass the instance explicitly
-		}
+			// Update the instance with form results so it's persisted if we go back
+			targetInstance = configResponse.value
 
-		// 3. Ask for the output theme format for saving/exporting
-		const formatResponse = yield {
-			type: 'ask',
-			field: 'themeFormat',
-			schema: {
-				help: 'Choose how to export the theme configuration',
-				options: SandboxModel.themeFormat.options,
-			},
-			component: 'Select',
-			model: /** @type {any} */ (this),
-		}
+			// 3. Ask for the output theme format for saving/exporting
+			let formatResponse
+			try {
+				formatResponse = yield {
+					type: 'ask',
+					field: 'themeFormat',
+					schema: {
+						help: 'Choose how to export the theme configuration',
+						options: SandboxModel.themeFormat.options,
+					},
+					component: 'Select',
+					model: /** @type {any} */ (this),
+				}
+			} catch (e) {
+				const err = /** @type {Error} */ (e)
+				// Level 3 -> Level 2 Back Navigation
+				if (err.name === 'CancelError') {
+					// Loop again, it will go back to the SandboxWrapper editor with the same targetInstance
+					continue
+				}
+				throw e
+			}
 
-		this.themeFormat = formatResponse.value
+			this.themeFormat = formatResponse.value
 
-		// 4. Yield a log/success notification about the Theme export
-		yield {
-			type: 'log',
-			level: 'success',
-			message: `Theme correctly exported as ${(this.themeFormat || 'json').toUpperCase()}! Ready for the UI Theme Store.`,
-			component: 'Toast',
-			model: /** @type {any} */ (this),
-		}
+			// 4. Yield a log/success notification about the Theme export
+			yield {
+				type: 'log',
+				level: 'success',
+				message: `Theme correctly exported as ${(this.themeFormat || 'json').toUpperCase()}! Ready for the UI Theme Store.`,
+				component: 'Toast',
+				model: /** @type {any} */ (this),
+			}
 
-		// 5. Return the resulting configuration context
-		return { 
-			type: 'result', 
-			data: { 
-				targetComponent: this.selectedComponent, 
-				themeConfig: configResponse.value, 
-				exportFormat: this.themeFormat 
-			} 
+			// 5. Return the resulting configuration context
+			return { 
+				type: 'result', 
+				data: { 
+					targetComponent: this.selectedComponent, 
+					themeConfig: configResponse.value, 
+					exportFormat: this.themeFormat 
+				} 
+			}
 		}
 	}
 }

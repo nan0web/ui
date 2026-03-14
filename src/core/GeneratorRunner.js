@@ -97,7 +97,7 @@ export async function runGenerator(generator, handlers, options = {}) {
 		throw IntentErrorModel.error('adapter_missing_ask')
 	}
 
-	/** @type {import('./Intent.js').IntentResponse} */
+	/** @type {import('./Intent.js').IntentResponse | Error | undefined} */
 	let nextVal = undefined
 
 	while (true) {
@@ -109,7 +109,23 @@ export async function runGenerator(generator, handlers, options = {}) {
 			throw error
 		}
 
-		const { value: intent, done } = await generator.next(nextVal)
+		let nextEvent
+		try {
+			if (nextVal instanceof Error) {
+				nextEvent = await generator.throw(nextVal)
+			} else {
+				nextEvent = await generator.next(nextVal)
+			}
+		} catch (e) {
+			// If the generator didn't catch the CancelError, we gracefully abort the runner.
+			const err = /** @type {Error} */ (e)
+			if (err.name === 'CancelError') {
+				return /** @type {T} */ (null)
+			}
+			throw e // Bubble up unexpected runtime errors
+		}
+
+		const { value: intent, done } = nextEvent
 
 		// ─── Generator completed (return statement) ───
 		if (done) {
@@ -141,8 +157,12 @@ export async function runGenerator(generator, handlers, options = {}) {
 
 				// ─── Handle cancellation (ESC / back navigation) ───
 				if (response.cancelled) {
-					await generator.return({ type: 'result', data: null })
-					return /** @type {T} */ (null)
+					// Prepare CancelError to be thrown INTO the generator on the next loop iteration.
+					// This allows the Model to elegantly intercept ESC using try...catch!
+					const err = new Error('User cancelled interaction')
+					err.name = 'CancelError'
+					nextVal = err
+					break
 				}
 
 				// Run field validation if schema has a validator (the Judge again)

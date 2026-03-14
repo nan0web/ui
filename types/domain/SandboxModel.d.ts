@@ -83,7 +83,7 @@ export class SandboxModel {
             themeConfig: any;
             exportFormat: string | undefined;
         };
-    }, unknown>;
+    }, any>;
 }
 export type SandboxData = {
     components?: string[] | undefined;
