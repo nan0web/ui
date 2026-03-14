@@ -101,7 +101,7 @@ export class SandboxModel {
 		yield {
 			type: 'log',
 			level: 'success',
-			message: `Theme correctly exported as ${this.themeFormat.toUpperCase()}! Ready for the UI Theme Store.`,
+			message: `Theme correctly exported as ${(this.themeFormat || 'json').toUpperCase()}! Ready for the UI Theme Store.`,
 			component: 'Toast',
 			model: /** @type {any} */ (this),
 		}
