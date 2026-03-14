@@ -1,22 +1,26 @@
 import '@nan0web/ui-lit/theme'
 import './ide.js'
+import './form-color.js'
+import './form-shadow.js'
 
-// Load all YAML schemas dynamically (docs/data/{lang}/{Component}.yaml)
-const yamlModules = import.meta.glob('../../data/**/*.yaml', { eager: true })
+const groups = {
+	Actions: ['Button', 'Toggle'],
+	Forms: ['Input', 'Select', 'Slider', 'Autocomplete', 'Color', 'Shadow'],
+	Data: ['Accordion', 'Card', 'Sortable', 'Table', 'Tree', 'CodeBlock', 'Markdown', 'Badge'],
+	Feedback: ['Alert', 'Confirm', 'Modal', 'ProgressBar', 'Spinner', 'Toast'],
+	System: ['LangSelect', 'ThemeToggle'],
+}
 
-const coreManifest = {}
+const allComponentNames = Object.values(groups).flat()
 
-for (const path in yamlModules) {
-	// path is like ../../data/uk/Alert.yaml or ../../data/en/Badge.yaml
-	const match = path.match(/\/data\/([^/]+)\/([^/.]+)\.yaml$/)
-	if (!match) continue
+function getGroupFor(compName) {
+	for (const [groupName, comps] of Object.entries(groups)) {
+		if (comps.includes(compName)) return groupName
+	}
+	return 'Core'
+}
 
-	const lang = match[1]
-	const compName = match[2]
-
-	if (lang.startsWith('_')) continue
-
-	const data = yamlModules[path].default || yamlModules[path]
+function parseManifestFromData(compName, data) {
 	const configKey = `$${compName}`
 	const config = data[configKey] || {}
 
@@ -39,10 +43,8 @@ for (const path in yamlModules) {
 	const variants = (data.content || []).map((v) => {
 		let props = v[compName]
 		if (props === true) props = {}
-		// Determine variant display name — prefer variant, fallback to content or label
 		let name = props.variant || props.content || props.label || 'Default'
 		name = name.charAt(0).toUpperCase() + name.slice(1)
-		// Deduplicate: if name is taken, try content/label; if still taken, append suffix
 		if (seen.has(name) && (props.content || props.label)) {
 			const fallback = props.content || props.label
 			name = fallback.charAt(0).toUpperCase() + fallback.slice(1)
@@ -56,44 +58,60 @@ for (const path in yamlModules) {
 		return { name: finalName, props }
 	})
 
-	if (!coreManifest[compName]) {
-		coreManifest[compName] = {
-			tag: `ui-${compName.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()}`,
-			description: `Компонент ${compName}`,
-			searchTags,
-			propTypes,
-			defaultProps,
-			variants,
-		}
+	return {
+		tag: `ui-${compName.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()}`,
+		searchTags,
+		propTypes,
+		defaultProps,
+		variants,
 	}
 }
 
-const groups = {
-	Actions: ['Button', 'Toggle'],
-	Forms: ['Input', 'Select', 'Slider', 'Autocomplete'],
-	Data: ['Accordion', 'Card', 'Sortable', 'Table', 'Tree', 'CodeBlock', 'Markdown', 'Badge'],
-	Feedback: ['Alert', 'Confirm', 'Modal', 'ProgressBar', 'Spinner', 'Toast'],
-	System: ['LangSelect', 'ThemeToggle'],
-}
+/**
+ * Fetch all component JSON files for a given language.
+ * @param {string} lang
+ * @returns {Promise<Record<string, Record<string, object>>>} grouped manifests
+ */
+async function _fetchManifest(lang) {
+	const grouped = {}
 
-// Group the components
-const groupedManifests = {}
-for (const [compName, meta] of Object.entries(coreManifest)) {
-	let assignedGroup = 'Core'
-	for (const [groupName, comps] of Object.entries(groups)) {
-		if (comps.includes(compName)) {
-			assignedGroup = groupName
-			break
-		}
+	const results = await Promise.allSettled(
+		allComponentNames.map(async (name) => {
+			const url = `/data/${lang}/${name}.json`
+			const res = await fetch(url)
+			if (!res.ok) return null
+			const data = await res.json()
+			return { name, data }
+		}),
+	)
+
+	for (const result of results) {
+		if (result.status !== 'fulfilled' || !result.value) continue
+		const { name, data } = result.value
+		const group = getGroupFor(name)
+		if (!grouped[group]) grouped[group] = {}
+		grouped[group][name] = parseManifestFromData(name, data)
 	}
-	if (!groupedManifests[assignedGroup]) {
-		groupedManifests[assignedGroup] = {}
-	}
-	groupedManifests[assignedGroup][compName] = meta
+
+	return grouped
 }
 
 export const uiLitApp = {
-	componentsManifests: groupedManifests,
+	componentsManifests: {},
+	_currentLang: null,
+
+	/** Load manifest for a specific language via fetch() */
+	async _loadManifest(lang) {
+		if (this._currentLang === lang) return
+		this._currentLang = lang
+		this.componentsManifests = await _fetchManifest(lang)
+		window.dispatchEvent(
+			new CustomEvent('manifest-updated', {
+				detail: this.componentsManifests,
+			}),
+		)
+	},
+
 	registerApps(manifests = {}) {
 		for (const [app, manifest] of Object.entries(manifests)) {
 			if (!this.componentsManifests[app]) this.componentsManifests[app] = {}
@@ -108,6 +126,33 @@ export const uiLitApp = {
 }
 
 window.uiLitApp = uiLitApp
-uiLitApp.registerApps({})
+
+// Detect initial lang from URL
+const pathLang = window.location.pathname.startsWith('/en/')
+	? 'en'
+	: window.location.pathname.startsWith('/uk/')
+		? 'uk'
+		: localStorage.getItem('ui-docs-lang') || 'uk'
+
+// Fetch manifest for detected lang
+uiLitApp._loadManifest(pathLang)
+
+// Re-fetch when IDE changes `lang` attribute
+const observer = new MutationObserver((mutations) => {
+	for (const m of mutations) {
+		if (m.type === 'attributes' && m.attributeName === 'lang') {
+			const newLang = m.target.getAttribute('lang')
+			if (newLang) uiLitApp._loadManifest(newLang)
+		}
+	}
+})
+
+// Wait for master-ide element and observe it
+requestAnimationFrame(() => {
+	const ide = document.querySelector('master-ide')
+	if (ide) {
+		observer.observe(ide, { attributes: true, attributeFilter: ['lang'] })
+	}
+})
 
 import '@nan0web/ui-lit/core'

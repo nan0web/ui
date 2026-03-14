@@ -39,3 +39,8 @@ export {
 	Progress,
 } from './Flow.js'
 export { default as Flow } from './Flow.js'
+
+// OLMUI Generator Engine — Intent-based Model→Adapter contract
+export { validateIntent, ask, progress, log, result, INTENT_TYPES, isModelSchema } from './Intent.js'
+export { IntentErrorModel } from './IntentErrorModel.js'
+export { runGenerator } from './GeneratorRunner.js'

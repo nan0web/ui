@@ -10,7 +10,7 @@ const indexHtmlTemplate = fs.readFileSync(path.join(siteDir, 'ide.html'), 'utf-8
 // Category mapping — mirrors main.js groups
 const groups = {
 	Actions: ['Button', 'Toggle'],
-	Forms: ['Input', 'Select', 'Slider', 'Autocomplete'],
+	Forms: ['Input', 'Select', 'Slider', 'Autocomplete', 'Color', 'Shadow'],
 	Data: ['Accordion', 'Card', 'Sortable', 'Table', 'Tree', 'CodeBlock', 'Markdown', 'Badge'],
 	Feedback: ['Alert', 'Confirm', 'Modal', 'ProgressBar', 'Spinner', 'Toast'],
 	System: ['LangSelect', 'ThemeToggle'],
@@ -72,6 +72,18 @@ langs.forEach((lang) => {
 	ideHtml = ideHtml.replace(/src="\.\/src\/main\.js"/, 'src="../src/main.js"')
 	fs.writeFileSync(ideHtmlPath, ideHtml)
 	console.log(`Generated: ${lang}/ide.html`)
+
+	// Generate /{lang}/CSS.html → Theme Settings deep link
+	const cssHtmlPath = path.join(siteDir, lang, 'CSS.html')
+	let cssHtml = indexHtmlTemplate
+	cssHtml = cssHtml.replace('<master-ide></master-ide>', `<master-ide lang="${lang}"></master-ide>`)
+	cssHtml = cssHtml.replace(/src="\.\/src\/main\.js"/, 'src="../src/main.js"')
+	cssHtml = cssHtml.replace(
+		'<title>Master IDE — @nan0web/ui Sovereign Workbench</title>',
+		`<title>Theme Settings (CSS) — NaN•Web UI (${lang})</title>`,
+	)
+	fs.writeFileSync(cssHtmlPath, cssHtml)
+	console.log(`Generated: ${lang}/CSS.html`)
 })
 
 // ─── Generate redirect pages without lang prefix ───────────────

@@ -22,3 +22,8 @@ export { default as UiMessage } from './core/Message/Message.js'
 export { default as UiStream } from './core/Stream.js'
 export { default as Error, CancelError } from './core/Error/index.js'
 export { default as UiAdapter } from './core/UiAdapter.js'
+
+// OLMUI Generator Engine
+export { validateIntent, ask, progress, log, result, INTENT_TYPES, isModelSchema } from './core/Intent.js'
+export { IntentErrorModel } from './core/IntentErrorModel.js'
+export { runGenerator } from './core/GeneratorRunner.js'

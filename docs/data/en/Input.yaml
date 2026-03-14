@@ -1,4 +1,5 @@
 $Input:
+  $search: 'input text field form pattern validation required min max step'
   content:
     default: Username
   type:
@@ -8,32 +9,42 @@ $Input:
     - number
     - tel
     - url
+    - date
   placeholder:
     default: Enter text...
   required:
     default: false
+  pattern:
+    default: ''
+  min:
+    default: ''
+  max:
+    default: ''
+  step:
+    default: ''
+  hint:
+    default: ''
+  disabled:
+    default: false
 content:
   - Input:
-      type: text
-      content: Text
+      content: Admin
+      label: Username
   - Input:
+      content: test@example.com
       type: email
-      content: Email
-      placeholder: your@email.com
+      label: Email
+      required: true
   - Input:
-      type: password
-      content: Password
-      placeholder: your password
+      content: '123'
+      label: Number with Range
+      type: number
+      min: '0'
+      max: '100'
+      step: '10'
+      hint: Range 0-100, step 10
   - Input:
-      type: slider
-      content: Number
-      default: 50
-      placeholder: 123
-  - Input:
-      type: tel
-      content: Tel
-      placeholder: '+1234567890'
-  - Input:
-      type: url
-      content: URL
-      placeholder: https://example.com
+      content: 'ABC'
+      label: RegExp Pattern
+      pattern: '[A-Z]{3}'
+      hint: Exactly 3 uppercase letters

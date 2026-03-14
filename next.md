@@ -1,43 +1,115 @@
 # Master IDE: Roadmap & Status
+## ✅ v1.7.0 — OLMUI Generator Engine (DONE)
 
-## ✅ v1.6.2 — Pro Theme Editor & UI Integrity (DONE)
+### Зроблено
 
-### Виправлено
+- [x] `Intent.js` — Yield Contract Types (`ask`, `progress`, `log`, `result`)
+- [x] `GeneratorRunner.js` — Universal Adapter Loop (timeout, abort, dispatch)
+- [x] `IntentErrorModel.js` — Model-as-Schema для помилок контракту
+- [x] `AdapterContract.test.js` — 21 контрактний тест
+- [x] `ask()` розширено для Model-as-Schema: `ask('transfer', TransferModel)`
+- [x] `GeneratorRunner` інстанціює Model: `response.value = new Model(rawData)`
+- [x] `isModelSchema()` — детектор Model-as-Schema класів
+- [x] TypeScript types: повні `.d.ts` для всіх нових export;
+- [x] tsc build — зелений, 0 помилок
+- [x] Версія: `1.7.0`
 
-- [x] Theme Engine: primary/secondary/success/warning/danger/info + radius/spacing
-- [x] Table: rows[][] → data[] + --fg-muted light theme
-- [x] Tree: 4-рівнева таксономія
-- [x] Markdown: \_md2html() конвертер
-- [x] Alert: нативний .content (не label)
-- [x] Modal/Confirm: el.open = true
-- [x] ProgressBar: tagAliases + show-label + sizes + named variants
-- [x] LangSelect: string[] → {code,title}[]
-- [x] Navbar i18n: data-i18n + \_translateNav()
-- [x] Tree scroll: align-items: safe center
-- [x] Hyphenated props: camelCase конвертація
-- [x] IDE i18n: searchPlaceholder, componentCount, componentLabel, noComponentSelected
+### Migration Path (UiAdapter → runGenerator)
 
-### Test Status
+| Стара (v1.x) | Нова (OLMUI Engine) |
+|---|---|
+| `UiAdapter` клас (OOP) | `runGenerator` функція (FP) |
+| `adapter.ask()` / `adapter.select()` | `yield ask('field', schema)` |
+| `processForm(UIForm)` | `yield ask('form', Model)` |
+| `EventProcessor` наслідування | Чистий async generator |
+| `CancelError` throw | `AbortSignal` / `ModelError` |
 
-| Suite        | Result                  |
-| :----------- | :---------------------- |
-| release:spec | **97 pass, 0 fail** ✅  |
-| npm test     | **109 pass, 0 fail** ✅ |
-| build        | **Clean** ✅            |
-| knip         | **Clean** ✅            |
+Обидві системи **співіснують**. Нова — наступна ітерація, що поступово замінить стару.
 
 ---
 
-## 🔜 v1.7.0 — Dynamic i18n & Advanced Editor (NEXT)
+## ✅ v1.7.1 — Dynamic i18n & Advanced Editor (DONE)
 
-### Architecture (Breaking)
+### Зроблено
 
-- [ ] **Manifest per language**: Замість одноразового build manifest — `db.fetch(URL)` для кожної мови. YAML → JSON пакування.
-- [ ] **Theme Settings page**: Окрема сторінка `/theme.html` з сотнями змінних як Bootstrap `_variables.scss`.
-- [ ] **UIForm for complex props**: Генерація форм для array-of-objects (LangSelect.langs, Tree.data).
+- [x] Manifest per language: `db.fetch(URL)` для кожної мови. YAML → JSON.
+- [x] Theme Settings page: `/uk/CSS.html` та `/en/CSS.html` deep linking.
+- [x] UIForm for complex props: array-of-objects (object→JSON textarea, boolean→text).
+- [x] Smart inputs: rgba→color+opacity slider, rem/px→number+unit select.
+- [x] Live Preview: у правому sidebar замість знизу.
+- [x] Sidebar navigation: absolute URLs з locale prefix.
+- [x] CSS.html route: `_syncFromUrl()` + `generate-pages.js` генерує файли.
+
+---
+
+## ✅ v1.7.1 — Theme Editor: CSS Variable Propagation (DONE)
+
+### Проблема
+
+**CSS Variables не впливали на компоненти** — головний баг Theme Editor.
+
+### Кореневі причини (Root Cause Analysis)
+
+1. **Shadow CSS `:host` override**: `--co: var(--ide-accent)` у shadow CSS `master-ide`
+   створював scope boundary, який блокував inherited `--co` від inline styles.
+2. **`--ui-btn-bg` override**: Fallback chain у `ui-button` — `var(--ui-btn-bg, var(--co, #818cf8))`.
+   Коли `--ui-btn-bg: '#0099dc'` було задано, воно перебивало `--co`.
+3. **Empty string = valid CSS value**: Порожні CSS custom properties (`--ui-btn-bg: ""`)
+   через inline style вважаються валідними і не дають fallback спрацювати.
+
+### Виправлення
+
+1. ✅ Видалено `--co: var(--ide-accent)` з `:host` shadow CSS — тепер `--co` каскадується нормально
+2. ✅ `--ui-btn-bg` / `--ui-btn-fg` default → `''` — наслідують `--co` / `--co-on` tokens
+3. ✅ `_applyCssVars()` — `removeProperty()` для порожніх значень (замість `setProperty('')`)
+4. ✅ Inline cssVars style на wrapper div у `_renderThemePreview()` та `.preview-canvas`
+5. ✅ Фільтрація порожніх значень при побудові inline style string
+
+### E2E тести
+
+| Тест                                 | Статус  |
+| :----------------------------------- | :------ |
+| `color input dispatches @input`      | ✅ pass |
+| `/uk/CSS.html loads Theme Editor`    | ✅ pass |
+| `CSS vars set on host after load`    | ✅ pass |
+| `--co change → Primary button color` | ✅ pass |
+
+### Файли змінені
+
+- `docs/site/src/ide.js` — shadow CSS fix, cssVars defaults, \_applyCssVars, \_renderThemePreview
+- `e2e/theme-editor.spec.js` — оновлено selector `.theme-preview-wrap`
+- `e2e/debug-theme.spec.js` — оновлено selector
+
+---
+
+## 🔜 v1.8.0 — Theme Editor Pro & Sidebar Components (NEXT)
+
+### Theme Editor
+
+- [ ] Shadow editor: visual box-shadow builder
+- [ ] CSS Export: кнопка «Export CSS» для копіювання `:root { ... }`
+- [ ] CSS Import: paste готового CSS
+- [ ] Reset to defaults
+- [ ] Persistence: зберігати в localStorage
+
+### Sidebar Base Components
+
+- [ ] ColorPicker: окремий sidebar component
+- [ ] ColorRGBA: color + opacity slider
+- [ ] SizeUnit: number + unit select
 
 ### Components (ui-lit)
 
-- [ ] **Tree keyboard**: Arrow Up/Down/Left/Right навігація (component-level, не IDE).
-- [ ] **Modal footer**: Slot injection з кнопками з IDE.
-- [ ] **Table column config**: UI для контролю стилів колонок (bold/muted).
+- [ ] Tree keyboard: Arrow keys навігація
+- [ ] Modal footer: Slot injection
+- [ ] Table column config
+- [ ] Focus ring: `--ui-*-focus` змінні
+
+### Unit Test Status
+
+| Suite        | Result                  |
+| :----------- | :---------------------- |
+| npm test     | **129 pass, 0 fail** ✅ |
+| test:docs    | **17 pass, 0 fail** ✅  |
+| test:play    | **1 pass, 0 fail** ✅   |
+| tsc build    | **0 errors** ✅         |

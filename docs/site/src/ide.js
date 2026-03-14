@@ -12,11 +12,69 @@ export class MasterIDE extends LitElement {
 		activeComponent: { type: String, attribute: 'active-component' },
 		activeVariant: { type: String },
 		editableProps: { type: Object },
+		cssVars: { type: Object },
+		activeThemeKey: { type: String },
 		searchQuery: { type: String },
 		codeFormat: { type: String },
 		lang: { type: String },
 		sidebarOpen: { type: Boolean },
 		docsContent: { type: String },
+	}
+
+	static _baseThemes = {
+		default: {
+			'--co': '#0099dc',
+			'--co-on': '#ffffff',
+			'--co-success': '#22c55e',
+			'--co-warn': '#f59e0b',
+			'--co-danger': '#ef4444',
+			'--co-info': '#3b82f6',
+			'--ba': '#ffffff',
+			'--ba-surface': 'rgba(128,128,128,0.15)',
+			'--fg': '#1a1a2e',
+			'--fg-dim': '#6b7280',
+			'--border': 'rgba(128,128,128,0.2)',
+			'--ui-btn-radius': '8px',
+			'--ui-input-bg': '#ffffff',
+			'--ui-card-bg': '#ffffff',
+			'--ui-card-shadow': '0 4px 6px rgba(0,0,0,0.1)',
+		},
+		dark: {
+			'--co': '#818cf8',
+			'--co-on': '#ffffff',
+			'--co-success': '#4ade80',
+			'--co-warn': '#fbbf24',
+			'--co-danger': '#f87171',
+			'--co-info': '#60a5fa',
+			'--ba': '#0a0a0f',
+			'--ba-surface': '#12121a',
+			'--fg': '#e4e4e7',
+			'--fg-dim': '#a1a1aa',
+			'--border': 'rgba(255,255,255,0.1)',
+			'--ui-btn-radius': '10px',
+			'--ui-input-bg': '#1a1a26',
+			'--ui-card-bg': '#12121a',
+			'--ui-card-shadow': '0 4px 20px rgba(0,0,0,0.4)',
+			'--ui-input-border': 'rgba(255,255,255,0.1)',
+			'--ui-card-border': 'rgba(255,255,255,0.06)',
+		},
+		highcontrast: {
+			'--co': '#ffff00',
+			'--co-on': '#000000',
+			'--co-success': '#00ff00',
+			'--co-warn': '#ffcc00',
+			'--co-danger': '#ff0000',
+			'--co-info': '#00ffff',
+			'--ba': '#000000',
+			'--ba-surface': '#111111',
+			'--fg': '#ffffff',
+			'--fg-dim': '#eeeeee',
+			'--border': '#ffffff',
+			'--ui-btn-radius': '0px',
+			'--ui-input-bg': '#000000',
+			'--ui-card-bg': '#000000',
+			'--ui-card-border': '#ffffff',
+		},
 	}
 
 	static styles = css`
@@ -764,14 +822,16 @@ export class MasterIDE extends LitElement {
 			--ide-code-bg: #1e1e1e;
 			--ide-code-tabs-bg: #252526;
 
-			/* Propagate dark fallbacks to UI components */
+			/* Propagate dark fallbacks to UI components.
+			   NOTE: --co is NOT set here — it must inherit from inline styles
+			   via _applyCssVars() so Theme Editor changes propagate through
+			   nested shadow DOM (master-ide → ui-button etc). */
 			--ba: var(--ide-surface);
 			--ba-surface: var(--ide-surface-2);
 			--fg: var(--ide-text);
 			--fg-dim: var(--ide-text-muted);
 			--border: var(--ide-border-bright);
 			--co-text: var(--ide-text);
-			--co: var(--ide-accent);
 		}
 
 		:host(.theme-light) {
@@ -788,15 +848,8 @@ export class MasterIDE extends LitElement {
 			--ide-code-bg: #f6f8fa;
 			--ide-code-tabs-bg: #ebedf0;
 
-			/* Propagate to UI components too */
-			--ba: var(--ide-surface);
-			--ba-surface: var(--ide-surface-2);
-			--fg: var(--ide-text);
-			--fg-dim: var(--ide-text-muted);
-			--fg-muted: var(--ide-text-muted);
-			--border: var(--ide-border-bright);
+			/* IDE-specific component overrides (not theme tokens) */
 			--co-text: var(--ide-text);
-			--co: var(--ide-accent);
 			--ui-code-bg: var(--ide-surface);
 		}
 	`
@@ -861,37 +914,25 @@ export class MasterIDE extends LitElement {
 
 	constructor() {
 		super()
-		this.components = {}
-		this.activeApp = 'Core'
-		this.activeComponent = 'Alert'
-		this.activeVariant = null
+		this.activeApp = ''
+		this.activeComponent = ''
+		this.activeVariant = ''
 		this.editableProps = {}
-		this.cssVars = {
-			'--ui-primary': '#0d6efd',
-			'--ui-secondary': '#6c757d',
-			'--ui-success': '#198754',
-			'--ui-info': '#0dcaf0',
-			'--ui-warning': '#ffc107',
-			'--ui-danger': '#dc3545',
-			'--ui-light': '#f8f9fa',
-			'--ui-dark': '#212529',
-			'--ui-radius-sm': '0.2rem',
-			'--ui-radius-md': '0.375rem',
-			'--ui-radius-lg': '0.5rem',
-			'--ui-radius-pill': '50rem',
-			'--ui-radius-circle': '50%',
-			'--ui-space-sm': '0.5rem',
-			'--ui-space-md': '1rem',
-			'--ui-space-lg': '1.5rem',
-		}
+		this.activeThemeKey = localStorage.getItem('ui-active-theme-key') || 'default'
+		this._themes = JSON.parse(JSON.stringify(MasterIDE._baseThemes))
+		this.cssVars = { ...this._themes[this.activeThemeKey] }
 		this.searchQuery = ''
 		this.theme = localStorage.getItem('ui-theme') || 'auto'
 		this.codeFormat = localStorage.getItem('ui-code-format') || 'html'
-		this.lang = 'uk'
+		this.lang = location.pathname.split('/')[1] === 'en' ? 'en' : 'uk'
+		this.sidebarOpen = window.innerWidth > 768
 		this.docsContent = ''
-		this.sidebarOpen = false
+		this._previewEl = null
+
 		const savedSections = localStorage.getItem('ui-open-sections')
 		this._openSections = new Set(savedSections ? JSON.parse(savedSections) : ['Core'])
+
+		this._loadTheme()
 
 		window.addEventListener('manifest-updated', (e) => {
 			this.components = structuredClone(e.detail)
@@ -915,7 +956,44 @@ export class MasterIDE extends LitElement {
 		this._applyTheme(this.theme)
 	}
 
+	updated(changedProperties) {
+		if (changedProperties.has('lang') && this.lang) {
+			// Re-fetch manifest for new language via _loadManifest
+			if (window.uiLitApp?._loadManifest) {
+				window.uiLitApp._loadManifest(this.lang)
+			}
+		}
+		// Sync cssVars → :root so they actually affect all components
+		if (changedProperties.has('cssVars')) {
+			this._applyCssVars()
+		}
+	}
+
+	/** Apply cssVars: set on both :root and host element to ensure cascade through Shadow DOM.
+	 *  Empty values are removed so CSS fallback chains (e.g. var(--ui-btn-bg, var(--co))) work. */
+	_applyCssVars() {
+		const root = document.documentElement
+		for (const [k, v] of Object.entries(this.cssVars)) {
+			if (v === '' || v == null) {
+				root.style.removeProperty(k)
+				this.style.removeProperty(k)
+			} else {
+				root.style.setProperty(k, v)
+				this.style.setProperty(k, v)
+			}
+		}
+		this._saveTheme()
+	}
+
 	_syncFromUrl() {
+		// Handle /{lang}/CSS.html → Theme Settings
+		const cssMatch = window.location.pathname.match(/\/([^/]+)\/CSS\.html$/)
+		if (cssMatch) {
+			this.lang = cssMatch[1]
+			this.activeComponent = '__THEME__'
+			this.activeApp = 'System'
+			return
+		}
 		// Regex: /([^/]+)/([^/]+)/([^/.]+)\.html (category-aware URL pattern)
 		let match = window.location.pathname.match(RegExp('/([^/]+)/([^/]+)/([^/.]+)\.html$'))
 		if (match) {
@@ -1014,6 +1092,76 @@ export class MasterIDE extends LitElement {
 		}
 	}
 
+	_loadTheme() {
+		const saved = localStorage.getItem('ui-themes-custom')
+		if (saved) {
+			try {
+				const data = JSON.parse(saved)
+				// Merge saved themes into our runtime themes
+				for (const [key, vars] of Object.entries(data)) {
+					if (this._themes[key]) {
+						this._themes[key] = { ...this._themes[key], ...vars }
+					} else {
+						this._themes[key] = vars
+					}
+				}
+				this.cssVars = { ...this._themes[this.activeThemeKey] }
+			} catch (_) {
+				/* ignore corrupt data */
+			}
+		}
+	}
+
+	_saveTheme() {
+		// Update the active theme session in the themes object
+		this._themes[this.activeThemeKey] = { ...this.cssVars }
+		localStorage.setItem('ui-themes-custom', JSON.stringify(this._themes))
+		localStorage.setItem('ui-active-theme-key', this.activeThemeKey)
+	}
+
+	_exportTheme() {
+		const blob = new Blob([JSON.stringify(this._themes, null, 2)], { type: 'application/json' })
+		const url = URL.createObjectURL(blob)
+		const a = document.createElement('a')
+		a.href = url
+		a.download = `nan0web-themes-${new Date().toISOString().split('T')[0]}.json`
+		a.click()
+		URL.revokeObjectURL(url)
+	}
+
+	_importTheme() {
+		const input = document.createElement('input')
+		input.type = 'file'
+		input.accept = 'application/json'
+		input.onchange = (e) => {
+			const file = e.target.files[0]
+			if (file) {
+				const reader = new FileReader()
+				reader.onload = (re) => {
+					try {
+						const data = JSON.parse(re.target.result)
+						this._themes = data
+						this.cssVars = { ...(this._themes[this.activeThemeKey] || this._themes.default) }
+						this._saveTheme()
+						this.requestUpdate()
+					} catch (err) {
+						alert('Invalid JSON file')
+					}
+				}
+				reader.readAsText(file)
+			}
+		}
+		input.click()
+	}
+
+	_setThemeKey(key) {
+		this._saveTheme() // save current
+		this.activeThemeKey = key
+		this.cssVars = { ...this._themes[key] }
+		this._applyCssVars()
+		this.requestUpdate()
+	}
+
 	_applyTheme(theme) {
 		this.theme = theme
 		localStorage.setItem('ui-theme', theme)
@@ -1068,7 +1216,7 @@ export class MasterIDE extends LitElement {
 	_selectComponent(app, name) {
 		if (this.activeComponent === name) return
 		this.activeApp = app
-		const newUrl = `../../${this.activeApp}/${name}.html`
+		const newUrl = `/${this.lang}/${this.activeApp}/${name}.html`
 		history.pushState(null, '', newUrl)
 		this._syncFromUrl()
 		this.sidebarOpen = false
@@ -1083,7 +1231,7 @@ export class MasterIDE extends LitElement {
 		if (meta && meta.variants) {
 			const index = meta.variants.findIndex((v) => v.name === name)
 			if (index >= 0) {
-				const newUrl = `../../${this.activeApp}/${this.activeComponent}.html#var${index + 1}`
+				const newUrl = `/${this.lang}/${this.activeApp}/${this.activeComponent}.html#var${index + 1}`
 				history.replaceState(null, '', newUrl)
 			}
 		}
@@ -1322,88 +1470,197 @@ ${this.docsContent}</pre
 
 	_renderThemeEditor() {
 		const varEntries = Object.entries(this.cssVars)
-		const colors = varEntries.filter(([k]) => !k.includes('radius') && !k.includes('space'))
-		const sizes = varEntries.filter(([k]) => k.includes('radius') || k.includes('space'))
+
+		const tokens = varEntries.filter(
+			([k]) => k.match(/^--(co|ba|fg|border)/) && !k.includes('radius'),
+		)
+		const components = varEntries.filter(
+			([k]) => k.startsWith('--ui-') && !k.includes('radius') && !k.includes('shadow'),
+		)
+		const geometry = varEntries.filter(([k]) => k.includes('ra-') || k.includes('radius'))
+		const shadows = varEntries.filter(([k]) => k.includes('shadow'))
 
 		const renderRow = ([key, val]) => {
-			const type = val.startsWith('#') ? 'color' : 'text'
+			const sv = String(val)
+			const _update = (e) => {
+				const v = e.detail?.value ?? e.target?.value ?? ''
+				this.cssVars = { ...this.cssVars, [key]: v }
+				this._saveTheme() // Persist immediately
+				this.requestUpdate()
+			}
+
+			// Color check: hex or rgba/rgb
+			const isColor = /^rgba?\(/.test(sv) || sv.startsWith('#')
+			// Shadow check: contains shadow keyword AND doesn't look like a simple color
+			const isShadow = key.includes('shadow') && !isColor
+
+			if (isColor) {
+				return html`
+					<ui-color
+						label=${key}
+						.value=${sv}
+						?alpha=${sv.includes('rgba')}
+						@input=${_update}
+					></ui-color>
+				`
+			}
+			if (isShadow) {
+				return html` <ui-shadow label=${key} .value=${sv} @input=${_update}></ui-shadow> `
+			}
+
+			const sizeMatch = sv.match(/^([\d.]+)(rem|px|em|%)$/)
+			if (sizeMatch) {
+				const [, num, unit] = sizeMatch
+				return html`
+					<div
+						class="prop-group"
+						style="margin-bottom: 8px; display: grid; grid-template-columns: 1fr 140px; align-items: center; gap: 12px;"
+					>
+						<div
+							class="prop-label"
+							style="margin-bottom: 0; font-family: monospace; font-size: 0.65rem;"
+						>
+							${key}
+						</div>
+						<div style="display: flex; gap: 4px; align-items: center;">
+							<input
+								type="number"
+								step="0.1"
+								.value=${num}
+								class="prop-input"
+								style="flex:1; height:26px;"
+								@input=${(e) => _update({ target: { value: e.target.value + unit } })}
+							/>
+							<select
+								style="height:26px;"
+								@change=${(e) => {
+									const val = e.target.parentElement.querySelector('input').value + e.target.value
+									_update({ target: { value: val } })
+								}}
+							>
+								${['px', 'rem', 'em', '%'].map(
+									(u) => html`<option value=${u} ?selected=${u === unit}>${u}</option>`,
+								)}
+							</select>
+						</div>
+					</div>
+				`
+			}
 			return html`
 				<div
 					class="prop-group"
-					style="margin-bottom: 12px; display: grid; grid-template-columns: 1fr 140px; align-items: center; gap: 16px;"
+					style="margin-bottom: 8px; display: grid; grid-template-columns: 1fr 140px; align-items: center; gap: 12px;"
 				>
 					<div
 						class="prop-label"
-						style="margin-bottom: 0; font-family: monospace; font-size: 0.7rem;"
+						style="margin-bottom: 0; font-family: monospace; font-size: 0.65rem;"
 					>
 						${key}
 					</div>
-					<div style="display: flex; gap: 8px; align-items: center;">
-						${type === 'color'
-							? html`<div
-									style="width:16px; height:16px; border-radius:3px; background: ${val}; flex-shrink: 0; border: 1px solid var(--ide-border-bright);"
-								></div>`
-							: ''}
-						<input
-							class="prop-input"
-							type="${type}"
-							.value=${val}
-							@input=${(e) => {
-								this.cssVars = { ...this.cssVars, [key]: e.target.value }
-								this.requestUpdate()
-							}}
-							style="flex: 1; height: 28px; padding: 2px 6px;"
-						/>
-					</div>
+					<input
+						class="prop-input"
+						type="text"
+						.value=${val}
+						@input=${_update}
+						style="flex: 1; height: 26px;"
+					/>
 				</div>
 			`
 		}
 
-		const styleStr = Object.entries(this.cssVars)
-			.map(([k, v]) => `${k}:${v}`)
-			.join(';')
+		const sectionHead = (title) => html`
+			<h3
+				style="font-size: 0.7rem; text-transform: uppercase; color: var(--ide-text-muted); margin: 20px 0 10px; border-bottom: 1px solid var(--ide-border); padding-bottom: 6px; letter-spacing: 0.06em;"
+			>
+				${title}
+			</h3>
+		`
 
 		return html`
 			<div
 				class="theme-page"
-				style="padding: 32px; max-width: 800px; overflow-y: auto; height: 100%; ${styleStr}"
+				style="padding: 24px; max-width: 860px; overflow-y: auto; height: 100%;"
 			>
-				<h2 style="margin-bottom: 32px;">${this._t('themeSettings')}</h2>
-
-				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px;">
-					<div>
-						<h3
-							style="font-size: 0.75rem; text-transform: uppercase; color: var(--ide-text-muted); margin-bottom: 16px; border-bottom: 1px solid var(--ide-border); padding-bottom: 8px; letter-spacing: 0.05em;"
-						>
-							Палітра (Palette)
-						</h3>
-						${colors.map(renderRow)}
+				<div
+					style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;"
+				>
+					<div style="display: flex; gap: 8px;">
+						${['default', 'dark', 'highcontrast'].map(
+							(k) => html`
+								<button
+									class="nav-item ${this.activeThemeKey === k ? 'active' : ''}"
+									@click=${() => this._setThemeKey(k)}
+								>
+									${k.toUpperCase()}
+								</button>
+							`,
+						)}
 					</div>
-
-					<div>
-						<h3
-							style="font-size: 0.75rem; text-transform: uppercase; color: var(--ide-text-muted); margin-bottom: 16px; border-bottom: 1px solid var(--ide-border); padding-bottom: 8px; letter-spacing: 0.05em;"
-						>
-							Геометрія (Geometry)
-						</h3>
-						${sizes.map(renderRow)}
+					<div style="display: flex; gap: 8px;">
+						<button class="nav-item" @click=${this._exportTheme}>Export JSON</button>
+						<button class="nav-item" @click=${this._importTheme}>Import JSON</button>
 					</div>
 				</div>
 
-				<div
-					style="margin-top: 48px; padding: 32px; border: 1px solid var(--ide-border); border-radius: var(--ui-radius-md, 8px); background: var(--ide-surface-2); text-align: center;"
-				>
-					<div
-						style="font-size: 0.8rem; margin-bottom: 24px; color: var(--ide-text-muted); font-weight: 600;"
+				${sectionHead('🎨 Design Tokens')} ${tokens.map(renderRow)} ${sectionHead('🧩 Components')}
+				${components.map(renderRow)} ${sectionHead('📐 Geometry')} ${geometry.map(renderRow)}
+				${sectionHead('🌑 Shadows')} ${shadows.map(renderRow)}
+			</div>
+		`
+	}
+
+	/** Live Preview panel for Theme Editor — rendered in right sidebar.
+	 *  Wraps all preview components in a div with inline cssVars so changes
+	 *  propagate through shadow DOM boundaries. */
+	_renderThemePreview() {
+		// Build inline style string from cssVars (same pattern as component preview).
+		// Skip empty values so CSS fallback chains (e.g. var(--ui-btn-bg, var(--co))) work.
+		const varStyle = Object.entries(this.cssVars)
+			.filter(([, v]) => v !== '' && v != null)
+			.map(([k, v]) => `${k}:${v}`)
+			.join(';')
+
+		return html`
+			<div class="theme-preview-wrap" style="padding: 16px; ${varStyle}">
+				<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px;">
+					<ui-button>Primary</ui-button>
+					<ui-button style="--co: var(--co-success); --co-on: var(--co-on-success)"
+						>Success</ui-button
 					>
-						Попередній перегляд теми:
-					</div>
-					<div style="display: flex; gap: 16px; justify-content: center; align-items: center;">
-						<ui-button style="--co: var(--ui-primary)">Головна кнопка</ui-button>
-						<ui-button style="--co: var(--ui-secondary)">Другорядна</ui-button>
-						<ui-badge style="--co: var(--ui-success); color: #fff;">Success</ui-badge>
-						<ui-badge style="--co: var(--ui-danger); color: #fff;">Danger</ui-badge>
-					</div>
+					<ui-button style="--co: var(--co-warn); --co-on: var(--co-on-warn)">Warning</ui-button>
+					<ui-button style="--co: var(--co-danger); --co-on: var(--co-on-danger)">Danger</ui-button>
+					<ui-button style="--co: var(--co-info); --co-on: var(--co-on-info)">Info</ui-button>
+				</div>
+				<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+					<ui-badge variant="info">Info</ui-badge>
+					<ui-badge variant="ok">Success</ui-badge>
+					<ui-badge variant="warn">Warning</ui-badge>
+					<ui-badge variant="err">Danger</ui-badge>
+				</div>
+				<div style="margin-bottom: 12px;">
+					<ui-alert variant="info" content="Theme preview alert"></ui-alert>
+				</div>
+				<div style="margin-bottom: 12px;">
+					<ui-input label="Input preview" placeholder="Type here..."></ui-input>
+				</div>
+				<div style="margin-bottom: 12px;">
+					<ui-card style="padding: 16px;">
+						<div style="font-weight: 600; margin-bottom: 4px;">Card Preview</div>
+						<div style="font-size: 0.85rem; color: var(--fg-dim);">Card content with shadow</div>
+					</ui-card>
+				</div>
+				<div>
+					<ui-progress value="65" show-label style="margin-bottom: 6px;"></ui-progress>
+					<ui-progress
+						value="40"
+						show-label
+						style="--ui-progress-fill: var(--co-success); margin-bottom: 6px;"
+					></ui-progress>
+					<ui-progress
+						value="80"
+						show-label
+						style="--ui-progress-fill: var(--co-danger);"
+					></ui-progress>
 				</div>
 			</div>
 		`
@@ -1436,12 +1693,9 @@ ${this.docsContent}</pre
 		if (!meta)
 			return html`<div style="color: var(--ide-text-muted)">${this._t('selectComponent')}</div>`
 
-		// Tag alias: some YAML names generate wrong tag names
 		const tagAliases = { 'ui-progress-bar': 'ui-progress' }
 		const tag = tagAliases[meta.tag] || meta.tag
 
-		// Simple components that use `label` for text content
-		// (ui-alert uses .content natively, NOT label)
 		const labelComponents = new Set([
 			'ui-badge',
 			'ui-button',
@@ -1451,86 +1705,94 @@ ${this.docsContent}</pre
 		])
 		const usesLabel = labelComponents.has(tag)
 
-		const el = document.createElement(tag)
+		// Create or reuse element
+		if (!this._previewEl || this._previewEl.tagName.toLowerCase() !== tag) {
+			this._previewEl = document.createElement(tag)
+
+			// Initial setup for events
+			const handlePropChange = (key, newVal) => {
+				this.editableProps = { ...this.editableProps, [key]: newVal }
+				this.requestUpdate()
+			}
+
+			this._previewEl.addEventListener('input', (e) => {
+				const newVal = e.detail?.value ?? e.target?.value
+				if (newVal !== undefined) handlePropChange('value', newVal)
+			})
+			this._previewEl.addEventListener('input-change', (e) => {
+				if (e.detail?.value !== undefined) handlePropChange('value', e.detail.value)
+			})
+		}
+
+		const el = this._previewEl
 		const props = this.editableProps
 
-		// ── Table: convert rows[][] + columns[] → data[] (array of objects) ──
+		// Update properties without recreating the element
 		if (tag === 'ui-table') {
-			const columns = props.columns || []
-			const rows = props.rows || []
-			el.columns = columns
-			el.data = rows.map((row) => {
+			el.columns = props.columns || []
+			el.data = (props.rows || []).map((row) => {
 				const obj = {}
-				columns.forEach((col, i) => {
+				el.columns.forEach((col, i) => {
 					obj[col] = Array.isArray(row) ? row[i] : row
 				})
 				return obj
 			})
-			return html`${el}`
-		}
-
-		// ── Tree: map data → items (ui-tree expects .items) ──
-		if (tag === 'ui-tree') {
+		} else if (tag === 'ui-tree') {
 			el.items = props.data || []
-			return html`${el}`
-		}
-
-		// ── Markdown: convert raw markdown → HTML ──
-		if (tag === 'ui-markdown') {
+		} else if (tag === 'ui-markdown') {
 			el.content = this._md2html(props.content || '')
-			return html`${el}`
-		}
-
-		// ── LangSelect: convert string[] → {code,title}[] ──
-		if (tag === 'ui-lang-select') {
+		} else if (tag === 'ui-lang-select') {
 			const langs = props.langs || ['uk', 'en']
-			const titles = { uk: 'Українська', en: 'English', de: 'Deutsch', pl: 'Polski' }
+			const titles = { uk: 'Українська', en: 'English' }
 			el.langs = langs.map((l) =>
 				typeof l === 'string' ? { code: l, title: titles[l] || l.toUpperCase() } : l,
 			)
 			if (props.current) el.locale = props.current
-			return html`${el}`
-		}
-
-		// ── ProgressBar: map variant → --ui-progress-fill color ──
-		if (tag === 'ui-progress') {
-			const variantColors = {
-				primary: 'var(--ui-primary, #0099dc)',
-				secondary: 'var(--ui-secondary, #6c757d)',
-				success: 'var(--ui-success, #22c55e)',
-				danger: 'var(--ui-danger, #ef4444)',
-				warning: 'var(--ui-warning, #f59e0b)',
-				info: 'var(--ui-info, #06b6d4)',
-			}
-			for (const [k, v] of Object.entries(props)) {
-				if (k === 'variant') continue // skip, handled via CSS
-				const prop = k.replace(/-([a-z])/g, (_, c) => c.toUpperCase())
-				el[prop] = v
-			}
+		} else if (tag === 'ui-progress') {
+			const variantColors = { success: '#22c55e', danger: '#ef4444', warning: '#f59e0b' }
+			Object.entries(props).forEach(([k, v]) => {
+				if (k === 'variant') return
+				el[k.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = v
+			})
 			const fill = variantColors[props.variant] || ''
 			if (fill) el.style.setProperty('--ui-progress-fill', fill)
-			return html`${el}`
+		} else if (tag === 'ui-select' || tag === 'ui-autocomplete') {
+			el.options = props.options || []
+			Object.entries(props).forEach(([k, v]) => {
+				if (k === 'options' || k.startsWith('$')) return
+				el[k.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = v
+			})
+		} else {
+			// Default prop application
+			Object.entries(props).forEach(([k, v]) => {
+				if (k.startsWith('$') || k === 'content' || k === 'options') return
+				const prop = k.replace(/-([a-z])/g, (_, c) => c.toUpperCase())
+				if (typeof v === 'boolean') {
+					if (v) el.setAttribute(k, '')
+					else el.removeAttribute(k)
+				} else {
+					if (['pattern', 'min', 'max', 'step', 'required'].includes(k))
+						el.setAttribute(k, String(v))
+					el[prop] = v
+				}
+			})
+
+			if (props.content) {
+				if (tag === 'ui-badge') el.innerText = props.content
+				else if (tag === 'ui-input') {
+					el.value = props.content
+					if (props.label) el.setAttribute('label', props.label)
+				} else if (usesLabel) el.label = props.content
+				else if (tag === 'ui-alert') el.content = props.content
+			}
 		}
 
-		for (const [k, v] of Object.entries(props)) {
-			// Map content -> label only for simple text components
-			const mapped = k === 'content' && usesLabel ? 'label' : k
-			// Convert hyphenated attribute names to camelCase JS properties
-			const prop = mapped.replace(/-([a-z])/g, (_, c) => c.toUpperCase())
-			el[prop] = v
-		}
-
-		// Handle empty states/triggers for specific components
+		// Interactive components wrapping
 		if (tag === 'ui-modal' || tag === 'ui-confirm') {
 			const i18nKey = tag === 'ui-modal' ? 'openModal' : 'openConfirm'
 			return html`
 				<div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-					<ui-button
-						@click=${() => {
-							el.open = true
-						}}
-						>${this._t(i18nKey)}</ui-button
-					>
+					<ui-button @click=${() => (el.open = true)}>${this._t(i18nKey)}</ui-button>
 					<div style="font-size:0.7rem; color:var(--ide-text-muted)">
 						${this._t('modalTriggerDesc')}
 					</div>
@@ -1544,6 +1806,25 @@ ${this.docsContent}</pre
 
 	_renderPropEditor(key, value, typeDef) {
 		const propType = typeDef || typeof value
+
+		// Autocomplete/Select options (array of strings)
+		if (key === 'options' && Array.isArray(value)) {
+			return html` <div class="prop-group">
+				<div class="prop-label">${key}</div>
+				<textarea
+					class="prop-input"
+					rows="4"
+					.value=${value.join('\n')}
+					@input=${(e) =>
+						this._onPropChange(
+							key,
+							e.target.value.split('\n').filter((x) => x.trim()),
+						)}
+					placeholder="One option per line..."
+					style="font-size: 0.72rem; resize: vertical;"
+				></textarea>
+			</div>`
+		}
 
 		// Boolean
 		if (propType === 'boolean' || typeof value === 'boolean') {
@@ -1580,6 +1861,15 @@ ${this.docsContent}</pre
 					@input=${(e) => this._onPropChange(key, Number(e.target.value))}
 				/>
 			</div>`
+		}
+		// Array of objects — structured editor with add/remove
+		if (
+			Array.isArray(value) &&
+			value.length > 0 &&
+			typeof value[0] === 'object' &&
+			value[0] !== null
+		) {
+			return this._renderArrayEditor(key, value)
 		}
 		// Array / Object / Models — show as JSON
 		const isModel =
@@ -1651,6 +1941,97 @@ ${this.docsContent}</pre
 				@input=${(e) => this._onPropChange(key, e.target.value)}
 			/>
 		</div>`
+	}
+
+	/** Render structured editor for array-of-objects props */
+	_renderArrayEditor(key, items) {
+		const fields = items.length > 0 ? Object.keys(items[0]) : []
+		return html`
+			<div class="prop-group">
+				<div
+					class="prop-label"
+					style="display:flex; justify-content:space-between; align-items:center;"
+				>
+					${key}
+					<button
+						class="array-editor-btn add-item"
+						style="background:none; border:1px solid var(--ide-border-bright); border-radius:4px; color:var(--ide-accent); cursor:pointer; font-size:0.7rem; padding:2px 6px;"
+						@click=${() => this._addArrayItem(key, fields)}
+					>
+						➕
+					</button>
+				</div>
+				${items.map(
+					(item, idx) => html`
+						<div
+							class="array-editor"
+							style="display:flex; gap:4px; align-items:center; margin-bottom:4px;"
+						>
+							${fields.map((field) => {
+								const val = item[field]
+								// Nested objects/arrays — show as compact JSON textarea
+								if (typeof val === 'object' && val !== null) {
+									return html`
+										<textarea
+											class="prop-input"
+											style="flex:1; font-size:0.68rem; padding:3px 5px; font-family:monospace; min-height:24px; resize:vertical;"
+											placeholder="${field}"
+											.value=${JSON.stringify(val)}
+											@input=${(e) => {
+												try {
+													const updated = [...items]
+													updated[idx] = { ...updated[idx], [field]: JSON.parse(e.target.value) }
+													this._onPropChange(key, updated)
+												} catch (_) {}
+											}}
+										></textarea>
+									`
+								}
+								// Primitive values — regular input
+								const displayVal = val === true ? 'true' : val === false ? 'false' : (val ?? '')
+								return html`
+									<input
+										class="prop-input"
+										style="flex:1; font-size:0.72rem; padding:4px 6px;"
+										placeholder="${field}"
+										.value=${String(displayVal)}
+										@input=${(e) => {
+											const updated = [...items]
+											let newVal = e.target.value
+											if (newVal === 'true') newVal = true
+											else if (newVal === 'false') newVal = false
+											updated[idx] = { ...updated[idx], [field]: newVal }
+											this._onPropChange(key, updated)
+										}}
+									/>
+								`
+							})}
+							<button
+								class="array-editor-btn remove-item"
+								style="background:none; border:none; color:var(--ide-danger); cursor:pointer; font-size:0.8rem; padding:2px;"
+								@click=${() => this._removeArrayItem(key, idx)}
+							>
+								🗑
+							</button>
+						</div>
+					`,
+				)}
+			</div>
+		`
+	}
+
+	_addArrayItem(key, fields) {
+		const items = [...(this.editableProps[key] || [])]
+		const newItem = {}
+		for (const f of fields) newItem[f] = ''
+		items.push(newItem)
+		this._onPropChange(key, items)
+	}
+
+	_removeArrayItem(key, idx) {
+		const items = [...(this.editableProps[key] || [])]
+		items.splice(idx, 1)
+		this._onPropChange(key, items)
 	}
 
 	render() {
@@ -1752,6 +2133,7 @@ ${this.docsContent}</pre
 						@click=${() => {
 							this.activeComponent = '__THEME__'
 							this.activeApp = 'System'
+							history.pushState(null, '', `/${this.lang}/CSS.html`)
 						}}
 					>
 						<span class="comp-dot" style="background: var(--ide-accent)"></span>
@@ -1806,7 +2188,7 @@ ${this.docsContent}</pre
 				</div>
 
 				${this.activeComponent === '__THEME__'
-					? this._renderThemeEditor()
+					? ''
 					: meta
 						? html`
 								<div class="variants-list">
@@ -1830,121 +2212,131 @@ ${this.docsContent}</pre
 								</div>
 							`
 						: ''}
-				${this.activeComponent === '__THEME__'
-					? ''
-					: html` <div class="content">
-							<!-- Live Preview -->
-							<div class="preview-pane">
-								<div class="pane-label">${this._t('preview')}</div>
-								<div class="preview-area">
-									<div
-										class="preview-canvas"
-										style="${Object.entries(this.cssVars)
-											.map(([k, v]) => `${k}:${v}`)
-											.join(';')}"
-									>
-										${this._renderPreview()}
-									</div>
-								</div>
-								${meta
-									? html`
-									<div class="code-pane">
-										<div class="code-tabs">
-											<button
-												class="code-tab ${this.codeFormat === 'html' ? 'active' : ''}"
-												@click=${() => {
-													this.codeFormat = 'html'
-													localStorage.setItem('ui-code-format', 'html')
-												}}
-											>
-												HTML
-											</button>
-											<button
-												class="code-tab ${this.codeFormat === 'yaml' ? 'active' : ''}"
-												@click=${() => {
-													this.codeFormat = 'yaml'
-													localStorage.setItem('ui-code-format', 'yaml')
-												}}
-											>
-												YAML Spec
-											</button>
-											<button
-												class="code-tab ${this.codeFormat === 'nan0' ? 'active' : ''}"
-												@click=${() => {
-													this.codeFormat = 'nan0'
-													localStorage.setItem('ui-code-format', 'nan0')
-												}}
-											>
-												NaN0 Spec
-											<button
-												class="code-copy"
-												@click=${() => this._copyCode(this._generateCode(meta))}
-											>
-												${this._t('copyCode')}
-											</button>
-										</div>
-										<pre class="code-content">${this._generateCode(meta)}</pre>
-									</div>
-								`
-									: ''}
-							</div>
 
-							<!-- Props Editor -->
-							<div class="props-pane">
-								<div
-									class="pane-label"
-									style="display: flex; justify-content: space-between; align-items: center;"
-								>
-									<span>${this._t('properties')}</span>
-									${meta &&
-									this.activeVariant &&
-									!this._builtInVariantNames.get(this.activeComponent)?.has(this.activeVariant)
+				<div class="content">
+					<div class="preview-pane">
+						${this.activeComponent === '__THEME__'
+							? this._renderThemeEditor()
+							: html`
+									<div class="pane-label">${this._t('preview')}</div>
+									<div class="preview-area">
+										<div
+											class="preview-canvas"
+											style="${Object.entries(this.cssVars)
+												.filter(([, v]) => v !== '' && v != null)
+												.map(([k, v]) => `${k}:${v}`)
+												.join(';')}"
+										>
+											${this._renderPreview()}
+										</div>
+									</div>
+									${meta
 										? html`
-												<div style="display: flex; gap: 12px; margin-right: 4px;">
-													<button
-														style="all: unset; cursor: pointer; color: var(--ide-text-muted); font-size: 0.8rem; transition: color 0.2s;"
-														onmouseover="this.style.color='var(--ide-text)'"
-														onmouseout="this.style.color='var(--ide-text-muted)'"
-														@click=${() => this._renameVariant(this.activeVariant)}
-														title="Перейменувати варіацію"
-													>
-														✎
-													</button>
-													<button
-														style="all: unset; cursor: pointer; color: var(--ide-err, #f87171); font-size: 0.8rem; opacity: 0.7; transition: opacity 0.2s;"
-														onmouseover="this.style.opacity=1"
-														onmouseout="this.style.opacity=0.7"
-														@click=${() => this._deleteVariant(this.activeVariant)}
-														title="Видалити варіацію"
-													>
-														🗑
-													</button>
+												<div class="code-pane">
+													<div class="code-tabs">
+														<button
+															class="code-tab ${this.codeFormat === 'html' ? 'active' : ''}"
+															@click=${() => {
+																this.codeFormat = 'html'
+																localStorage.setItem('ui-code-format', 'html')
+															}}
+														>
+															HTML
+														</button>
+														<button
+															class="code-tab ${this.codeFormat === 'yaml' ? 'active' : ''}"
+															@click=${() => {
+																this.codeFormat = 'yaml'
+																localStorage.setItem('ui-code-format', 'yaml')
+															}}
+														>
+															YAML Spec
+														</button>
+														<button
+															class="code-tab ${this.codeFormat === 'nan0' ? 'active' : ''}"
+															@click=${() => {
+																this.codeFormat = 'nan0'
+																localStorage.setItem('ui-code-format', 'nan0')
+															}}
+														>
+															NaN0 Spec
+														</button>
+														<button
+															class="code-copy"
+															@click=${() => this._copyCode(this._generateCode(meta))}
+														>
+															${this._t('copyCode')}
+														</button>
+													</div>
+													<pre class="code-content">${this._generateCode(meta)}</pre>
 												</div>
 											`
 										: ''}
-								</div>
-								<div class="props-scroll">
-									${meta
-										? Object.entries(this.editableProps).map(([key, value]) =>
-												this._renderPropEditor(key, value, meta.propTypes?.[key]),
-											)
-										: html`<div
-												style="color: var(--ide-text-muted); font-size: 0.82rem; padding: 8px 0;"
+								`}
+					</div>
+
+					<!-- Props Editor / Theme Preview -->
+					<div class="props-pane">
+						<div
+							class="pane-label"
+							style="display: flex; justify-content: space-between; align-items: center;"
+						>
+							<span
+								>${this.activeComponent === '__THEME__'
+									? 'Live Preview'
+									: this._t('properties')}</span
+							>
+							${meta &&
+							this.activeVariant &&
+							!this._builtInVariantNames.get(this.activeComponent)?.has(this.activeVariant)
+								? html`
+										<div style="display: flex; gap: 12px; margin-right: 4px;">
+											<button
+												style="all: unset; cursor: pointer; color: var(--ide-text-muted); font-size: 0.8rem; transition: color 0.2s;"
+												onmouseover="this.style.color='var(--ide-text)'"
+												onmouseout="this.style.color='var(--ide-text-muted)'"
+												@click=${() => this._renameVariant(this.activeVariant)}
+												title="Перейменувати варіацію"
 											>
-												${this._t('noComponentSelected')}
-											</div>`}
-									${meta
-										? html`<button
-												class="btn-reset"
-												@click=${this._resetProps}
-												title="${this._t('resetToDefault')}"
+												✎
+											</button>
+											<button
+												style="all: unset; cursor: pointer; color: var(--ide-err, #f87171); font-size: 0.8rem; opacity: 0.7; transition: opacity 0.2s;"
+												onmouseover="this.style.opacity=1"
+												onmouseout="this.style.opacity=0.7"
+												@click=${() => this._deleteVariant(this.activeVariant)}
+												title="Видалити варіацію"
 											>
-												↺ ${this._t('reset')}
-											</button>`
-										: ''}
-								</div>
-							</div>
-						</div>`}
+												🗑
+											</button>
+										</div>
+									`
+								: ''}
+						</div>
+						<div class="props-scroll">
+							${this.activeComponent === '__THEME__'
+								? this._renderThemePreview()
+								: meta
+									? Object.entries(this.editableProps).map(([key, value]) =>
+											this._renderPropEditor(key, value, meta.propTypes?.[key]),
+										)
+									: html`<div
+											style="color: var(--ide-text-muted); font-size: 0.82rem; padding: 8px 0;"
+										>
+											${this._t('noComponentSelected')}
+										</div>`}
+							${meta
+								? html`<button
+										class="btn-reset"
+										@click=${this._resetProps}
+										title="${this._t('resetToDefault')}"
+									>
+										↺ ${this._t('reset')}
+									</button>`
+								: ''}
+						</div>
+					</div>
+				</div>
 			</main>
 		`
 	}

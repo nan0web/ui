@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Theme Settings — NaN•Web UI CSS Variables</title>
+	<meta name="description" content="Full CSS variable editor for NaN•Web UI components — Bootstrap-level theming">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<style>
+		*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+		:root {
+			--ide-bg: #0a0a0f; --ide-surface: #12121a; --ide-surface-2: #1a1a26;
+			--ide-border: rgba(255,255,255,0.06); --ide-border-bright: rgba(255,255,255,0.12);
+			--ide-text: #e4e4e7; --ide-text-muted: #71717a;
+			--ide-accent: #0099DC; --ide-accent-dim: rgba(0,153,220,0.12);
+			--ide-success: #22c55e; --ide-danger: #ef4444; --ide-warning: #f59e0b;
+			--ide-font: 'Inter', system-ui, sans-serif;
+			color-scheme: dark;
+		}
+		body { font-family: var(--ide-font); background: var(--ide-bg); color: var(--ide-text); }
+		.container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+		h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+		h1 span { color: var(--ide-accent); }
+		.subtitle { color: var(--ide-text-muted); font-size: 0.85rem; margin-bottom: 40px; }
+		.section { margin-bottom: 36px; }
+		.section-title {
+			font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+			letter-spacing: 0.12em; color: var(--ide-accent);
+			padding-bottom: 8px; margin-bottom: 16px;
+			border-bottom: 1px solid var(--ide-border);
+		}
+		.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+		.var-card {
+			background: var(--ide-surface); border: 1px solid var(--ide-border);
+			border-radius: 8px; padding: 12px; transition: border-color 0.2s;
+		}
+		.var-card:hover { border-color: var(--ide-accent); }
+		.var-name { font-size: 0.7rem; font-family: 'SF Mono', monospace; color: var(--ide-text-muted); margin-bottom: 6px; }
+		.var-input {
+			width: 100%; padding: 6px 8px; border: 1px solid var(--ide-border-bright);
+			border-radius: 6px; background: var(--ide-surface-2); color: var(--ide-text);
+			font-family: inherit; font-size: 0.8rem; outline: none;
+		}
+		.var-input:focus { border-color: var(--ide-accent); }
+		.color-row { display: flex; gap: 8px; align-items: center; }
+		.color-swatch {
+			width: 32px; height: 32px; border-radius: 6px;
+			border: 1px solid var(--ide-border-bright); cursor: pointer; flex-shrink: 0;
+		}
+		.color-swatch input { opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+		.preview-box {
+			margin-top: 40px; padding: 32px; background: var(--ide-surface);
+			border: 1px solid var(--ide-border); border-radius: 12px;
+		}
+		.preview-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ide-text-muted); margin-bottom: 16px; }
+		.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+		.export-bar { margin-top: 24px; display: flex; gap: 8px; }
+		.export-btn {
+			padding: 8px 16px; border-radius: 8px; border: 1px solid var(--ide-accent);
+			background: transparent; color: var(--ide-accent); cursor: pointer;
+			font-family: inherit; font-weight: 600; font-size: 0.8rem;
+		}
+		.export-btn:hover { background: var(--ide-accent-dim); }
+		.export-btn.primary { background: var(--ide-accent); color: #fff; }
+	</style>
+</head>
+<body>
+<div class="container">
+	<h1>Theme <span>Settings</span></h1>
+	<div class="subtitle">CSS Custom Properties — configure all NaN•Web UI variables in one place</div>
+
+	<div id="editor"></div>
+
+	<div class="preview-box">
+		<div class="preview-title">Live Preview</div>
+		<div class="btn-row" id="preview-buttons"></div>
+		<div id="preview-progress"></div>
+	</div>
+
+	<div class="export-bar">
+		<button class="export-btn primary" id="btn-copy">Copy CSS</button>
+		<button class="export-btn" id="btn-reset">Reset All</button>
+	</div>
+</div>
+
+<script type="module">
+import '@nan0web/ui-lit/theme'
+import '@nan0web/ui-lit/core'
+
+const sections = {
+	'Colors — Primary': {
+		'--ui-primary': '#0099dc',
+		'--ui-primary-hover': '#007ab8',
+		'--ui-primary-active': '#006199',
+		'--ui-primary-text': '#ffffff',
+		'--ui-primary-bg': 'rgba(0,153,220,0.1)',
+	},
+	'Colors — Secondary': {
+		'--ui-secondary': '#6c757d',
+		'--ui-secondary-hover': '#565e64',
+		'--ui-secondary-active': '#41484e',
+		'--ui-secondary-text': '#ffffff',
+	},
+	'Colors — Success': {
+		'--ui-success': '#22c55e',
+		'--ui-success-hover': '#16a34a',
+		'--ui-success-active': '#15803d',
+		'--ui-success-text': '#ffffff',
+		'--ui-success-bg': 'rgba(34,197,94,0.1)',
+	},
+	'Colors — Warning': {
+		'--ui-warning': '#f59e0b',
+		'--ui-warning-hover': '#d97706',
+		'--ui-warning-active': '#b45309',
+		'--ui-warning-text': '#000000',
+		'--ui-warning-bg': 'rgba(245,158,11,0.1)',
+	},
+	'Colors — Danger': {
+		'--ui-danger': '#ef4444',
+		'--ui-danger-hover': '#dc2626',
+		'--ui-danger-active': '#b91c1c',
+		'--ui-danger-text': '#ffffff',
+		'--ui-danger-bg': 'rgba(239,68,68,0.1)',
+	},
+	'Colors — Info': {
+		'--ui-info': '#06b6d4',
+		'--ui-info-hover': '#0891b2',
+		'--ui-info-active': '#0e7490',
+		'--ui-info-text': '#ffffff',
+	},
+	'Typography': {
+		'--ui-font-family': "'Inter', system-ui, sans-serif",
+		'--ui-font-size-xs': '0.75rem',
+		'--ui-font-size-sm': '0.875rem',
+		'--ui-font-size-md': '1rem',
+		'--ui-font-size-lg': '1.125rem',
+		'--ui-font-size-xl': '1.25rem',
+		'--ui-font-weight-normal': '400',
+		'--ui-font-weight-medium': '500',
+		'--ui-font-weight-bold': '700',
+		'--ui-line-height': '1.5',
+	},
+	'Spacing': {
+		'--ui-spacing-xs': '4px',
+		'--ui-spacing-sm': '8px',
+		'--ui-spacing-md': '16px',
+		'--ui-spacing-lg': '24px',
+		'--ui-spacing-xl': '32px',
+		'--ui-spacing-2xl': '48px',
+	},
+	'Border Radius': {
+		'--ui-radius-sm': '4px',
+		'--ui-radius-md': '8px',
+		'--ui-radius-lg': '12px',
+		'--ui-radius-xl': '16px',
+		'--ui-radius-pill': '9999px',
+		'--ui-radius-circle': '50%',
+	},
+	'Shadows': {
+		'--ui-shadow-sm': '0 1px 2px rgba(0,0,0,0.05)',
+		'--ui-shadow-md': '0 4px 6px rgba(0,0,0,0.1)',
+		'--ui-shadow-lg': '0 10px 15px rgba(0,0,0,0.15)',
+		'--ui-shadow-xl': '0 20px 25px rgba(0,0,0,0.2)',
+	},
+	'Z-Index': {
+		'--ui-z-dropdown': '1000',
+		'--ui-z-sticky': '1020',
+		'--ui-z-fixed': '1030',
+		'--ui-z-modal-backdrop': '1040',
+		'--ui-z-modal': '1050',
+		'--ui-z-popover': '1060',
+		'--ui-z-tooltip': '1070',
+		'--ui-z-toast': '1080',
+	},
+}
+
+const editor = document.getElementById('editor')
+const state = {}
+
+for (const [sectionName, vars] of Object.entries(sections)) {
+	const section = document.createElement('div')
+	section.className = 'section'
+	section.innerHTML = `<div class="section-title">${sectionName}</div>`
+	const grid = document.createElement('div')
+	grid.className = 'grid'
+
+	for (const [varName, defaultVal] of Object.entries(vars)) {
+		state[varName] = defaultVal
+		const card = document.createElement('div')
+		card.className = 'var-card'
+
+		const isColor = defaultVal.startsWith('#') || defaultVal.startsWith('rgb')
+		if (isColor) {
+			card.innerHTML = `
+				<div class="var-name">${varName}</div>
+				<div class="color-row">
+					<div class="color-swatch" style="background:${defaultVal}">
+						<input type="color" value="${defaultVal}" data-var="${varName}">
+					</div>
+					<input class="var-input" value="${defaultVal}" data-var="${varName}">
+				</div>
+			`
+			const colorInput = card.querySelector('input[type="color"]')
+			const textInput = card.querySelector('.var-input')
+			const swatch = card.querySelector('.color-swatch')
+			colorInput.addEventListener('input', (e) => {
+				textInput.value = e.target.value
+				swatch.style.background = e.target.value
+				applyVar(varName, e.target.value)
+			})
+			textInput.addEventListener('input', (e) => {
+				swatch.style.background = e.target.value
+				applyVar(varName, e.target.value)
+			})
+		} else {
+			card.innerHTML = `
+				<div class="var-name">${varName}</div>
+				<input class="var-input" value="${defaultVal}" data-var="${varName}">
+			`
+			card.querySelector('.var-input').addEventListener('input', (e) => {
+				applyVar(varName, e.target.value)
+			})
+		}
+		grid.appendChild(card)
+	}
+
+	section.appendChild(grid)
+	editor.appendChild(section)
+}
+
+function applyVar(name, value) {
+	state[name] = value
+	document.documentElement.style.setProperty(name, value)
+}
+
+// Preview
+const btnRow = document.getElementById('preview-buttons')
+const variants = ['primary', 'secondary', 'success', 'warning', 'danger', 'info']
+for (const v of variants) {
+	const btn = document.createElement('ui-button')
+	btn.textContent = v.charAt(0).toUpperCase() + v.slice(1)
+	btn.setAttribute('variant', v)
+	btnRow.appendChild(btn)
+}
+
+const progRow = document.getElementById('preview-progress')
+for (const v of variants) {
+	const p = document.createElement('ui-progress')
+	p.value = Math.round(30 + Math.random() * 60)
+	p.showLabel = true
+	p.style.setProperty('--ui-progress-fill', `var(--ui-${v})`)
+	p.style.marginBottom = '6px'
+	progRow.appendChild(p)
+}
+
+// Export CSS
+document.getElementById('btn-copy').addEventListener('click', () => {
+	const lines = [':root {']
+	for (const [k, v] of Object.entries(state)) {
+		lines.push(`  ${k}: ${v};`)
+	}
+	lines.push('}')
+	navigator.clipboard.writeText(lines.join('\n'))
+	document.getElementById('btn-copy').textContent = '✓ Copied!'
+	setTimeout(() => { document.getElementById('btn-copy').textContent = 'Copy CSS' }, 1500)
+})
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+	for (const [k, v] of Object.entries(sections)) {
+		for (const [varName, defaultVal] of Object.entries(v)) {
+			state[varName] = defaultVal
+			document.documentElement.style.setProperty(varName, defaultVal)
+			document.querySelectorAll(`[data-var="${varName}"]`).forEach(el => {
+				el.value = defaultVal
+				if (el.type === 'color') {
+					el.closest('.color-swatch').style.background = defaultVal
+				}
+			})
+		}
+	}
+})
+</script>
+</body>
+</html>
