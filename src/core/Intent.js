@@ -70,6 +70,7 @@ import { IntentErrorModel } from './IntentErrorModel.js'
  * The value MUST conform to the type described in the requested FieldSchema.
  * @typedef {Object} AskResponse
  * @property {*} value - The value matching schema.type (collected from user / LLM / test fixture).
+ * @property {boolean} [cancelled] - Whether the user cancelled this interaction (e.g. pressed ESC).
  */
 
 // ─── Abort Support ───

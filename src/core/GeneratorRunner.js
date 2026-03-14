@@ -139,6 +139,12 @@ export async function runGenerator(generator, handlers, options = {}) {
 					})
 				}
 
+				// ─── Handle cancellation (ESC / back navigation) ───
+				if (response.cancelled) {
+					await generator.return({ type: 'result', data: null })
+					return /** @type {T} */ (null)
+				}
+
 				// Run field validation if schema has a validator (the Judge again)
 				if (!intent.model) {
 					/** @type {import('./Intent.js').FieldSchema} */

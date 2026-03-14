@@ -62,6 +62,7 @@ export function validateIntent(intent: any): intent is Intent;
  * The value MUST conform to the type described in the requested FieldSchema.
  * @typedef {Object} AskResponse
  * @property {*} value - The value matching schema.type (collected from user / LLM / test fixture).
+ * @property {boolean} [cancelled] - Whether the user cancelled this interaction (e.g. pressed ESC).
  */
 /**
  * Special response that Adapters can send to abort the generator.
@@ -198,6 +199,10 @@ export type AskResponse = {
      * - The value matching schema.type (collected from user / LLM / test fixture).
      */
     value: any;
+    /**
+     * - Whether the user cancelled this interaction (e.g. pressed ESC).
+     */
+    cancelled?: boolean | undefined;
 };
 /**
  * Special response that Adapters can send to abort the generator.
