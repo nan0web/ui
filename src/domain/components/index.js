@@ -1,4 +1,5 @@
 // Exports for Component Models
+export { BreadcrumbModel } from './BreadcrumbModel.js'
 export { ButtonModel } from './ButtonModel.js'
 export { ConfirmModel } from './ConfirmModel.js'
 export { InputModel } from './InputModel.js'

@@ -1,5 +1,6 @@
 import { resolveDefaults } from '@nan0web/types'
 import * as ComponentModels from './components/index.js'
+import { BreadcrumbModel } from './components/BreadcrumbModel.js'
 
 /**
  * @typedef {Object} SandboxData
@@ -14,9 +15,14 @@ import * as ComponentModels from './components/index.js'
  * users to inspect their models, tweak variables interactively,
  * and export the configuration as themes for the Marketplace.
  *
- * Navigation uses a breadcrumb stack:
- *   ESC = pop one level (if stack empty → exit app)
+ * Navigation uses BreadcrumbModel:
+ *   ESC = pop one level (if stack has no parent → exit app)
  *   Ctrl+C = always exit (handled by prompts.js wrapper)
+ *
+ * URL mapping:
+ *   /sandbox             → Select Component
+ *   /sandbox/button      → Edit Button properties
+ *   /sandbox/button/export → Choose export format
  */
 export class SandboxModel {
 	// ==========================================
@@ -55,35 +61,26 @@ export class SandboxModel {
 	// 2. AGNOSTIC LOGIC (Async Generator)
 	// ==========================================
 
-	/**
-	 * Navigation breadcrumb stack.
-	 * ESC pops one entry. Empty stack = CancelError bubbles out → app exits.
-	 * @type {string[]}
-	 */
-	#stack = []
-
-	/**
-	 * Format breadcrumb path for display.
-	 * @returns {string} e.g. "🏖 Sandbox › Button › Export"
-	 */
-	#breadcrumb() {
-		return this.#stack.join(' › ')
-	}
-
 	async *run() {
 		/** @type {any} */
 		let targetInstance = null
-		this.#stack = ['🏖 Sandbox']
+
+		// ── BreadcrumbModel as navigation stack ──
+		const nav = new BreadcrumbModel()
+		nav.push('🏖 Sandbox', 'sandbox')
 
 		while (true) {
 			// ── Level 1: Select Component ──
 			if (!this.selectedComponent) {
+				// Show breadcrumb
 				yield /** @type {any} */ ({
 					type: 'log', level: 'info',
-					message: `\n${this.#breadcrumb()}`,
+					message: `\n${nav}`,
+					component: 'Breadcrumbs',
+					model: /** @type {any} */ (nav),
 				})
 
-				// ESC here is NOT caught → CancelError bubbles → app exits
+				// ESC here = CancelError not caught → bubbles out → app exits
 				const listResponse = yield {
 					type: 'ask',
 					field: 'selectedComponent',
@@ -97,9 +94,7 @@ export class SandboxModel {
 					model: /** @type {any} */ (this),
 				}
 				this.selectedComponent = listResponse.value
-
-				// Push to breadcrumb stack
-				this.#stack.push(this.selectedComponent)
+				nav.push(/** @type {string} */ (this.selectedComponent))
 
 				// Instantiate the selected model class
 				const Ctor = ComponentModels[`${this.selectedComponent}Model`]
@@ -107,12 +102,15 @@ export class SandboxModel {
 			}
 
 			// ── Level 2: Edit Component Properties ──
+			// URL: /sandbox/button  Data: data/sandbox/button/index.yaml
 			/** @type {any} */
 			let configResponse
 			try {
 				yield /** @type {any} */ ({
 					type: 'log', level: 'info',
-					message: `\n${this.#breadcrumb()}`,
+					message: `\n${nav}`,
+					component: 'Breadcrumbs',
+					model: /** @type {any} */ (nav),
 				})
 
 				configResponse = yield {
@@ -129,7 +127,7 @@ export class SandboxModel {
 				const err = /** @type {Error} */ (e)
 				if (err.name === 'CancelError') {
 					// Pop: Level 2 → Level 1
-					this.#stack.pop()
+					nav.pop()
 					this.selectedComponent = undefined
 					continue
 				}
@@ -140,13 +138,16 @@ export class SandboxModel {
 			targetInstance = configResponse.value
 
 			// ── Level 3: Choose Export Format ──
+			// URL: /sandbox/button/export  Data: data/sandbox/button/export/index.yaml
 			/** @type {any} */
 			let formatResponse
 			try {
-				this.#stack.push('Export')
+				nav.push('Export', 'export')
 				yield /** @type {any} */ ({
 					type: 'log', level: 'info',
-					message: `\n${this.#breadcrumb()}`,
+					message: `\n${nav}`,
+					component: 'Breadcrumbs',
+					model: /** @type {any} */ (nav),
 				})
 
 				formatResponse = yield {
@@ -163,7 +164,7 @@ export class SandboxModel {
 				const err = /** @type {Error} */ (e)
 				if (err.name === 'CancelError') {
 					// Pop: Level 3 → Level 2 (same targetInstance preserved)
-					this.#stack.pop()
+					nav.pop()
 					continue
 				}
 				throw e
@@ -175,16 +176,17 @@ export class SandboxModel {
 			yield /** @type {any} */ ({
 				type: 'log',
 				level: 'success',
-				message: `Theme exported as ${(this.themeFormat || 'json').toUpperCase()}! Ready for the UI Theme Store.`,
+				message: `Theme exported as ${(this.themeFormat || 'json').toUpperCase()}! Path: ${nav.path}`,
 			})
 
-			// 5. Return result
+			// 5. Return result with navigation context
 			return {
 				type: 'result',
 				data: {
 					targetComponent: this.selectedComponent,
 					themeConfig: configResponse.value,
 					exportFormat: this.themeFormat,
+					breadcrumb: nav.path,
 				}
 			}
 		}
