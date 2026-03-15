@@ -10,9 +10,13 @@ import * as ComponentModels from './components/index.js'
 
 /**
  * Model-as-Schema for the UI Sandbox environment.
- * Represents a tool wrapping standard OLMUI components, allowing 
- * users to inspect their models, tweak variables interactively, 
+ * Represents a tool wrapping standard OLMUI components, allowing
+ * users to inspect their models, tweak variables interactively,
  * and export the configuration as themes for the Marketplace.
+ *
+ * Navigation uses a breadcrumb stack:
+ *   ESC = pop one level (if stack empty → exit app)
+ *   Ctrl+C = always exit (handled by prompts.js wrapper)
  */
 export class SandboxModel {
 	// ==========================================
@@ -51,33 +55,66 @@ export class SandboxModel {
 	// 2. AGNOSTIC LOGIC (Async Generator)
 	// ==========================================
 
+	/**
+	 * Navigation breadcrumb stack.
+	 * ESC pops one entry. Empty stack = CancelError bubbles out → app exits.
+	 * @type {string[]}
+	 */
+	#stack = []
+
+	/**
+	 * Format breadcrumb path for display.
+	 * @returns {string} e.g. "🏖 Sandbox › Button › Export"
+	 */
+	#breadcrumb() {
+		return this.#stack.join(' › ')
+	}
+
 	async *run() {
+		/** @type {any} */
 		let targetInstance = null
+		this.#stack = ['🏖 Sandbox']
 
 		while (true) {
-			// 1. List available components and ask user to select one
+			// ── Level 1: Select Component ──
 			if (!this.selectedComponent) {
+				yield /** @type {any} */ ({
+					type: 'log', level: 'info',
+					message: `\n${this.#breadcrumb()}`,
+				})
+
+				// ESC here is NOT caught → CancelError bubbles → app exits
 				const listResponse = yield {
 					type: 'ask',
 					field: 'selectedComponent',
 					schema: {
 						help: 'Select a component to inspect and theme',
 						options: this.components || [],
-						validate: (val) => (this.components || []).includes(val) || 'Component not found in sandbox registry',
+						validate: (/** @type {string} */ val) =>
+							(this.components || []).includes(val) || 'Component not found in sandbox registry',
 					},
 					component: 'Select',
 					model: /** @type {any} */ (this),
 				}
 				this.selectedComponent = listResponse.value
-				
-				// Reset target instance when changing component
-				const TargetModelConstructor = ComponentModels[`${this.selectedComponent}Model`]
-				targetInstance = TargetModelConstructor ? new TargetModelConstructor() : this
+
+				// Push to breadcrumb stack
+				this.#stack.push(this.selectedComponent)
+
+				// Instantiate the selected model class
+				const Ctor = ComponentModels[`${this.selectedComponent}Model`]
+				targetInstance = Ctor ? new Ctor() : this
 			}
 
-			// 2. Wrap the selected component in a Sandbox IDE editor to configure properties
+			// ── Level 2: Edit Component Properties ──
+			/** @type {any} */
 			let configResponse
 			try {
+				yield /** @type {any} */ ({
+					type: 'log', level: 'info',
+					message: `\n${this.#breadcrumb()}`,
+				})
+
 				configResponse = yield {
 					type: 'ask',
 					field: 'componentThemeConfig',
@@ -86,24 +123,32 @@ export class SandboxModel {
 					},
 					component: 'SandboxWrapper',
 					model: true,
-					instance: /** @type {any} */ (targetInstance), // pass the instance explicitly to persist edits
+					instance: /** @type {any} */ (targetInstance),
 				}
 			} catch (e) {
 				const err = /** @type {Error} */ (e)
-				// Level 2 -> Level 1 Back Navigation
 				if (err.name === 'CancelError') {
+					// Pop: Level 2 → Level 1
+					this.#stack.pop()
 					this.selectedComponent = undefined
 					continue
 				}
 				throw e
 			}
 
-			// Update the instance with form results so it's persisted if we go back
+			// Persist edits for potential back-navigation
 			targetInstance = configResponse.value
 
-			// 3. Ask for the output theme format for saving/exporting
+			// ── Level 3: Choose Export Format ──
+			/** @type {any} */
 			let formatResponse
 			try {
+				this.#stack.push('Export')
+				yield /** @type {any} */ ({
+					type: 'log', level: 'info',
+					message: `\n${this.#breadcrumb()}`,
+				})
+
 				formatResponse = yield {
 					type: 'ask',
 					field: 'themeFormat',
@@ -116,9 +161,9 @@ export class SandboxModel {
 				}
 			} catch (e) {
 				const err = /** @type {Error} */ (e)
-				// Level 3 -> Level 2 Back Navigation
 				if (err.name === 'CancelError') {
-					// Loop again, it will go back to the SandboxWrapper editor with the same targetInstance
+					// Pop: Level 3 → Level 2 (same targetInstance preserved)
+					this.#stack.pop()
 					continue
 				}
 				throw e
@@ -126,23 +171,21 @@ export class SandboxModel {
 
 			this.themeFormat = formatResponse.value
 
-			// 4. Yield a log/success notification about the Theme export
-			yield {
+			// 4. Success notification
+			yield /** @type {any} */ ({
 				type: 'log',
 				level: 'success',
-				message: `Theme correctly exported as ${(this.themeFormat || 'json').toUpperCase()}! Ready for the UI Theme Store.`,
-				component: 'Toast',
-				model: /** @type {any} */ (this),
-			}
+				message: `Theme exported as ${(this.themeFormat || 'json').toUpperCase()}! Ready for the UI Theme Store.`,
+			})
 
-			// 5. Return the resulting configuration context
-			return { 
-				type: 'result', 
-				data: { 
-					targetComponent: this.selectedComponent, 
-					themeConfig: configResponse.value, 
-					exportFormat: this.themeFormat 
-				} 
+			// 5. Return result
+			return {
+				type: 'result',
+				data: {
+					targetComponent: this.selectedComponent,
+					themeConfig: configResponse.value,
+					exportFormat: this.themeFormat,
+				}
 			}
 		}
 	}
