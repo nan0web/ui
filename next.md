@@ -1,18 +1,51 @@
 # Master IDE: Roadmap & Status
+
+## ✅ v1.7.2 — BreadcrumbModel & Sandbox Navigation (DONE, 2026-03-15)
+
+### BreadcrumbModel — Universal Navigation Stack
+
+Новий Model-as-Schema компонент в `@nan0web/ui/domain/components/`:
+
+- [x] `BreadcrumbModel.js` — навігаційний стек з `push()`, `pop()`, `navigateTo()`, `canGoBack()`
+- [x] Кожен елемент має `label` (display) + `path` (URL segment, auto-slugify Unicode)
+- [x] Маппінг на DBFS: `toURI()` → `sandbox/button/index` (для `db.fetch()`)
+- [x] Маппінг на FS: `toDataPath()` → `sandbox/button/index.yaml` (відносно `db.root`)
+- [x] Маппінг на URL: `path` → `/sandbox/button`, `toURL()` → `sandbox/button`
+- [x] CLI display: `toString()` → `🏖 Sandbox › Button`
+- [x] `fromPath('/sandbox/button', labelMap)` — десеріалізація з URL
+- [x] `slugify()` — Unicode-safe (Cyrillic, emoji strip)
+- [x] `run()` async generator → yields `log` intent з `component: 'Breadcrumbs'`
+- [x] **25 контрактних тестів** (construction, navigation, serialization, generator)
+
+### SandboxModel — Breadcrumb Navigation
+
+- [x] `SandboxModel` використовує `BreadcrumbModel` замість приватного `#stack`
+- [x] ESC = `nav.pop()`, порожній стек = CancelError летить назовні → вихід
+- [x] Ctrl+C = `process.exit(0)` на будь-якому рівні (prompts.js wrapper)
+- [x] Breadcrumb log intent перед кожним prompt: `🏖 Sandbox › Button › Export`
+- [x] Результат містить `breadcrumb: nav.path` → `/sandbox/button/export`
+
+### CancelError & Error Handling Fixes
+
+- [x] `GeneratorRunner.js`: `nextVal` типізовано як `IntentResponse | Error | undefined`, CancelError → `generator.throw()`
+- [x] `SandboxModel.js`: catch блоки cast `e` to `Error` перед `err.name` перевіркою
+- [x] `InputAdapter.js`: robust catch для `unhandled_intent` — string + ModelError об'єкт
+- [x] Button CLI preview: dim ефект тільки на текст, не на border/background
+- [x] Static spinner `⟲ loading...` замість анімації
+
+### Тестування
+
+| Suite | Result |
+|:------|:-------|
+| npm test (unit) | ✅ pass |
+| test:ssg | ✅ pass |
+| tsc build | **0 errors** ✅ |
+| BreadcrumbModel | **25 pass** ✅ |
+| SandboxModel | ✅ pass |
+
+---
+
 ## ✅ v1.7.0 — OLMUI Generator Engine (DONE)
-
-### Зроблено
-
-- [x] `Intent.js` — Yield Contract Types (`ask`, `progress`, `log`, `result`)
-- [x] `GeneratorRunner.js` — Universal Adapter Loop (timeout, abort, dispatch)
-- [x] `IntentErrorModel.js` — Model-as-Schema для помилок контракту
-- [x] `AdapterContract.test.js` — 21 контрактний тест
-- [x] `ask()` розширено для Model-as-Schema: `ask('transfer', TransferModel)`
-- [x] `GeneratorRunner` інстанціює Model: `response.value = new Model(rawData)`
-- [x] `isModelSchema()` — детектор Model-as-Schema класів
-- [x] TypeScript types: повні `.d.ts` для всіх нових export;
-- [x] tsc build — зелений, 0 помилок
-- [x] Версія: `1.7.0`
 
 ### Migration Path (UiAdapter → runGenerator)
 
