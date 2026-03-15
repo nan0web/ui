@@ -113,15 +113,26 @@ describe('BreadcrumbModel', () => {
 		assert.equal(bc.toURL(), 'app/settings')
 	})
 
-	it('toDataPath() returns filesystem-style data path', () => {
+	it('toURI() returns DBFS document URI (no extension)', () => {
 		const bc = new BreadcrumbModel()
 		bc.push('Sandbox', 'sandbox').push('Button', 'button')
-		assert.equal(bc.toDataPath(), 'data/sandbox/button/index.yaml')
-		assert.equal(bc.toDataPath('t.yaml'), 'data/sandbox/button/t.yaml')
+		assert.equal(bc.toURI(), 'sandbox/button/index')
+		assert.equal(bc.toURI('config'), 'sandbox/button/config')
+	})
+
+	it('toURI() handles empty stack', () => {
+		assert.equal(new BreadcrumbModel().toURI(), 'index')
+	})
+
+	it('toDataPath() returns path relative to db.root', () => {
+		const bc = new BreadcrumbModel()
+		bc.push('Sandbox', 'sandbox').push('Button', 'button')
+		assert.equal(bc.toDataPath(), 'sandbox/button/index.yaml')
+		assert.equal(bc.toDataPath('t.yaml'), 'sandbox/button/t.yaml')
 	})
 
 	it('toDataPath() handles empty stack', () => {
-		assert.equal(new BreadcrumbModel().toDataPath(), 'data/index.yaml')
+		assert.equal(new BreadcrumbModel().toDataPath(), 'index.yaml')
 	})
 
 	// ── Static: fromPath() ──

@@ -17,9 +17,10 @@ import { resolveDefaults } from '@nan0web/types'
  *
  * Each breadcrumb item has a `label` (display) and a `path` (URL segment).
  * The full path is the join of all segments, mirroring both:
- *   - Web URL:  /sandbox/button/export
- *   - FS data:  data/sandbox/button/export/index.yaml
- *   - CLI nav:  🏖 Sandbox › Button › Export
+ *   - Web URL:    /sandbox/button/export
+ *   - DBFS URI:   sandbox/button/export/index  (relative to db.root)
+ *   - Data path:  {db.root}/sandbox/button/export/index.yaml
+ *   - CLI nav:    🏖 Sandbox › Button › Export
  *
  * This is the universal "where am I?" model for any OLMUI application.
  *
@@ -171,13 +172,32 @@ export class BreadcrumbModel {
 	}
 
 	/**
-	 * Filesystem data path: `data/sandbox/button/export/index.yaml`
-	 * @param {string} [filename='index.yaml'] - Leaf filename.
+	 * DBFS document URI — the key you pass to `db.fetch()` or `db.get()`.
+	 * Relative to `db.root`, without extension (DBFS resolves `.yaml`/`.json` automatically).
+	 *
+	 * @example
+	 * nav.push('sandbox').push('button')
+	 * nav.toURI()        // → 'sandbox/button/index'
+	 * db.fetch(nav.toURI()) // ← DBFS resolves to {root}/sandbox/button/index.yaml
+	 *
+	 * @param {string} [leaf='index'] - Document name without extension.
+	 * @returns {string}
+	 */
+	toURI(leaf = 'index') {
+		if (this.items.length === 0) return leaf
+		return `${this.segments.join('/')}/${leaf}`
+	}
+
+	/**
+	 * Full filesystem path relative to db.root: `sandbox/button/export/index.yaml`
+	 * This is what DBFS resolves to on disk: `{cwd}/{root}/{toDataPath()}`.
+	 *
+	 * @param {string} [filename='index.yaml'] - Leaf filename with extension.
 	 * @returns {string}
 	 */
 	toDataPath(filename = 'index.yaml') {
-		if (this.items.length === 0) return `data/${filename}`
-		return `data/${this.segments.join('/')}/${filename}`
+		if (this.items.length === 0) return filename
+		return `${this.segments.join('/')}/${filename}`
 	}
 
 	/**
