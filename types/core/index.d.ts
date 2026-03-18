@@ -6,6 +6,7 @@ export { default as FormInput } from "./Form/Input.js";
 export { default as UiAdapter } from "./UiAdapter.js";
 export { IntentErrorModel } from "./IntentErrorModel.js";
 export { runGenerator } from "./GeneratorRunner.js";
+export { MaskHandler } from "./MaskHandler.js";
 import UIStream from './Stream.js';
 import StreamEntry from './StreamEntry.js';
 import UIForm from './Form/Form.js';

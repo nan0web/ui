@@ -1,6 +1,6 @@
-import { resolveAliases, resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
-export class EconomyCalculator {
+export class EconomyCalculator extends Model {
 	static mission = {
 		help: 'Навіщо ми це створюємо? Яка фундаментальна місія для людства? (Фільтр на рабство грошей)',
 		default: 'Покращення життя та свободи',
@@ -21,21 +21,13 @@ export class EconomyCalculator {
 		default: 100,
 	}
 
-	/** @type {string} */
-	mission = EconomyCalculator.mission.default
-
-	/** @type {number} */
-	developmentCost = EconomyCalculator.developmentCost.default
-
-	/** @type {number} */
-	monthlyPrice = EconomyCalculator.monthlyPrice.default
-
-	/** @type {number} */
-	expectedUsers = EconomyCalculator.expectedUsers.default
-
+	/** @param {any} [data] */
 	constructor(data = {}) {
-		resolveDefaults(EconomyCalculator, this)
-		Object.assign(this, resolveAliases(EconomyCalculator, data))
+		super(data)
+		/** @type {string|undefined} */ this.mission
+		/** @type {number|undefined} */ this.developmentCost
+		/** @type {number|undefined} */ this.monthlyPrice
+		/** @type {number|undefined} */ this.expectedUsers
 	}
 
 	evaluate() {

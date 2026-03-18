@@ -19,7 +19,7 @@
  *   /sandbox/button      → Edit Button properties
  *   /sandbox/button/export → Choose export format
  */
-export class SandboxModel {
+export class SandboxModel extends Model {
     static components: {
         help: string;
         type: string;
@@ -35,9 +35,9 @@ export class SandboxModel {
         default: string;
     };
     /**
-     * @param {SandboxData} [data]
+     * @param {SandboxData | any} [data]
      */
-    constructor(data?: SandboxData);
+    constructor(data?: SandboxData | any);
     /** @type {string[]|undefined} */ components: string[] | undefined;
     /** @type {string|undefined} */ selectedComponent: string | undefined;
     /** @type {string|undefined} */ themeFormat: string | undefined;
@@ -56,3 +56,4 @@ export type SandboxData = {
     selectedComponent?: string | undefined;
     themeFormat?: string | undefined;
 };
+import { Model } from '@nan0web/core';

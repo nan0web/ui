@@ -7,7 +7,7 @@
  * Model-as-Schema for Table Data component.
  * Displays tabular string data in rows and columns.
  */
-export class TableModel {
+export class TableModel extends Model {
     static columns: {
         help: string;
         type: string;
@@ -19,9 +19,9 @@ export class TableModel {
         default: string[][];
     };
     /**
-     * @param {TableData} [data]
+     * @param {TableData | any} [data]
      */
-    constructor(data?: TableData);
+    constructor(data?: TableData | any);
     /** @type {string[]|undefined} */ columns: string[] | undefined;
     /** @type {string[][]|undefined} */ rows: string[][] | undefined;
     run(): AsyncGenerator<{
@@ -41,3 +41,4 @@ export type TableData = {
     columns?: string[] | undefined;
     rows?: string[][] | undefined;
 };
+import { Model } from '@nan0web/core';

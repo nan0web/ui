@@ -1,4 +1,4 @@
-import { resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
 /**
  * @typedef {Object} TableData
@@ -10,7 +10,7 @@ import { resolveDefaults } from '@nan0web/types'
  * Model-as-Schema for Table Data component.
  * Displays tabular string data in rows and columns.
  */
-export class TableModel {
+export class TableModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -30,14 +30,13 @@ export class TableModel {
 		],
 	}
 
-	/** @type {string[]|undefined} */ columns = undefined;
-	/** @type {string[][]|undefined} */ rows = undefined;
-
 	/**
-	 * @param {TableData} [data]
+	 * @param {TableData | any} [data]
 	 */
 	constructor(data = {}) {
-		Object.assign(this, resolveDefaults(TableModel, data))
+		super(data)
+		/** @type {string[]|undefined} */ this.columns
+		/** @type {string[][]|undefined} */ this.rows
 	}
 
 	// ==========================================

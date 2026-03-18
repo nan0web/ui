@@ -1,4 +1,4 @@
-import { resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
 /**
  * @typedef {Object} TreeNode
@@ -16,7 +16,7 @@ import { resolveDefaults } from '@nan0web/types'
  * Model-as-Schema for Tree component.
  * Represents a hierarchical selection or navigation structure.
  */
-export class TreeModel {
+export class TreeModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -27,13 +27,12 @@ export class TreeModel {
 		default: [],
 	}
 
-	/** @type {TreeNode[]|undefined} */ data = undefined;
-
 	/**
-	 * @param {TreeData} [data]
+	 * @param {TreeData | any} [data]
 	 */
 	constructor(data = {}) {
-		Object.assign(this, resolveDefaults(TreeModel, data))
+		super(data)
+		/** @type {TreeNode[]|undefined} */ this.data
 	}
 
 	// ==========================================

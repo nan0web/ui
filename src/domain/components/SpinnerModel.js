@@ -1,4 +1,4 @@
-import { resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
 /**
  * @typedef {'sm'|'md'|'lg'} SpinnerSize
@@ -11,7 +11,7 @@ import { resolveDefaults } from '@nan0web/types'
  * Model-as-Schema for Spinner component.
  * Represents a loading or progress state without user interaction.
  */
-export class SpinnerModel {
+export class SpinnerModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -28,14 +28,13 @@ export class SpinnerModel {
 		default: '',
 	}
 
-	/** @type {SpinnerSize|undefined} */ size = undefined;
-	/** @type {string|undefined} */ color = undefined;
-
 	/**
-	 * @param {SpinnerData} [data]
+	 * @param {SpinnerData | any} [data]
 	 */
 	constructor(data = {}) {
-		Object.assign(this, resolveDefaults(SpinnerModel, data))
+		super(data)
+		/** @type {SpinnerSize|undefined} */ this.size
+		/** @type {string|undefined} */ this.color
 	}
 
 	// ==========================================

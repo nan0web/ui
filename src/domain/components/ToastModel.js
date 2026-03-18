@@ -1,4 +1,4 @@
-import { resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
 /**
  * @typedef {'success'|'error'|'info'|'warning'} ToastVariant
@@ -13,7 +13,7 @@ import { resolveDefaults } from '@nan0web/types'
  * Model-as-Schema for Toast notification component.
  * Represents a transient message displayed to the user.
  */
-export class ToastModel {
+export class ToastModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -42,16 +42,15 @@ export class ToastModel {
 		type: 'boolean',
 	}
 
-	/** @type {string|undefined} */ message = undefined;
-	/** @type {ToastVariant|undefined} */ variant = undefined;
-	/** @type {number|undefined} */ duration = undefined;
-	/** @type {boolean|undefined} */ open = undefined;
-
 	/**
-	 * @param {ToastData} [data]
+	 * @param {ToastData | any} [data]
 	 */
 	constructor(data = {}) {
-		Object.assign(this, resolveDefaults(ToastModel, data))
+		super(data)
+		/** @type {string|undefined} */ this.message
+		/** @type {ToastVariant|undefined} */ this.variant
+		/** @type {number|undefined} */ this.duration
+		/** @type {boolean|undefined} */ this.open
 	}
 
 	// ==========================================

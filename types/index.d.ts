@@ -1,3 +1,4 @@
+export { format } from "./format.js";
 export { default as FormMessage } from "./core/Form/Message.js";
 export { default as FormInput } from "./core/Form/Input.js";
 export { default as InputAdapter } from "./core/InputAdapter.js";

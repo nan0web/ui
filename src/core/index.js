@@ -44,3 +44,5 @@ export { default as Flow } from './Flow.js'
 export { validateIntent, ask, progress, log, result, INTENT_TYPES, isModelSchema } from './Intent.js'
 export { IntentErrorModel } from './IntentErrorModel.js'
 export { runGenerator } from './GeneratorRunner.js'
+
+export { MaskHandler } from './MaskHandler.js'

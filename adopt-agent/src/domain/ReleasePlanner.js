@@ -1,6 +1,6 @@
-import { resolveAliases, resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
-export class ReleasePlanner {
+export class ReleasePlanner extends Model {
 	static version = {
 		help: 'Версія релізу (напр. 1.0.0)',
 		default: '1.0.0',
@@ -16,18 +16,12 @@ export class ReleasePlanner {
 		default: 'false',
 	}
 
-	/** @type {string} */
-	version = ReleasePlanner.version.default
-
-	/** @type {string} */
-	focus = ReleasePlanner.focus.default
-
-	/** @type {boolean} */
-	verified = ReleasePlanner.verified.default === 'true'
-
+	/** @param {any} [data] */
 	constructor(data = {}) {
-		resolveDefaults(ReleasePlanner, this)
-		Object.assign(this, resolveAliases(ReleasePlanner, data))
+		super(data)
+		/** @type {string|undefined} */ this.version
+		/** @type {string|undefined} */ this.focus
+		/** @type {boolean|undefined} */ this.verified
 
 		// Map string booleans if typed from cli
 		if (typeof this.verified === 'string') {

@@ -12,16 +12,16 @@
  * Model-as-Schema for Tree component.
  * Represents a hierarchical selection or navigation structure.
  */
-export class TreeModel {
+export class TreeModel extends Model {
     static data: {
         help: string;
         type: string;
         default: never[];
     };
     /**
-     * @param {TreeData} [data]
+     * @param {TreeData | any} [data]
      */
-    constructor(data?: TreeData);
+    constructor(data?: TreeData | any);
     /** @type {TreeNode[]|undefined} */ data: TreeNode[] | undefined;
     run(): AsyncGenerator<{
         type: string;
@@ -46,3 +46,4 @@ export type TreeNode = {
 export type TreeData = {
     data?: TreeNode[] | undefined;
 };
+import { Model } from '@nan0web/core';

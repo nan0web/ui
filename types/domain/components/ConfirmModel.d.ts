@@ -7,7 +7,7 @@
 /**
  * Model-as-Schema for Confirm component.
  */
-export class ConfirmModel {
+export class ConfirmModel extends Model {
     static message: {
         help: string;
         default: string;
@@ -24,9 +24,9 @@ export class ConfirmModel {
         type: string;
     };
     /**
-     * @param {ConfirmData} [data]
+     * @param {ConfirmData | any} [data]
      */
-    constructor(data?: ConfirmData);
+    constructor(data?: ConfirmData | any);
     /** @type {string|undefined} */ message: string | undefined;
     /** @type {string|undefined} */ confirmText: string | undefined;
     /** @type {string|undefined} */ cancelText: string | undefined;
@@ -51,3 +51,4 @@ export type ConfirmData = {
     confirmText?: string | undefined;
     cancelText?: string | undefined;
 };
+import { Model } from '@nan0web/core';

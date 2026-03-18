@@ -1,4 +1,4 @@
-import { resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
 /**
  * @typedef {Object} AutocompleteData
@@ -10,7 +10,7 @@ import { resolveDefaults } from '@nan0web/types'
  * Model-as-Schema for Autocomplete component.
  * Represents a text input with search suggestions.
  */
-export class AutocompleteModel {
+export class AutocompleteModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -27,14 +27,13 @@ export class AutocompleteModel {
 		type: 'string[]',
 	}
 
-	/** @type {string|undefined} */ content = undefined;
-	/** @type {string[]|undefined} */ options = undefined;
-
 	/**
-	 * @param {AutocompleteData} [data]
+	 * @param {AutocompleteData | any} [data]
 	 */
 	constructor(data = {}) {
-		Object.assign(this, resolveDefaults(AutocompleteModel, data))
+		super(data)
+		/** @type {string|undefined} */ this.content
+		/** @type {string[]|undefined} */ this.options
 	}
 
 	// ==========================================

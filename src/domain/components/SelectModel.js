@@ -1,4 +1,4 @@
-import { resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
 /**
  * @typedef {Object} SelectData
@@ -10,7 +10,7 @@ import { resolveDefaults } from '@nan0web/types'
  * Model-as-Schema for Select component.
  * Represents a dropdown choice selection.
  */
-export class SelectModel {
+export class SelectModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -27,14 +27,13 @@ export class SelectModel {
 		type: 'string[]',
 	}
 
-	/** @type {string|undefined} */ content = undefined;
-	/** @type {string[]|undefined} */ options = undefined;
-
 	/**
-	 * @param {SelectData} [data]
+	 * @param {SelectData | any} [data]
 	 */
 	constructor(data = {}) {
-		Object.assign(this, resolveDefaults(SelectModel, data))
+		super(data)
+		/** @type {string|undefined} */ this.content
+		/** @type {string[]|undefined} */ this.options
 	}
 
 	// ==========================================

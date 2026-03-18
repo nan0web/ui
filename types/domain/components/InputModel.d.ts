@@ -17,7 +17,7 @@
  * Model-as-Schema for Input component.
  * Used exclusively for schema definition, validation, and editor reflection.
  */
-export class InputModel {
+export class InputModel extends Model {
     static type: {
         help: string;
         default: string;
@@ -74,9 +74,9 @@ export class InputModel {
         type: string;
     };
     /**
-     * @param {InputData} [data]
+     * @param {InputData | any} [data]
      */
-    constructor(data?: InputData);
+    constructor(data?: InputData | any);
     /** @type {InputType|undefined} */ type: InputType | undefined;
     /** @type {string|undefined} */ label: string | undefined;
     /** @type {string|undefined} */ placeholder: string | undefined;
@@ -118,3 +118,4 @@ export type InputData = {
     disabled?: boolean | undefined;
     content?: string | undefined;
 };
+import { Model } from '@nan0web/core';

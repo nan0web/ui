@@ -1,4 +1,4 @@
-import { resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
 /**
  * @typedef {Object} BreadcrumbItem
@@ -27,7 +27,7 @@ import { resolveDefaults } from '@nan0web/types'
  * ESC/Back = pop() one item. Empty stack = app exit.
  * Ctrl+C   = always exit (adapter responsibility).
  */
-export class BreadcrumbModel {
+export class BreadcrumbModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -44,14 +44,13 @@ export class BreadcrumbModel {
 		type: 'string',
 	}
 
-	/** @type {BreadcrumbItem[]} */ items = [];
-	/** @type {string} */ separator = '›';
-
 	/**
-	 * @param {BreadcrumbData} [data]
+	 * @param {BreadcrumbData | any} [data]
 	 */
 	constructor(data = {}) {
-		Object.assign(this, resolveDefaults(BreadcrumbModel, data))
+		super(data)
+		/** @type {BreadcrumbItem[]} */ this.items
+		/** @type {string} */ this.separator
 		// Normalize: if items were passed as plain strings, convert to {label, path}
 		if (Array.isArray(this.items)) {
 			this.items = this.items.map((item) =>

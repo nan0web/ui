@@ -10,7 +10,7 @@
  * Model-as-Schema for Toast notification component.
  * Represents a transient message displayed to the user.
  */
-export class ToastModel {
+export class ToastModel extends Model {
     static message: {
         help: string;
         default: string;
@@ -32,9 +32,9 @@ export class ToastModel {
         type: string;
     };
     /**
-     * @param {ToastData} [data]
+     * @param {ToastData | any} [data]
      */
-    constructor(data?: ToastData);
+    constructor(data?: ToastData | any);
     /** @type {string|undefined} */ message: string | undefined;
     /** @type {ToastVariant|undefined} */ variant: ToastVariant | undefined;
     /** @type {number|undefined} */ duration: number | undefined;
@@ -59,3 +59,4 @@ export type ToastData = {
     duration?: number | undefined;
     open?: boolean | undefined;
 };
+import { Model } from '@nan0web/core';

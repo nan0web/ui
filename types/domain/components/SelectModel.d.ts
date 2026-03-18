@@ -7,7 +7,7 @@
  * Model-as-Schema for Select component.
  * Represents a dropdown choice selection.
  */
-export class SelectModel {
+export class SelectModel extends Model {
     static content: {
         help: string;
         default: string;
@@ -19,9 +19,9 @@ export class SelectModel {
         type: string;
     };
     /**
-     * @param {SelectData} [data]
+     * @param {SelectData | any} [data]
      */
-    constructor(data?: SelectData);
+    constructor(data?: SelectData | any);
     /** @type {string|undefined} */ content: string | undefined;
     /** @type {string[]|undefined} */ options: string[] | undefined;
     run(): AsyncGenerator<{
@@ -45,3 +45,4 @@ export type SelectData = {
     content?: string | undefined;
     options?: string[] | undefined;
 };
+import { Model } from '@nan0web/core';

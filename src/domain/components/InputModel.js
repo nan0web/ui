@@ -1,4 +1,4 @@
-import { resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
 /**
  * @typedef {'text'|'email'|'password'|'number'|'tel'|'url'|'date'} InputType
@@ -20,7 +20,7 @@ import { resolveDefaults } from '@nan0web/types'
  * Model-as-Schema for Input component.
  * Used exclusively for schema definition, validation, and editor reflection.
  */
-export class InputModel {
+export class InputModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -91,23 +91,22 @@ export class InputModel {
 		type: 'string',
 	}
 
-	/** @type {InputType|undefined} */ type = undefined;
-	/** @type {string|undefined} */ label = undefined;
-	/** @type {string|undefined} */ placeholder = undefined;
-	/** @type {boolean|undefined} */ required = undefined;
-	/** @type {string|undefined} */ pattern = undefined;
-	/** @type {string|undefined} */ min = undefined;
-	/** @type {string|undefined} */ max = undefined;
-	/** @type {string|undefined} */ step = undefined;
-	/** @type {string|undefined} */ hint = undefined;
-	/** @type {boolean|undefined} */ disabled = undefined;
-	/** @type {string|undefined} */ content = undefined;
-
 	/**
-	 * @param {InputData} [data]
+	 * @param {InputData | any} [data]
 	 */
 	constructor(data = {}) {
-		Object.assign(this, resolveDefaults(InputModel, data))
+		super(data)
+		/** @type {InputType|undefined} */ this.type
+		/** @type {string|undefined} */ this.label
+		/** @type {string|undefined} */ this.placeholder
+		/** @type {boolean|undefined} */ this.required
+		/** @type {string|undefined} */ this.pattern
+		/** @type {string|undefined} */ this.min
+		/** @type {string|undefined} */ this.max
+		/** @type {string|undefined} */ this.step
+		/** @type {string|undefined} */ this.hint
+		/** @type {boolean|undefined} */ this.disabled
+		/** @type {string|undefined} */ this.content
 	}
 
 	// ==========================================

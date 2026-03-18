@@ -1,4 +1,4 @@
-import { resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 import * as ComponentModels from './components/index.js'
 import { BreadcrumbModel } from './components/BreadcrumbModel.js'
 
@@ -24,7 +24,7 @@ import { BreadcrumbModel } from './components/BreadcrumbModel.js'
  *   /sandbox/button      → Edit Button properties
  *   /sandbox/button/export → Choose export format
  */
-export class SandboxModel {
+export class SandboxModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -46,15 +46,14 @@ export class SandboxModel {
 		default: 'yaml'
 	}
 
-	/** @type {string[]|undefined} */ components = undefined;
-	/** @type {string|undefined} */ selectedComponent = undefined;
-	/** @type {string|undefined} */ themeFormat = undefined;
-
 	/**
-	 * @param {SandboxData} [data]
+	 * @param {SandboxData | any} [data]
 	 */
 	constructor(data = {}) {
-		Object.assign(this, resolveDefaults(SandboxModel, data))
+		super(data)
+		/** @type {string[]|undefined} */ this.components
+		/** @type {string|undefined} */ this.selectedComponent
+		/** @type {string|undefined} */ this.themeFormat
 	}
 
 	// ==========================================

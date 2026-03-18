@@ -1,4 +1,4 @@
-import { resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
 /**
  * @typedef {Object} ConfirmData
@@ -10,7 +10,7 @@ import { resolveDefaults } from '@nan0web/types'
 /**
  * Model-as-Schema for Confirm component.
  */
-export class ConfirmModel {
+export class ConfirmModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -33,15 +33,14 @@ export class ConfirmModel {
 		type: 'string',
 	}
 
-	/** @type {string|undefined} */ message = undefined;
-	/** @type {string|undefined} */ confirmText = undefined;
-	/** @type {string|undefined} */ cancelText = undefined;
-
 	/**
-	 * @param {ConfirmData} [data]
+	 * @param {ConfirmData | any} [data]
 	 */
 	constructor(data = {}) {
-		Object.assign(this, resolveDefaults(ConfirmModel, data))
+		super(data)
+		/** @type {string|undefined} */ this.message
+		/** @type {string|undefined} */ this.confirmText
+		/** @type {string|undefined} */ this.cancelText
 	}
 
 	// ==========================================

@@ -14,7 +14,7 @@
  * Represents the intention and state of a Button interaction.
  * Used exclusively for schema definition and editor validation.
  */
-export class ButtonModel {
+export class ButtonModel extends Model {
     static content: {
         help: string;
         default: string;
@@ -46,9 +46,9 @@ export class ButtonModel {
         type: string;
     };
     /**
-     * @param {ButtonData} [data]
+     * @param {ButtonData | any} [data]
      */
-    constructor(data?: ButtonData);
+    constructor(data?: ButtonData | any);
     /** @type {string|undefined} */ content: string | undefined;
     /** @type {ButtonVariant|undefined} */ variant: ButtonVariant | undefined;
     /** @type {ButtonSize|undefined} */ size: ButtonSize | undefined;
@@ -78,3 +78,4 @@ export type ButtonData = {
     disabled?: boolean | undefined;
     loading?: boolean | undefined;
 };
+import { Model } from '@nan0web/core';

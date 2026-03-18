@@ -7,7 +7,7 @@
  * Model-as-Schema for Autocomplete component.
  * Represents a text input with search suggestions.
  */
-export class AutocompleteModel {
+export class AutocompleteModel extends Model {
     static content: {
         help: string;
         default: string;
@@ -19,9 +19,9 @@ export class AutocompleteModel {
         type: string;
     };
     /**
-     * @param {AutocompleteData} [data]
+     * @param {AutocompleteData | any} [data]
      */
-    constructor(data?: AutocompleteData);
+    constructor(data?: AutocompleteData | any);
     /** @type {string|undefined} */ content: string | undefined;
     /** @type {string[]|undefined} */ options: string[] | undefined;
     run(): AsyncGenerator<{
@@ -44,3 +44,4 @@ export type AutocompleteData = {
     content?: string | undefined;
     options?: string[] | undefined;
 };
+import { Model } from '@nan0web/core';

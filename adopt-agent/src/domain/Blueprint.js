@@ -1,6 +1,6 @@
-import { resolveAliases, resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
-export class Blueprint {
+export class Blueprint extends Model {
 	static blueprint = {
 		help: 'Blueprint is a domain object that represents a blueprint of a system.',
 		alias: 'bp',
@@ -32,25 +32,14 @@ export class Blueprint {
 		options: ['zero-hallucination', 'flexible'],
 	}
 
-	/** @type {boolean} */
-	blueprint = Blueprint.blueprint.default
-
-	/** @type {string} */
-	name = Blueprint._name.default
-
-	/** @type {string} */
-	description = Blueprint.description.default
-
-	/** @type {string} */
-	version = Blueprint.version.default
-
-	/** @type {'zero-hallucination' | 'flexible'} */
-	strictness = Blueprint.strictness.default
-
+	/** @param {any} [data] */
 	constructor(data = {}) {
-		resolveDefaults(Blueprint, this)
-		const resolvedData = resolveAliases(Blueprint, data)
-		Object.assign(this, resolvedData)
+		super(data)
+		/** @type {boolean|undefined} */ this.blueprint
+		/** @type {string|undefined} */ this.name
+		/** @type {string|undefined} */ this.description
+		/** @type {string|undefined} */ this.version
+		/** @type {'zero-hallucination'|'flexible'|undefined} */ this.strictness
 
 		// Map the static _name key to the instance property name
 		if (this._name !== undefined) {

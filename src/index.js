@@ -10,6 +10,7 @@ import Component from './Component/index.js'
 import App from './App/index.js'
 
 export { Frame, FrameProps, Locale, StdIn, StdOut, View, RenderOptions, Model, Component, App }
+export { format } from './format.js'
 
 // export default App
 export { default as FormMessage } from './core/Form/Message.js'

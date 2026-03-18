@@ -1,4 +1,4 @@
-import { resolveDefaults } from '@nan0web/types'
+import { Model } from '@nan0web/core'
 
 /**
  * @typedef {'primary'|'secondary'|'info'|'ok'|'warn'|'err'|'ghost'} ButtonVariant
@@ -17,7 +17,7 @@ import { resolveDefaults } from '@nan0web/types'
  * Represents the intention and state of a Button interaction.
  * Used exclusively for schema definition and editor validation.
  */
-export class ButtonModel {
+export class ButtonModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -58,18 +58,17 @@ export class ButtonModel {
 		type: 'boolean',
 	}
 
-	/** @type {string|undefined} */ content = undefined;
-	/** @type {ButtonVariant|undefined} */ variant = undefined;
-	/** @type {ButtonSize|undefined} */ size = undefined;
-	/** @type {boolean|undefined} */ outline = undefined;
-	/** @type {boolean|undefined} */ disabled = undefined;
-	/** @type {boolean|undefined} */ loading = undefined;
-
 	/**
-	 * @param {ButtonData} [data]
+	 * @param {ButtonData | any} [data]
 	 */
 	constructor(data = {}) {
-		Object.assign(this, resolveDefaults(ButtonModel, data))
+		super(data)
+		/** @type {string|undefined} */ this.content
+		/** @type {ButtonVariant|undefined} */ this.variant
+		/** @type {ButtonSize|undefined} */ this.size
+		/** @type {boolean|undefined} */ this.outline
+		/** @type {boolean|undefined} */ this.disabled
+		/** @type {boolean|undefined} */ this.loading
 	}
 
 	// ==========================================

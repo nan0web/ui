@@ -23,7 +23,7 @@
  * ESC/Back = pop() one item. Empty stack = app exit.
  * Ctrl+C   = always exit (adapter responsibility).
  */
-export class BreadcrumbModel {
+export class BreadcrumbModel extends Model {
     static items: {
         help: string;
         type: string;
@@ -51,9 +51,9 @@ export class BreadcrumbModel {
      */
     static slugify(label: string): string;
     /**
-     * @param {BreadcrumbData} [data]
+     * @param {BreadcrumbData | any} [data]
      */
-    constructor(data?: BreadcrumbData);
+    constructor(data?: BreadcrumbData | any);
     /** @type {BreadcrumbItem[]} */ items: BreadcrumbItem[];
     /** @type {string} */ separator: string;
     /**
@@ -109,11 +109,6 @@ export class BreadcrumbModel {
      */
     get depth(): number;
     /**
-     * Display string: `Sandbox › Button › Export`
-     * @returns {string}
-     */
-    toString(): string;
-    /**
      * Serialize to URL query param value: `sandbox/button/export`
      * @returns {string}
      */
@@ -166,3 +161,4 @@ export type BreadcrumbData = {
     items?: BreadcrumbItem[] | undefined;
     separator?: string | undefined;
 };
+import { Model } from '@nan0web/core';

@@ -117,6 +117,12 @@
 
 ## 🔜 v1.8.0 — Theme Editor Pro & Sidebar Components (NEXT)
 
+### CORE-8: Model Migration (extends Model from @nan0web/core)
+
+- [ ] 12 доменних моделей → `extends Model` (see `docs/seed-model-migration.md`)
+- [ ] 3 adopt-agent моделі → `extends Model` (see `adopt-agent/docs/seed-model-migration.md`)
+- [ ] Додати `@nan0web/core` до dependencies
+
 ### Theme Editor
 
 - [ ] Shadow editor: visual box-shadow builder

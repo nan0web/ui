@@ -8,7 +8,7 @@
  * Model-as-Schema for Spinner component.
  * Represents a loading or progress state without user interaction.
  */
-export class SpinnerModel {
+export class SpinnerModel extends Model {
     static size: {
         help: string;
         default: string;
@@ -20,9 +20,9 @@ export class SpinnerModel {
         default: string;
     };
     /**
-     * @param {SpinnerData} [data]
+     * @param {SpinnerData | any} [data]
      */
-    constructor(data?: SpinnerData);
+    constructor(data?: SpinnerData | any);
     /** @type {SpinnerSize|undefined} */ size: SpinnerSize | undefined;
     /** @type {string|undefined} */ color: string | undefined;
     run(): AsyncGenerator<{
@@ -42,3 +42,4 @@ export type SpinnerData = {
     size?: SpinnerSize | undefined;
     color?: string | undefined;
 };
+import { Model } from '@nan0web/core';
