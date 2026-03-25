@@ -3,13 +3,14 @@
  * Represents a complete User Journey demonstrating all components.
  * Showcases OLMUI Scenario Testing capabilities.
  */
-export class ShowcaseAppModel {
+export class ShowcaseAppModel extends Model {
     static appName: {
         help: string;
         default: string;
         type: string;
     };
-    appName: string;
+    constructor(data?: {});
+    /** @type {string|undefined} */ appName: string | undefined;
     run(): AsyncGenerator<{
         type: string;
         field: string;
@@ -60,3 +61,4 @@ export class ShowcaseAppModel {
         };
     }, unknown>;
 }
+import { Model } from '@nan0web/core';

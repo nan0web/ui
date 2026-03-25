@@ -115,13 +115,25 @@
 
 ---
 
-## 🔜 v1.8.0 — Theme Editor Pro & Sidebar Components (NEXT)
+## ✅ v1.8.0 — Navigation Model & UI Core Expansion (DONE, 2026-03-25)
+
+### Navigation — Universal Navigation Model
+
+Новий Model-as-Schema компонент в `@nan0web/ui/domain/`:
+
+- [x] `Navigation.js` — рекурсивна модель навігації (title, href, icon, image, children, hidden)
+- [x] Вбудована підтримка `resolveDefaults` для автоматичної ініціалізації масивів `children`
+- [x] Суверенний ідентифікатор `$id = '@nan0web/ui/Navigation'` для коректної генерації схем у монорепозиторії
+- [x] Експортовано через `domain/index.js`
+- [x] Покриття Story-тестами у `nan0web.app` (інтеграційна перевірка)
+
+### Theme Editor Pro & Sidebar Components (NEXT)
 
 ### CORE-8: Model Migration (extends Model from @nan0web/core)
 
-- [ ] 12 доменних моделей → `extends Model` (see `docs/seed-model-migration.md`)
+- [x] 12 доменних моделей → `extends Model` (including Navigation)
 - [ ] 3 adopt-agent моделі → `extends Model` (see `adopt-agent/docs/seed-model-migration.md`)
-- [ ] Додати `@nan0web/core` до dependencies
+- [x] Додати `@nan0web/core` до dependencies
 
 ### Theme Editor
 

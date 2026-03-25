@@ -84,6 +84,7 @@
 	},
 	"dependencies": {
 		"@nan0web/co": "^2.0.0",
+		"@nan0web/core": "workspace:*",
 		"@nan0web/event": "^1.0.1",
 		"@nan0web/log": "^1.1.1",
 		"@nan0web/types": "^1.4.0",

@@ -1,11 +1,12 @@
 import { InputModel, ConfirmModel, SpinnerModel, ToastModel, TableModel, ButtonModel, AutocompleteModel, SelectModel } from './components/index.js'
+import { Model } from '@nan0web/core'
 
 /**
  * Model-as-Schema for the entire UI Sandbox Showcase.
  * Represents a complete User Journey demonstrating all components.
  * Showcases OLMUI Scenario Testing capabilities.
  */
-export class ShowcaseAppModel {
+export class ShowcaseAppModel extends Model {
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -16,8 +17,9 @@ export class ShowcaseAppModel {
 		type: 'string',
 	}
 
-	constructor() {
-		this.appName = ShowcaseAppModel.appName.default
+	constructor(data = {}) {
+		super(data)
+		/** @type {string|undefined} */ this.appName
 	}
 
 	// ==========================================

@@ -5,6 +5,7 @@
 	"ignore": ["src/README.md.js", "play/**", "stories/**", "releases/**"],
 	"ignoreDependencies": [
 		"@nan0web/co",
+		"@nan0web/core",
 		"@nan0web/event",
 		"@nan0web/log",
 		"@nan0web/types",
