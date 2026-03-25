@@ -133,7 +133,7 @@
 
 - [x] 12 доменних моделей → `extends Model` (including Navigation)
 - [ ] 3 adopt-agent моделі → `extends Model` (see `adopt-agent/docs/seed-model-migration.md`)
-- [x] Додати `@nan0web/core` до dependencies
+- [x] Додати `@nan0web/core` до dependencies (Published as v1.8.0)
 
 ### Theme Editor
 
