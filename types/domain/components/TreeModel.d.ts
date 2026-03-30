@@ -1,14 +1,4 @@
 /**
- * @typedef {Object} TreeNode
- * @property {string} label
- * @property {boolean} [expanded]
- * @property {TreeNode[]} [children]
- */
-/**
- * @typedef {Object} TreeData
- * @property {TreeNode[]} [data]
- */
-/**
  * Model-as-Schema for Tree component.
  * Represents a hierarchical selection or navigation structure.
  */
@@ -19,31 +9,18 @@ export class TreeModel extends Model {
         default: never[];
     };
     /**
-     * @param {TreeData | any} [data]
+     * @param {Partial<TreeModel> | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: TreeData | any);
-    /** @type {TreeNode[]|undefined} */ data: TreeNode[] | undefined;
-    run(): AsyncGenerator<{
-        type: string;
-        field: string;
-        schema: {
-            help: string;
-        };
-        component: string;
-        model: any;
-    }, {
-        type: string;
-        data: {
-            selected: any;
-        };
-    }, unknown>;
+    constructor(data?: Partial<TreeModel> | Record<string, any>, options?: object);
+    /** @type {Array<{label: string, expanded?: boolean, children?: any[]}>} Tree nodes */ data: Array<{
+        label: string;
+        expanded?: boolean;
+        children?: any[];
+    }>;
+    /**
+     * @returns {AsyncGenerator<any, any, any>}
+     */
+    run(): AsyncGenerator<any, any, any>;
 }
-export type TreeNode = {
-    label: string;
-    expanded?: boolean | undefined;
-    children?: TreeNode[] | undefined;
-};
-export type TreeData = {
-    data?: TreeNode[] | undefined;
-};
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';

@@ -51,11 +51,12 @@ export class BreadcrumbModel extends Model {
      */
     static slugify(label: string): string;
     /**
-     * @param {BreadcrumbData | any} [data]
+     * @param {BreadcrumbData | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: BreadcrumbData | any);
-    /** @type {BreadcrumbItem[]} */ items: BreadcrumbItem[];
-    /** @type {string} */ separator: string;
+    constructor(data?: BreadcrumbData | Record<string, any>, options?: object);
+    /** @type {BreadcrumbItem[]} Navigation stack */ items: BreadcrumbItem[];
+    /** @type {string} Visual separator between breadcrumb segments */ separator: string;
     /**
      * Push a new level onto the navigation stack.
      *
@@ -138,7 +139,13 @@ export class BreadcrumbModel extends Model {
      * Yields a log intent with the current breadcrumb path.
      * This is a "display-only" run — it shows the navigation state.
      */
-    run(): AsyncGenerator<any, {
+    run(): AsyncGenerator<{
+        type: string;
+        level: string;
+        message: string;
+        component: string;
+        model: BreadcrumbModel;
+    }, {
         type: string;
         data: {
             path: string;
@@ -161,4 +168,4 @@ export type BreadcrumbData = {
     items?: BreadcrumbItem[] | undefined;
     separator?: string | undefined;
 };
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';

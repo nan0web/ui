@@ -1,10 +1,4 @@
 /**
- * @typedef {'sm'|'md'|'lg'} SpinnerSize
- * @typedef {Object} SpinnerData
- * @property {SpinnerSize} [size]
- * @property {string} [color]
- */
-/**
  * Model-as-Schema for Spinner component.
  * Represents a loading or progress state without user interaction.
  */
@@ -20,26 +14,15 @@ export class SpinnerModel extends Model {
         default: string;
     };
     /**
-     * @param {SpinnerData | any} [data]
+     * @param {Partial<SpinnerModel> | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: SpinnerData | any);
-    /** @type {SpinnerSize|undefined} */ size: SpinnerSize | undefined;
-    /** @type {string|undefined} */ color: string | undefined;
-    run(): AsyncGenerator<{
-        type: string;
-        message: string;
-        component: string;
-        model: any;
-    }, {
-        type: string;
-        data: {
-            completed: boolean;
-        };
-    }, unknown>;
+    constructor(data?: Partial<SpinnerModel> | Record<string, any>, options?: object);
+    /** @type {'sm'|'md'|'lg'} Spinner diameter */ size: "sm" | "md" | "lg";
+    /** @type {string} Override for base color token */ color: string;
+    /**
+     * @returns {AsyncGenerator<any, any, any>}
+     */
+    run(): AsyncGenerator<any, any, any>;
 }
-export type SpinnerSize = "sm" | "md" | "lg";
-export type SpinnerData = {
-    size?: SpinnerSize | undefined;
-    color?: string | undefined;
-};
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';

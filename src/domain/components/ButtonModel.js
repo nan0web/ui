@@ -1,92 +1,65 @@
-import { Model } from '@nan0web/core'
-
-/**
- * @typedef {'primary'|'secondary'|'info'|'ok'|'warn'|'err'|'ghost'} ButtonVariant
- * @typedef {'sm'|'md'|'lg'} ButtonSize
- * @typedef {Object} ButtonData
- * @property {string} [content]
- * @property {ButtonVariant} [variant]
- * @property {ButtonSize} [size]
- * @property {boolean} [outline]
- * @property {boolean} [disabled]
- * @property {boolean} [loading]
- */
+import { Model } from '@nan0web/types'
 
 /**
  * Model-as-Schema for Button component.
- * Represents the intention and state of a Button interaction.
- * Used exclusively for schema definition and editor validation.
  */
 export class ButtonModel extends Model {
-	// ==========================================
-	// 1. MODEL AS SCHEMA (Static Definition)
-	// ==========================================
+	static variant = {
+		help: 'Button visual style',
+		default: 'primary',
+		options: ['primary', 'secondary', 'danger', 'ghost'],
+	}
 
 	static content = {
-		help: 'Text or content inside the button',
-		default: 'Click Me',
+		help: 'Text displayed inside the button',
+		default: 'Click me',
 		type: 'string',
 	}
 
-	static variant = {
-		help: 'Visual importance and semantic meaning',
-		default: 'primary',
-		options: ['primary', 'secondary', 'info', 'ok', 'warn', 'err', 'ghost'],
-	}
-
-	static size = {
-		help: 'Size of the button',
-		default: 'md',
-		options: ['sm', 'md', 'lg'],
-	}
-
-	static outline = {
-		help: 'Whether the button has a transparent background with border',
-		default: false,
-		type: 'boolean',
+	static href = {
+		help: 'Optional link URL',
+		default: '',
+		type: 'string',
 	}
 
 	static disabled = {
-		help: 'Whether the button is disabled and unclickable',
+		help: 'Whether the button can be clicked',
 		default: false,
 		type: 'boolean',
 	}
 
-	static loading = {
-		help: 'Whether the button shows a loading spinner instead of content',
+	static clicked = {
+		help: 'Interal flag: true if clicked',
 		default: false,
 		type: 'boolean',
 	}
 
 	/**
-	 * @param {ButtonData | any} [data]
+	 * @param {Partial<ButtonModel> | Record<string, any>} data Model input data.
+	 * @param {object} [options] Extended options (db, etc.)
 	 */
-	constructor(data = {}) {
-		super(data)
-		/** @type {string|undefined} */ this.content
-		/** @type {ButtonVariant|undefined} */ this.variant
-		/** @type {ButtonSize|undefined} */ this.size
-		/** @type {boolean|undefined} */ this.outline
-		/** @type {boolean|undefined} */ this.disabled
-		/** @type {boolean|undefined} */ this.loading
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {'primary'|'secondary'|'danger'|'ghost'} Button visual style */ this.variant
+		/** @type {string} Text displayed inside the button */ this.content
+		/** @type {string} Optional link URL */ this.href
+		/** @type {boolean} Whether the button can be clicked */ this.disabled
+		/** @type {boolean} Reactive flag set to true when user activates the button */ this.clicked
 	}
 
-	// ==========================================
-	// 2. AGNOSTIC LOGIC (Async Generator)
-	// ==========================================
-
+	/**
+	 * @returns {AsyncGenerator<any, any, any>}
+	 */
 	async *run() {
-		// A basic button interaction intention:
-		// We simply yield ourselves as a 'button_click' intent.
-		// Adaptors will render the button and wait for the click event.
 		const response = yield {
 			type: 'ask',
-			field: 'action',
-			schema: { help: 'Click the button to proceed' },
+			field: 'clicked',
+			schema: { help: 'Click the button' },
 			component: 'Button',
-			model: /** @type {any} */ (this),
+			model: this,
 		}
 
-		return { type: 'result', data: { clicked: true, ...response } }
+		this.clicked = response.value?.clicked || false
+		return { type: 'result', data: { clicked: this.clicked } }
 	}
 }

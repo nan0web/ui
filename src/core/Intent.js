@@ -131,14 +131,15 @@ export function validateIntent(intent) {
 		if (typeof intent.field !== 'string' || !intent.field) {
 			throw IntentErrorModel.error('ask_missing_field')
 		}
-		// Accept both: plain schema {help: '...'} and Model-as-Schema class
-		const isModel = intent.model === true
+		// Accept both: plain schema {help: '...'} and Model-as-Schema class/instance
+		const isModel = !!intent.model
 		if (!isModel && (!intent.schema || typeof intent.schema !== 'object' || !('help' in intent.schema))) {
 			throw IntentErrorModel.error('ask_missing_schema_help')
 		}
 	}
 	if (intent.type === 'progress' || intent.type === 'log') {
-		if (typeof intent.message !== 'string') {
+		const isComponentLog = intent.type === 'log' && intent.component
+		if (!isComponentLog && typeof intent.message !== 'string') {
 			throw IntentErrorModel.error('intent_missing_message', { type: intent.type })
 		}
 	}

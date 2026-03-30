@@ -1,9 +1,4 @@
 /**
- * @typedef {Object} TableData
- * @property {string[]} [columns]
- * @property {string[][]} [rows]
- */
-/**
  * Model-as-Schema for Table Data component.
  * Displays tabular string data in rows and columns.
  */
@@ -19,26 +14,15 @@ export class TableModel extends Model {
         default: string[][];
     };
     /**
-     * @param {TableData | any} [data]
+     * @param {Partial<TableModel> | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: TableData | any);
-    /** @type {string[]|undefined} */ columns: string[] | undefined;
-    /** @type {string[][]|undefined} */ rows: string[][] | undefined;
-    run(): AsyncGenerator<{
-        type: string;
-        level: string;
-        message: string;
-        component: string;
-        model: any;
-    }, {
-        type: string;
-        data: {
-            rowsCount: number;
-        };
-    }, unknown>;
+    constructor(data?: Partial<TableModel> | Record<string, any>, options?: object);
+    /** @type {string[]} Array of column headers */ columns: string[];
+    /** @type {string[][]} 2D Array of table cells matching column length */ rows: string[][];
+    /**
+     * @returns {AsyncGenerator<any, any, any>}
+     */
+    run(): AsyncGenerator<any, any, any>;
 }
-export type TableData = {
-    columns?: string[] | undefined;
-    rows?: string[][] | undefined;
-};
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';

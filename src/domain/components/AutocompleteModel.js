@@ -1,20 +1,10 @@
-import { Model } from '@nan0web/core'
-
-/**
- * @typedef {Object} AutocompleteData
- * @property {string} [content]
- * @property {string[]} [options]
- */
+import { Model } from '@nan0web/types'
 
 /**
  * Model-as-Schema for Autocomplete component.
  * Represents a text input with search suggestions.
  */
 export class AutocompleteModel extends Model {
-	// ==========================================
-	// 1. MODEL AS SCHEMA (Static Definition)
-	// ==========================================
-
 	static content = {
 		help: 'Current search text',
 		default: '',
@@ -28,18 +18,18 @@ export class AutocompleteModel extends Model {
 	}
 
 	/**
-	 * @param {AutocompleteData | any} [data]
+	 * @param {Partial<AutocompleteModel> | Record<string, any>} data Model input data.
+	 * @param {object} [options] Extended options (db, etc.)
 	 */
-	constructor(data = {}) {
-		super(data)
-		/** @type {string|undefined} */ this.content
-		/** @type {string[]|undefined} */ this.options
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {string} Current search text */ this.content
+		/** @type {string[]} List of suggestions based on input */ this.options
 	}
 
-	// ==========================================
-	// 2. AGNOSTIC LOGIC (Async Generator)
-	// ==========================================
-
+	/**
+	 * @returns {AsyncGenerator<any, any, any>}
+	 */
 	async *run() {
 		const response = yield {
 			type: 'ask',
@@ -49,7 +39,7 @@ export class AutocompleteModel extends Model {
 				options: this.options,
 			},
 			component: 'Autocomplete',
-			model: /** @type {any} */ (this),
+			model: this,
 		}
 
 		this.content = response.value

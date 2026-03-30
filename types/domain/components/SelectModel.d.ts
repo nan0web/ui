@@ -1,9 +1,4 @@
 /**
- * @typedef {Object} SelectData
- * @property {string} [content]
- * @property {string[]} [options]
- */
-/**
  * Model-as-Schema for Select component.
  * Represents a dropdown choice selection.
  */
@@ -19,30 +14,20 @@ export class SelectModel extends Model {
         type: string;
     };
     /**
-     * @param {SelectData | any} [data]
+     * @param {Partial<SelectModel> | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: SelectData | any);
-    /** @type {string|undefined} */ content: string | undefined;
-    /** @type {string[]|undefined} */ options: string[] | undefined;
-    run(): AsyncGenerator<{
-        type: string;
-        field: string;
-        schema: {
-            help: string;
-            options: string[] | undefined;
-            validate: (val: any) => true | "Invalid option selected";
-        };
-        component: string;
-        model: any;
-    }, {
-        type: string;
+    constructor(data?: Partial<SelectModel> | Record<string, any>, options?: object);
+    /** @type {string} Currently selected item or default placeholder */ content: string;
+    /** @type {string[]} List of available options for selection */ options: string[];
+    /**
+     * @returns {AsyncGenerator<any, { type: 'result', data: { selected: string } }, any>}
+     */
+    run(): AsyncGenerator<any, {
+        type: "result";
         data: {
-            selected: string | undefined;
+            selected: string;
         };
-    }, unknown>;
+    }, any>;
 }
-export type SelectData = {
-    content?: string | undefined;
-    options?: string[] | undefined;
-};
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';

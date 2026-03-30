@@ -1,4 +1,4 @@
-import { Model } from '@nan0web/core'
+import { Model } from '@nan0web/types'
 
 /**
  * Navigation Model — OLMUI Model-as-Schema
@@ -41,16 +41,17 @@ export default class Navigation extends Model {
 	}
 
 	/**
-	 * @param {Partial<Navigation>} data
+	 * @param {Partial<Navigation> | Record<string, any>} data Model input data.
+	 * @param {object} [options] Extended options (db, etc.)
 	 */
-	constructor(data = {}) {
-		super(data)
-		/** @type {string|undefined} */ this.title
-		/** @type {string|undefined} */ this.href
-		/** @type {string|undefined} */ this.icon
-		/** @type {string|undefined} */ this.image
-		/** @type {Navigation[]|undefined} */ this.children
-		/** @type {boolean|undefined} */ this.hidden
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {string} Label for the menu item */ this.title
+		/** @type {string} URL or internal app route */ this.href
+		/** @type {string} Icon name/ID */ this.icon
+		/** @type {string} Display image or thumbnail */ this.image
+		/** @type {Navigation[]} Nested sub-menu navigation */ this.children
+		/** @type {boolean} Hide from lists/menus */ this.hidden
 
 		if (this.children) {
 			this.children = this.children.map((item) => new Navigation(item))

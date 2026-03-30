@@ -1,64 +1,57 @@
-import { Model } from '@nan0web/core'
+import { Model } from '@nan0web/types'
 
 /**
- * @typedef {Object} ConfirmData
- * @property {string} [message]
- * @property {string} [confirmText]
- * @property {string} [cancelText]
- */
-
-/**
- * Model-as-Schema for Confirm component.
+ * Model-as-Schema for Confirmation dialog.
  */
 export class ConfirmModel extends Model {
-	// ==========================================
-	// 1. MODEL AS SCHEMA (Static Definition)
-	// ==========================================
+	static title = {
+		help: 'Short title for the action',
+		default: 'Confirm Action',
+		type: 'string',
+	}
 
 	static message = {
-		help: 'Dialog message displayed to the user',
+		help: 'The question asked to the user',
 		default: 'Are you sure?',
 		type: 'string',
 	}
 
-	static confirmText = {
-		help: 'Label for the positive confirmation button',
+	static okLabel = {
+		help: 'Text for the confirm button',
 		default: 'Yes',
 		type: 'string',
 	}
 
-	static cancelText = {
-		help: 'Label for the negative rejection button',
+	static cancelLabel = {
+		help: 'Text for the cancel button',
 		default: 'No',
 		type: 'string',
 	}
 
 	/**
-	 * @param {ConfirmData | any} [data]
+	 * @param {Partial<ConfirmModel> | Record<string, any>} data Model input data.
+	 * @param {object} [options] Extended options (db, etc.)
 	 */
-	constructor(data = {}) {
-		super(data)
-		/** @type {string|undefined} */ this.message
-		/** @type {string|undefined} */ this.confirmText
-		/** @type {string|undefined} */ this.cancelText
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {string} Short title for the action */ this.title
+		/** @type {string} The question asked to the user */ this.message
+		/** @type {string} Text for the confirm button */ this.okLabel
+		/** @type {string} Text for the cancel button */ this.cancelLabel
 	}
 
-	// ==========================================
-	// 2. AGNOSTIC LOGIC (Async Generator)
-	// ==========================================
-
+	/**
+	 * @returns {AsyncGenerator<any, any, any>}
+	 */
 	async *run() {
 		const response = yield {
 			type: 'ask',
 			field: 'confirmed',
-			schema: {
-				help: this.message,
-				type: 'boolean',
-			},
+			schema: { type: 'boolean', help: this.message },
 			component: 'Confirm',
-			model: /** @type {any} */ (this), // Attached for richer UI metadata
+			model: this,
 		}
 
-		return { type: 'result', data: { confirmed: !!response.value } }
+		return { type: 'result', data: { confirmed: response.value === true } }
 	}
 }

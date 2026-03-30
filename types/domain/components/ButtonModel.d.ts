@@ -1,38 +1,20 @@
 /**
- * @typedef {'primary'|'secondary'|'info'|'ok'|'warn'|'err'|'ghost'} ButtonVariant
- * @typedef {'sm'|'md'|'lg'} ButtonSize
- * @typedef {Object} ButtonData
- * @property {string} [content]
- * @property {ButtonVariant} [variant]
- * @property {ButtonSize} [size]
- * @property {boolean} [outline]
- * @property {boolean} [disabled]
- * @property {boolean} [loading]
- */
-/**
  * Model-as-Schema for Button component.
- * Represents the intention and state of a Button interaction.
- * Used exclusively for schema definition and editor validation.
  */
 export class ButtonModel extends Model {
-    static content: {
-        help: string;
-        default: string;
-        type: string;
-    };
     static variant: {
         help: string;
         default: string;
         options: string[];
     };
-    static size: {
+    static content: {
         help: string;
         default: string;
-        options: string[];
+        type: string;
     };
-    static outline: {
+    static href: {
         help: string;
-        default: boolean;
+        default: string;
         type: string;
     };
     static disabled: {
@@ -40,42 +22,24 @@ export class ButtonModel extends Model {
         default: boolean;
         type: string;
     };
-    static loading: {
+    static clicked: {
         help: string;
         default: boolean;
         type: string;
     };
     /**
-     * @param {ButtonData | any} [data]
+     * @param {Partial<ButtonModel> | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: ButtonData | any);
-    /** @type {string|undefined} */ content: string | undefined;
-    /** @type {ButtonVariant|undefined} */ variant: ButtonVariant | undefined;
-    /** @type {ButtonSize|undefined} */ size: ButtonSize | undefined;
-    /** @type {boolean|undefined} */ outline: boolean | undefined;
-    /** @type {boolean|undefined} */ disabled: boolean | undefined;
-    /** @type {boolean|undefined} */ loading: boolean | undefined;
-    run(): AsyncGenerator<{
-        type: string;
-        field: string;
-        schema: {
-            help: string;
-        };
-        component: string;
-        model: any;
-    }, {
-        type: string;
-        data: any;
-    }, unknown>;
+    constructor(data?: Partial<ButtonModel> | Record<string, any>, options?: object);
+    /** @type {'primary'|'secondary'|'danger'|'ghost'} Button visual style */ variant: "primary" | "secondary" | "danger" | "ghost";
+    /** @type {string} Text displayed inside the button */ content: string;
+    /** @type {string} Optional link URL */ href: string;
+    /** @type {boolean} Whether the button can be clicked */ disabled: boolean;
+    /** @type {boolean} Reactive flag set to true when user activates the button */ clicked: boolean;
+    /**
+     * @returns {AsyncGenerator<any, any, any>}
+     */
+    run(): AsyncGenerator<any, any, any>;
 }
-export type ButtonVariant = "primary" | "secondary" | "info" | "ok" | "warn" | "err" | "ghost";
-export type ButtonSize = "sm" | "md" | "lg";
-export type ButtonData = {
-    content?: string | undefined;
-    variant?: ButtonVariant | undefined;
-    size?: ButtonSize | undefined;
-    outline?: boolean | undefined;
-    disabled?: boolean | undefined;
-    loading?: boolean | undefined;
-};
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';

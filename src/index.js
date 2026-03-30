@@ -11,6 +11,8 @@ import App from './App/index.js'
 
 export { Frame, FrameProps, Locale, StdIn, StdOut, View, RenderOptions, Model, Component, App }
 export { format } from './format.js'
+export { default as Navigation } from './domain/Navigation.js'
+export { Language } from '@nan0web/i18n/src/domain/Language.js'
 
 // export default App
 export { default as FormMessage } from './core/Form/Message.js'

@@ -1,25 +1,9 @@
 /**
- * @typedef {Object} SandboxData
- * @property {string[]} [components]
- * @property {string} [selectedComponent]
- * @property {string} [themeFormat]
- */
-/**
- * Model-as-Schema for the UI Sandbox environment.
- * Represents a tool wrapping standard OLMUI components, allowing
- * users to inspect their models, tweak variables interactively,
- * and export the configuration as themes for the Marketplace.
- *
- * Navigation uses BreadcrumbModel:
- *   ESC = pop one level (if stack has no parent → exit app)
- *   Ctrl+C = always exit (handled by prompts.js wrapper)
- *
- * URL mapping:
- *   /sandbox             → Select Component
- *   /sandbox/button      → Edit Button properties
- *   /sandbox/button/export → Choose export format
+ * SandboxModel — OLMUI Model-as-Schema
+ * Environment for testing and previewing UI components with dynamic property editing.
  */
 export class SandboxModel extends Model {
+    static $id: string;
     static components: {
         help: string;
         type: string;
@@ -27,7 +11,8 @@ export class SandboxModel extends Model {
     };
     static selectedComponent: {
         help: string;
-        type: string;
+        placeholder: string;
+        default: string;
     };
     static themeFormat: {
         help: string;
@@ -35,25 +20,16 @@ export class SandboxModel extends Model {
         default: string;
     };
     /**
-     * @param {SandboxData | any} [data]
+     * @param {Partial<SandboxModel> | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: SandboxData | any);
-    /** @type {string[]|undefined} */ components: string[] | undefined;
-    /** @type {string|undefined} */ selectedComponent: string | undefined;
-    /** @type {string|undefined} */ themeFormat: string | undefined;
-    run(): AsyncGenerator<any, {
-        type: string;
-        data: {
-            targetComponent: string | undefined;
-            themeConfig: any;
-            exportFormat: string | undefined;
-            breadcrumb: string;
-        };
-    }, any>;
+    constructor(data?: Partial<SandboxModel> | Record<string, any>, options?: object);
+    /** @type {string[]} List of registered UI components available for inspection */ components: string[];
+    /** @type {string} The component currently being inspected in the sandbox */ selectedComponent: string;
+    /** @type {'yaml'|'css'|'json'} The file format chosen to export the custom theme configuration */ themeFormat: "yaml" | "css" | "json";
+    /**
+     * @returns {AsyncGenerator<any, any, any>}
+     */
+    run(): AsyncGenerator<any, any, any>;
 }
-export type SandboxData = {
-    components?: string[] | undefined;
-    selectedComponent?: string | undefined;
-    themeFormat?: string | undefined;
-};
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';

@@ -1,166 +1,91 @@
-# Master IDE: Roadmap & Status
+# @nan0web/ui — Release v1.9.0 Finalization
 
-## ✅ v1.7.2 — BreadcrumbModel & Sandbox Navigation (DONE, 2026-03-15)
+## Статус: 🟡 Міграція регресійних тестів (не завершена)
 
-### BreadcrumbModel — Universal Navigation Stack
+### ✅ Що вже зроблено
+1. **OLMUI v2 стандартизація** — усі domain-моделі мають канонічний конструктор `Partial<Model> | Record<string, any>`
+2. **TS2527** — виправлено у всіх `run()` через `@returns {AsyncGenerator<any, any, any>}`
+3. **`pnpm build` (tsc)** — 0 помилок
+4. **`release:spec`** — 132 pass, 0 fail, 2 skipped (всі релізи від v1.5.1 до v1.9.0 проходять)
+5. **`ide.js` розширено**:
+   - Додано Bootstrap-подібні токени: `--ui-primary`, `--ui-secondary`, etc.
+   - Додано `--ui-radius-sm/md/lg/pill/circle`, `--ui-space-sm/md/lg`
+   - Додано `--fg-muted` (аліас `--fg-dim`)
+   - Секції «Palette» та «Geometry» у Theme Editor
+   - Footer slot injection для `ui-modal` (v1.7.0 spec)
+6. **ProfileDropdownModel** — тест виправлений: `p.profileName` замість `p.name`
 
-Новий Model-as-Schema компонент в `@nan0web/ui/domain/components/`:
+### ❌ Що залишилось зробити
 
-- [x] `BreadcrumbModel.js` — навігаційний стек з `push()`, `pop()`, `navigateTo()`, `canGoBack()`
-- [x] Кожен елемент має `label` (display) + `path` (URL segment, auto-slugify Unicode)
-- [x] Маппінг на DBFS: `toURI()` → `sandbox/button/index` (для `db.fetch()`)
-- [x] Маппінг на FS: `toDataPath()` → `sandbox/button/index.yaml` (відносно `db.root`)
-- [x] Маппінг на URL: `path` → `/sandbox/button`, `toURL()` → `sandbox/button`
-- [x] CLI display: `toString()` → `🏖 Sandbox › Button`
-- [x] `fromPath('/sandbox/button', labelMap)` — десеріалізація з URL
-- [x] `slugify()` — Unicode-safe (Cyrillic, emoji strip)
-- [x] `run()` async generator → yields `log` intent з `component: 'Breadcrumbs'`
-- [x] **25 контрактних тестів** (construction, navigation, serialization, generator)
+#### 1. Виправити шляхи у мігрованих тестах (~15 хв)
+Файли `.spec.js` з `releases/` були переміщені у `src/test/releases/` як `.test.js`.
+Але відносні шляхи (`../../../..`) зламалися через збільшення глибини вкладеності.
 
-### SandboxModel — Breadcrumb Navigation
+**Проблема:** `sed`-автозаміна задублювала `../` і зависла. Потрібно вручну виправити.
 
-- [x] `SandboxModel` використовує `BreadcrumbModel` замість приватного `#stack`
-- [x] ESC = `nav.pop()`, порожній стек = CancelError летить назовні → вихід
-- [x] Ctrl+C = `process.exit(0)` на будь-якому рівні (prompts.js wrapper)
-- [x] Breadcrumb log intent перед кожним prompt: `🏖 Sandbox › Button › Export`
-- [x] Результат містить `breadcrumb: nav.path` → `/sandbox/button/export`
+**Правильна математика:** Файл `src/test/releases/1/9/v1.9.0/task.test.js` — 6 рівнів до кореня пакету.
+```
+src/test/releases/1/9/v1.9.0/ → ../../../../../../ = packages/ui/
+```
 
-### CancelError & Error Handling Fixes
+**Файли для ручної корекції:**
 
-- [x] `GeneratorRunner.js`: `nextVal` типізовано як `IntentResponse | Error | undefined`, CancelError → `generator.throw()`
-- [x] `SandboxModel.js`: catch блоки cast `e` to `Error` перед `err.name` перевіркою
-- [x] `InputAdapter.js`: robust catch для `unhandled_intent` — string + ModelError об'єкт
-- [x] Button CLI preview: dim ефект тільки на текст, не на border/background
-- [x] Static spinner `⟲ loading...` замість анімації
+| Файл | Що виправити |
+|------|-------------|
+| `src/test/releases/1/9/v1.9.0/task.test.js` | ✅ `root` вже виправлений на `../../../../../../` |
+| `src/test/releases/1/8/v1.8.0/task.test.js` | Відносні імпорти `../../../../../domain/` — мають бути ПРАВИЛЬНІ (5 рівнів до `src/`) |
+| `src/test/releases/1/7/v1.7.0/task.test.js` | Перевірити `root` та `new URL(...)` шляхи |
+| `src/test/releases/1/7/v1.7.1/task.test.js` | Перевірити `root` та імпорти |
+| `src/test/releases/1/6/v1.6.2/task.test.js` | `new URL('../../../../../../docs/...')` для ide.js та YAML |
+| `src/test/releases/1/6/v1.6.1/task.test.js` | `pkgDir = path.resolve(__dirname, '../../../../../../')` |
+| `src/test/releases/1/6/v1.6.0/task.test.js` | Перевірити `root`, `src/` path imports |
+| `src/test/releases/1/5/v1.5.2/task.test.js` | Перевірити `root` |
+| `src/test/releases/1/5/v1.5.1/task.test.js` | Перевірити `root` |
+| `src/test/releases/1/3/v1.3.0/task.test.js` | Перевірити |
+| `src/test/releases/1/2/v1.2.0/task.test.js` | Перевірити |
 
-### Тестування
+**Команда для валідації одного файлу:**
+```sh
+node --test src/test/releases/1/9/v1.9.0/task.test.js
+```
 
-| Suite | Result |
-|:------|:-------|
-| npm test (unit) | ✅ pass |
-| test:ssg | ✅ pass |
-| tsc build | **0 errors** ✅ |
-| BreadcrumbModel | **25 pass** ✅ |
-| SandboxModel | ✅ pass |
+**Стратегія:** Відкрити кожен файл, перевірити шлях `root`/`pkgDir`/`new URL(...)`, виправити на `../../../../../../` (6 рівнів).
 
----
+#### 2. Запустити фінальну верифікацію
+```sh
+pnpm test:unit    # ← повний regress suite
+pnpm build        # ← tsc
+pnpm release:spec # ← повинно бути 0 pass (бо .spec.js вже мігровані)
+```
 
-## ✅ v1.7.0 — OLMUI Generator Engine (DONE)
+#### 3. Git commit (Zero-Tolerance)
+```sh
+git add -A
+git status
+# Перевірити що немає артефактів, тільки:
+#   - src/test/releases/**/*.test.js (мігровані)
+#   - releases/**/ (видалені .spec.js)
+#   - docs/site/src/ide.js (розширені токени)
+#   - src/domain/components/*.js (стандартизовані конструктори)
+git commit -m "release(ui): v1.9.0 — OLMUI v2 Model-as-Schema standardization
 
-### Migration Path (UiAdapter → runGenerator)
+- Standardize all domain model constructors (Partial<Model> | Record<string, any>)
+- Fix TS2527 via explicit @returns on async generators
+- Extend IDE theme editor with Bootstrap-compatible tokens
+- Add --fg-muted, --ui-radius-*, --ui-space-* CSS variables
+- Inject modal footer slot for v1.7.0 compatibility
+- Migrate all release specs to src/test/releases/ regression suite
+- ProfileDropdownModel: use canonical profileName field"
+```
 
-| Стара (v1.x) | Нова (OLMUI Engine) |
-|---|---|
-| `UiAdapter` клас (OOP) | `runGenerator` функція (FP) |
-| `adapter.ask()` / `adapter.select()` | `yield ask('field', schema)` |
-| `processForm(UIForm)` | `yield ask('form', Model)` |
-| `EventProcessor` наслідування | Чистий async generator |
-| `CancelError` throw | `AbortSignal` / `ModelError` |
+#### 4. NPM release
+```sh
+npm version 1.9.0
+npm publish
+git tag v1.9.0
+git push --tags
+```
 
-Обидві системи **співіснують**. Нова — наступна ітерація, що поступово замінить стару.
-
----
-
-## ✅ v1.7.1 — Dynamic i18n & Advanced Editor (DONE)
-
-### Зроблено
-
-- [x] Manifest per language: `db.fetch(URL)` для кожної мови. YAML → JSON.
-- [x] Theme Settings page: `/uk/CSS.html` та `/en/CSS.html` deep linking.
-- [x] UIForm for complex props: array-of-objects (object→JSON textarea, boolean→text).
-- [x] Smart inputs: rgba→color+opacity slider, rem/px→number+unit select.
-- [x] Live Preview: у правому sidebar замість знизу.
-- [x] Sidebar navigation: absolute URLs з locale prefix.
-- [x] CSS.html route: `_syncFromUrl()` + `generate-pages.js` генерує файли.
-
----
-
-## ✅ v1.7.1 — Theme Editor: CSS Variable Propagation (DONE)
-
-### Проблема
-
-**CSS Variables не впливали на компоненти** — головний баг Theme Editor.
-
-### Кореневі причини (Root Cause Analysis)
-
-1. **Shadow CSS `:host` override**: `--co: var(--ide-accent)` у shadow CSS `master-ide`
-   створював scope boundary, який блокував inherited `--co` від inline styles.
-2. **`--ui-btn-bg` override**: Fallback chain у `ui-button` — `var(--ui-btn-bg, var(--co, #818cf8))`.
-   Коли `--ui-btn-bg: '#0099dc'` було задано, воно перебивало `--co`.
-3. **Empty string = valid CSS value**: Порожні CSS custom properties (`--ui-btn-bg: ""`)
-   через inline style вважаються валідними і не дають fallback спрацювати.
-
-### Виправлення
-
-1. ✅ Видалено `--co: var(--ide-accent)` з `:host` shadow CSS — тепер `--co` каскадується нормально
-2. ✅ `--ui-btn-bg` / `--ui-btn-fg` default → `''` — наслідують `--co` / `--co-on` tokens
-3. ✅ `_applyCssVars()` — `removeProperty()` для порожніх значень (замість `setProperty('')`)
-4. ✅ Inline cssVars style на wrapper div у `_renderThemePreview()` та `.preview-canvas`
-5. ✅ Фільтрація порожніх значень при побудові inline style string
-
-### E2E тести
-
-| Тест                                 | Статус  |
-| :----------------------------------- | :------ |
-| `color input dispatches @input`      | ✅ pass |
-| `/uk/CSS.html loads Theme Editor`    | ✅ pass |
-| `CSS vars set on host after load`    | ✅ pass |
-| `--co change → Primary button color` | ✅ pass |
-
-### Файли змінені
-
-- `docs/site/src/ide.js` — shadow CSS fix, cssVars defaults, \_applyCssVars, \_renderThemePreview
-- `e2e/theme-editor.spec.js` — оновлено selector `.theme-preview-wrap`
-- `e2e/debug-theme.spec.js` — оновлено selector
-
----
-
-## ✅ v1.8.0 — Navigation Model & UI Core Expansion (DONE, 2026-03-25)
-
-### Navigation — Universal Navigation Model
-
-Новий Model-as-Schema компонент в `@nan0web/ui/domain/`:
-
-- [x] `Navigation.js` — рекурсивна модель навігації (title, href, icon, image, children, hidden)
-- [x] Вбудована підтримка `resolveDefaults` для автоматичної ініціалізації масивів `children`
-- [x] Суверенний ідентифікатор `$id = '@nan0web/ui/Navigation'` для коректної генерації схем у монорепозиторії
-- [x] Експортовано через `domain/index.js`
-- [x] Покриття Story-тестами у `nan0web.app` (інтеграційна перевірка)
-
-### Theme Editor Pro & Sidebar Components (NEXT)
-
-### CORE-8: Model Migration (extends Model from @nan0web/core)
-
-- [x] 12 доменних моделей → `extends Model` (including Navigation)
-- [ ] 3 adopt-agent моделі → `extends Model` (see `adopt-agent/docs/seed-model-migration.md`)
-- [x] Додати `@nan0web/core` до dependencies (Published as v1.8.0)
-
-### Theme Editor
-
-- [ ] Shadow editor: visual box-shadow builder
-- [ ] CSS Export: кнопка «Export CSS» для копіювання `:root { ... }`
-- [ ] CSS Import: paste готового CSS
-- [ ] Reset to defaults
-- [ ] Persistence: зберігати в localStorage
-
-### Sidebar Base Components
-
-- [ ] ColorPicker: окремий sidebar component
-- [ ] ColorRGBA: color + opacity slider
-- [ ] SizeUnit: number + unit select
-
-### Components (ui-lit)
-
-- [ ] Tree keyboard: Arrow keys навігація
-- [ ] Modal footer: Slot injection
-- [ ] Table column config
-- [ ] Focus ring: `--ui-*-focus` змінні
-
-### Unit Test Status
-
-| Suite        | Result                  |
-| :----------- | :---------------------- |
-| npm test     | **129 pass, 0 fail** ✅ |
-| test:docs    | **17 pass, 0 fail** ✅  |
-| test:play    | **1 pass, 0 fail** ✅   |
-| tsc build    | **0 errors** ✅         |
+### 📋 Відомі «боржники» (не блокують реліз)
+- Core tests: `src/core/Form/`, `src/core/Stream.test.js` — `# TODO`
+- Tree keyboard navigation: `# SKIP` (2 тести)

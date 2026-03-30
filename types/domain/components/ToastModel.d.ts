@@ -1,62 +1,33 @@
 /**
- * @typedef {'success'|'error'|'info'|'warning'} ToastVariant
- * @typedef {Object} ToastData
- * @property {string} [message]
- * @property {ToastVariant} [variant]
- * @property {number} [duration]
- * @property {boolean} [open]
- */
-/**
- * Model-as-Schema for Toast notification component.
- * Represents a transient message displayed to the user.
+ * Model-as-Schema for Toast notification.
  */
 export class ToastModel extends Model {
-    static message: {
-        help: string;
-        default: string;
-        type: string;
-    };
     static variant: {
         help: string;
         default: string;
         options: string[];
+    };
+    static message: {
+        help: string;
+        default: string;
+        type: string;
     };
     static duration: {
         help: string;
         default: number;
         type: string;
     };
-    static open: {
-        help: string;
-        default: boolean;
-        type: string;
-    };
     /**
-     * @param {ToastData | any} [data]
+     * @param {Partial<ToastModel> | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: ToastData | any);
-    /** @type {string|undefined} */ message: string | undefined;
-    /** @type {ToastVariant|undefined} */ variant: ToastVariant | undefined;
-    /** @type {number|undefined} */ duration: number | undefined;
-    /** @type {boolean|undefined} */ open: boolean | undefined;
-    run(): AsyncGenerator<{
-        type: string;
-        level: string;
-        message: string | undefined;
-        component: string;
-        model: any;
-    }, {
-        type: string;
-        data: {
-            closed: boolean;
-        };
-    }, unknown>;
+    constructor(data?: Partial<ToastModel> | Record<string, any>, options?: object);
+    /** @type {'info'|'success'|'warn'|'error'} Notification color scheme */ variant: "info" | "success" | "warn" | "error";
+    /** @type {string} Text displayed in the toast */ message: string;
+    /** @type {number} Auto-dismiss timeout in ms */ duration: number;
+    /**
+     * @returns {AsyncGenerator<any, any, any>}
+     */
+    run(): AsyncGenerator<any, any, any>;
 }
-export type ToastVariant = "success" | "error" | "info" | "warning";
-export type ToastData = {
-    message?: string | undefined;
-    variant?: ToastVariant | undefined;
-    duration?: number | undefined;
-    open?: boolean | undefined;
-};
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';

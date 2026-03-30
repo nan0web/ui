@@ -1,21 +1,10 @@
-import { Model } from '@nan0web/core'
-
-/**
- * @typedef {'sm'|'md'|'lg'} SpinnerSize
- * @typedef {Object} SpinnerData
- * @property {SpinnerSize} [size]
- * @property {string} [color]
- */
+import { Model } from '@nan0web/types'
 
 /**
  * Model-as-Schema for Spinner component.
  * Represents a loading or progress state without user interaction.
  */
 export class SpinnerModel extends Model {
-	// ==========================================
-	// 1. MODEL AS SCHEMA (Static Definition)
-	// ==========================================
-
 	static size = {
 		help: 'Spinner diameter',
 		default: 'md',
@@ -29,30 +18,26 @@ export class SpinnerModel extends Model {
 	}
 
 	/**
-	 * @param {SpinnerData | any} [data]
+	 * @param {Partial<SpinnerModel> | Record<string, any>} data Model input data.
+	 * @param {object} [options] Extended options (db, etc.)
 	 */
-	constructor(data = {}) {
-		super(data)
-		/** @type {SpinnerSize|undefined} */ this.size
-		/** @type {string|undefined} */ this.color
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {'sm'|'md'|'lg'} Spinner diameter */ this.size
+		/** @type {string} Override for base color token */ this.color
 	}
 
-	// ==========================================
-	// 2. AGNOSTIC LOGIC (Async Generator)
-	// ==========================================
-
+	/**
+	 * @returns {AsyncGenerator<any, any, any>}
+	 */
 	async *run() {
-		// A spinner does not ask for anything, it simply indicates progress.
-		// However, as a pure component it doesn't do any work itself,
-		// so running it just means declaring its state.
 		yield {
 			type: 'progress',
 			message: 'Loading...',
 			component: 'Spinner',
-			model: /** @type {any} */ (this),
+			model: this,
 		}
 
-		// Instant exit since it performs no async task internally
 		return { type: 'result', data: { completed: true } }
 	}
 }

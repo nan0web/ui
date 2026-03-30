@@ -1,20 +1,10 @@
-import { Model } from '@nan0web/core'
-
-/**
- * @typedef {Object} SelectData
- * @property {string} [content]
- * @property {string[]} [options]
- */
+import { Model } from '@nan0web/types'
 
 /**
  * Model-as-Schema for Select component.
  * Represents a dropdown choice selection.
  */
 export class SelectModel extends Model {
-	// ==========================================
-	// 1. MODEL AS SCHEMA (Static Definition)
-	// ==========================================
-
 	static content = {
 		help: 'Currently selected item or default placeholder',
 		default: 'Choose option',
@@ -28,18 +18,18 @@ export class SelectModel extends Model {
 	}
 
 	/**
-	 * @param {SelectData | any} [data]
+	 * @param {Partial<SelectModel> | Record<string, any>} data Model input data.
+	 * @param {object} [options] Extended options (db, etc.)
 	 */
-	constructor(data = {}) {
-		super(data)
-		/** @type {string|undefined} */ this.content
-		/** @type {string[]|undefined} */ this.options
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {string} Currently selected item or default placeholder */ this.content
+		/** @type {string[]} List of available options for selection */ this.options
 	}
 
-	// ==========================================
-	// 2. AGNOSTIC LOGIC (Async Generator)
-	// ==========================================
-
+	/**
+	 * @returns {AsyncGenerator<any, { type: 'result', data: { selected: string } }, any>}
+	 */
 	async *run() {
 		const response = yield {
 			type: 'ask',
@@ -50,7 +40,7 @@ export class SelectModel extends Model {
 				validate: (val) => this.options?.includes(val) || 'Invalid option selected',
 			},
 			component: 'Select',
-			model: /** @type {any} */ (this),
+			model: this,
 		}
 
 		this.content = response.value

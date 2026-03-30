@@ -1,54 +1,39 @@
 /**
- * @typedef {Object} ConfirmData
- * @property {string} [message]
- * @property {string} [confirmText]
- * @property {string} [cancelText]
- */
-/**
- * Model-as-Schema for Confirm component.
+ * Model-as-Schema for Confirmation dialog.
  */
 export class ConfirmModel extends Model {
+    static title: {
+        help: string;
+        default: string;
+        type: string;
+    };
     static message: {
         help: string;
         default: string;
         type: string;
     };
-    static confirmText: {
+    static okLabel: {
         help: string;
         default: string;
         type: string;
     };
-    static cancelText: {
+    static cancelLabel: {
         help: string;
         default: string;
         type: string;
     };
     /**
-     * @param {ConfirmData | any} [data]
+     * @param {Partial<ConfirmModel> | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: ConfirmData | any);
-    /** @type {string|undefined} */ message: string | undefined;
-    /** @type {string|undefined} */ confirmText: string | undefined;
-    /** @type {string|undefined} */ cancelText: string | undefined;
-    run(): AsyncGenerator<{
-        type: string;
-        field: string;
-        schema: {
-            help: string | undefined;
-            type: string;
-        };
-        component: string;
-        model: any;
-    }, {
-        type: string;
-        data: {
-            confirmed: boolean;
-        };
-    }, unknown>;
+    constructor(data?: Partial<ConfirmModel> | Record<string, any>, options?: object);
+    /** @type {string} Short title for the action */ title: string;
+    /** @type {string} The question asked to the user */ message: string;
+    /** @type {string} Text for the confirm button */ okLabel: string;
+    /** @type {string} Text for the cancel button */ cancelLabel: string;
+    /**
+     * @returns {AsyncGenerator<any, any, any>}
+     */
+    run(): AsyncGenerator<any, any, any>;
 }
-export type ConfirmData = {
-    message?: string | undefined;
-    confirmText?: string | undefined;
-    cancelText?: string | undefined;
-};
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';

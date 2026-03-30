@@ -1,30 +1,9 @@
-import { Model } from '@nan0web/core'
-
-/**
- * @typedef {'text'|'email'|'password'|'number'|'tel'|'url'|'date'} InputType
- * @typedef {Object} InputData
- * @property {InputType} [type]
- * @property {string} [label]
- * @property {string} [placeholder]
- * @property {boolean} [required]
- * @property {string} [pattern]
- * @property {string} [min]
- * @property {string} [max]
- * @property {string} [step]
- * @property {string} [hint]
- * @property {boolean} [disabled]
- * @property {string} [content]
- */
+import { Model } from '@nan0web/types'
 
 /**
  * Model-as-Schema for Input component.
- * Used exclusively for schema definition, validation, and editor reflection.
  */
 export class InputModel extends Model {
-	// ==========================================
-	// 1. MODEL AS SCHEMA (Static Definition)
-	// ==========================================
-
 	static type = {
 		help: 'HTML5 Input type attribute',
 		default: 'text',
@@ -92,27 +71,27 @@ export class InputModel extends Model {
 	}
 
 	/**
-	 * @param {InputData | any} [data]
+	 * @param {Partial<InputModel> | Record<string, any>} data Model input data.
+	 * @param {object} [options] Extended options (db, etc.)
 	 */
-	constructor(data = {}) {
-		super(data)
-		/** @type {InputType|undefined} */ this.type
-		/** @type {string|undefined} */ this.label
-		/** @type {string|undefined} */ this.placeholder
-		/** @type {boolean|undefined} */ this.required
-		/** @type {string|undefined} */ this.pattern
-		/** @type {string|undefined} */ this.min
-		/** @type {string|undefined} */ this.max
-		/** @type {string|undefined} */ this.step
-		/** @type {string|undefined} */ this.hint
-		/** @type {boolean|undefined} */ this.disabled
-		/** @type {string|undefined} */ this.content
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {string} HTML5 Input type attribute */ this.type
+		/** @type {string} Label displayed above the input */ this.label
+		/** @type {string} Placeholder text shown when empty */ this.placeholder
+		/** @type {boolean} Whether the field must be filled out */ this.required
+		/** @type {string} RegExp pattern for validation */ this.pattern
+		/** @type {string} Minimum value */ this.min
+		/** @type {string} Maximum value */ this.max
+		/** @type {string} Step interval */ this.step
+		/** @type {string} Helper text displayed below the input */ this.hint
+		/** @type {boolean} Whether the input is disabled */ this.disabled
+		/** @type {string} The actual value of the input */ this.content
 	}
 
-	// ==========================================
-	// 2. AGNOSTIC LOGIC (Async Generator)
-	// ==========================================
-
+	/**
+	 * @returns {AsyncGenerator<any, any, any>}
+	 */
 	async *run() {
 		const response = yield {
 			type: 'ask',
@@ -127,13 +106,14 @@ export class InputModel extends Model {
 							if (!re.test(val)) return 'Invalid format'
 						} catch (e) {
 							// fallback if pattern is malformed
+							return 'Invalid format'
 						}
 					}
 					return true
 				},
 			},
 			component: 'Input',
-			model: /** @type {any} */ (this),
+			model: this,
 		}
 
 		this.content = response.value

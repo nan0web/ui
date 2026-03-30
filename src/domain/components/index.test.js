@@ -14,9 +14,9 @@ describe('Domain: OLMUI Components (Phase 1)', () => {
 		const askIntent = await iterator.next()
 		assert.equal(askIntent.value.type, 'ask')
 		assert.equal(askIntent.value.component, 'Button')
-		assert.equal(askIntent.value.field, 'action')
+		assert.equal(askIntent.value.field, 'clicked')
 
-		const result = await iterator.next({ value: { ok: true } })
+		const result = await iterator.next({ value: { clicked: true } })
 		assert.equal(result.value.type, 'result')
 		assert.equal(result.value.data.clicked, true)
 	})

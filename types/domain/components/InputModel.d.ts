@@ -1,21 +1,5 @@
 /**
- * @typedef {'text'|'email'|'password'|'number'|'tel'|'url'|'date'} InputType
- * @typedef {Object} InputData
- * @property {InputType} [type]
- * @property {string} [label]
- * @property {string} [placeholder]
- * @property {boolean} [required]
- * @property {string} [pattern]
- * @property {string} [min]
- * @property {string} [max]
- * @property {string} [step]
- * @property {string} [hint]
- * @property {boolean} [disabled]
- * @property {string} [content]
- */
-/**
  * Model-as-Schema for Input component.
- * Used exclusively for schema definition, validation, and editor reflection.
  */
 export class InputModel extends Model {
     static type: {
@@ -74,48 +58,24 @@ export class InputModel extends Model {
         type: string;
     };
     /**
-     * @param {InputData | any} [data]
+     * @param {Partial<InputModel> | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: InputData | any);
-    /** @type {InputType|undefined} */ type: InputType | undefined;
-    /** @type {string|undefined} */ label: string | undefined;
-    /** @type {string|undefined} */ placeholder: string | undefined;
-    /** @type {boolean|undefined} */ required: boolean | undefined;
-    /** @type {string|undefined} */ pattern: string | undefined;
-    /** @type {string|undefined} */ min: string | undefined;
-    /** @type {string|undefined} */ max: string | undefined;
-    /** @type {string|undefined} */ step: string | undefined;
-    /** @type {string|undefined} */ hint: string | undefined;
-    /** @type {boolean|undefined} */ disabled: boolean | undefined;
-    /** @type {string|undefined} */ content: string | undefined;
-    run(): AsyncGenerator<{
-        type: string;
-        field: string;
-        schema: {
-            help: string;
-            validate: (val: any) => true | "This field is required" | "Invalid format";
-        };
-        component: string;
-        model: any;
-    }, {
-        type: string;
-        data: {
-            value: string | undefined;
-        };
-    }, unknown>;
+    constructor(data?: Partial<InputModel> | Record<string, any>, options?: object);
+    /** @type {string} HTML5 Input type attribute */ type: string;
+    /** @type {string} Label displayed above the input */ label: string;
+    /** @type {string} Placeholder text shown when empty */ placeholder: string;
+    /** @type {boolean} Whether the field must be filled out */ required: boolean;
+    /** @type {string} RegExp pattern for validation */ pattern: string;
+    /** @type {string} Minimum value */ min: string;
+    /** @type {string} Maximum value */ max: string;
+    /** @type {string} Step interval */ step: string;
+    /** @type {string} Helper text displayed below the input */ hint: string;
+    /** @type {boolean} Whether the input is disabled */ disabled: boolean;
+    /** @type {string} The actual value of the input */ content: string;
+    /**
+     * @returns {AsyncGenerator<any, any, any>}
+     */
+    run(): AsyncGenerator<any, any, any>;
 }
-export type InputType = "text" | "email" | "password" | "number" | "tel" | "url" | "date";
-export type InputData = {
-    type?: InputType | undefined;
-    label?: string | undefined;
-    placeholder?: string | undefined;
-    required?: boolean | undefined;
-    pattern?: string | undefined;
-    min?: string | undefined;
-    max?: string | undefined;
-    step?: string | undefined;
-    hint?: string | undefined;
-    disabled?: boolean | undefined;
-    content?: string | undefined;
-};
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';

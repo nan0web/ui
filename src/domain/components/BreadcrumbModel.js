@@ -1,4 +1,4 @@
-import { Model } from '@nan0web/core'
+import { Model } from '@nan0web/types'
 
 /**
  * @typedef {Object} BreadcrumbItem
@@ -45,12 +45,14 @@ export class BreadcrumbModel extends Model {
 	}
 
 	/**
-	 * @param {BreadcrumbData | any} [data]
+	 * @param {BreadcrumbData | Record<string, any>} data Model input data.
+	 * @param {object} [options] Extended options (db, etc.)
 	 */
-	constructor(data = {}) {
-		super(data)
-		/** @type {BreadcrumbItem[]} */ this.items
-		/** @type {string} */ this.separator
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {BreadcrumbItem[]} Navigation stack */ this.items
+		/** @type {string} Visual separator between breadcrumb segments */ this.separator
+
 		// Normalize: if items were passed as plain strings, convert to {label, path}
 		if (Array.isArray(this.items)) {
 			this.items = this.items.map((item) =>
@@ -245,13 +247,13 @@ export class BreadcrumbModel extends Model {
 	 * This is a "display-only" run — it shows the navigation state.
 	 */
 	async *run() {
-		yield /** @type {any} */ ({
+		yield {
 			type: 'log',
 			level: 'info',
 			message: this.toString(),
 			component: 'Breadcrumbs',
-			model: /** @type {any} */ (this),
-		})
+			model: /** @type {BreadcrumbModel} */ (this),
+		}
 
 		return {
 			type: 'result',

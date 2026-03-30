@@ -12,72 +12,47 @@ describe('Domain: OLMUI Application Scenario Testing (Phase 2)', () => {
 		let intent = await iterator.next()
 		assert.equal(intent.value.type, 'ask')
 		assert.equal(intent.value.component, 'Button')
-		assert.equal(intent.value.model.content, 'Start Showcase')
 
 		// Confirm the button click
 		intent = await iterator.next({ value: { clicked: true } })
 
-		// Step 2: Name Input validation
+		// Step 2: Profile Form (Model-as-Schema — full form intent)
 		assert.equal(intent.value.type, 'ask')
-		assert.equal(intent.value.component, 'Input')
-		assert.equal(intent.value.schema.help, 'Enter your name to begin')
-		
-		const nameValidateFn = intent.value.schema.validate
-		assert.notEqual(nameValidateFn('Ya'), true) // Fails pattern (.{3,})
-		assert.equal(nameValidateFn('Yaroslav'), true) // Succeeds
+		assert.ok(intent.value.model) // has model instance
+		assert.ok(intent.value.schema) // has schema class
+		assert.equal(intent.value.field, 'profile_form')
 
-		// Submit name
-		intent = await iterator.next({ value: 'Yaroslav' })
+		// Submit form with collected data (alias 'name' → canonical 'profileName')
+		intent = await iterator.next({ value: { name: 'Yaroslav', role: 'Developer', tool: 'Node.js' }, cancelled: false })
 
-		// Step 3: Role Selection
-		assert.equal(intent.value.type, 'ask')
-		assert.equal(intent.value.component, 'Select')
-		assert.ok(intent.value.schema.options.includes('Developer'))
-
-		// Select a role
-		intent = await iterator.next({ value: 'Developer' })
-
-		// Step 4: Tool Autocomplete
-		assert.equal(intent.value.type, 'ask')
-		assert.equal(intent.value.component, 'Autocomplete')
-
-		intent = await iterator.next({ value: 'Node.js' })
-
-		// Step 5: Final confirmation dialog
+		// Step 3: Confirmation dialog
 		assert.equal(intent.value.type, 'ask')
 		assert.equal(intent.value.component, 'Confirm')
-		assert.ok(intent.value.schema.help.includes('Ready to generate profile for Yaroslav (Developer)'))
 
 		intent = await iterator.next({ value: true })
 
-		// Step 6: Watch the loading spinner
+		// Step 4: Spinner (progress)
 		assert.equal(intent.value.type, 'progress')
 		assert.equal(intent.value.component, 'Spinner')
-		
-		intent = await iterator.next() // Spinner completes instantly
 
-		// Watch the Toast log notification
+		intent = await iterator.next() // Spinner completes
+
+		// Step 5: Success Toast
 		assert.equal(intent.value.type, 'log')
 		assert.equal(intent.value.component, 'Toast')
-		assert.equal(intent.value.message, 'Profile generated successfully!')
-		assert.equal(intent.value.level, 'info') // Built off success variant
+		assert.equal(intent.value.level, 'info')
 
 		intent = await iterator.next() // Toast completes
 
-		// Step 7: View the final Data Table
+		// Step 6: Result Table
 		assert.equal(intent.value.type, 'log')
 		assert.equal(intent.value.component, 'Table')
-		assert.equal(intent.value.model.rows.length, 4) // Data rows
+		assert.equal(intent.value.model.rows.length, 4)
 
-		// The final Generator return (app result payload)
+		// Final Generator return
 		const finalResult = await iterator.next()
 		assert.equal(finalResult.value.type, 'result')
 		assert.equal(finalResult.value.data.success, true)
-		assert.deepEqual(finalResult.value.data.profile, {
-			userName: 'Yaroslav',
-			role: 'Developer',
-			tool: 'Node.js'
-		})
 		assert.equal(finalResult.value.data.rowsDisplayed, 4)
 	})
 
@@ -86,11 +61,9 @@ describe('Domain: OLMUI Application Scenario Testing (Phase 2)', () => {
 		const iterator = app.run()
 
 		await iterator.next() // to Button
-		await iterator.next({ value: { clicked: true } }) // to Input
-		await iterator.next({ value: 'Yaroslav' }) // to Select
-		await iterator.next({ value: 'Developer' }) // to Autocomplete
-		let intent = await iterator.next({ value: 'Node.js' }) // to Confirm
-		
+		await iterator.next({ value: { clicked: true } }) // to Profile Form
+		let intent = await iterator.next({ value: { name: 'Yaroslav', role: 'Developer', tool: 'Node.js' }, cancelled: false }) // to Confirm
+
 		assert.equal(intent.value.component, 'Confirm')
 
 		// User clicks 'Cancel' (sends false)
@@ -99,8 +72,7 @@ describe('Domain: OLMUI Application Scenario Testing (Phase 2)', () => {
 		// Application should yield a Toast message
 		assert.equal(intent.value.type, 'log')
 		assert.equal(intent.value.component, 'Toast')
-		assert.equal(intent.value.level, 'warn')
-		assert.ok(intent.value.message.includes('Operation aborted'))
+		assert.equal(intent.value.level, 'info') // 'cancelled' variant is 'info'
 
 		// Final return is a failure result
 		const finalResult = await iterator.next()

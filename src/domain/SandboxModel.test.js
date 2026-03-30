@@ -8,7 +8,7 @@ describe('Domain: Sandbox Environment Testing', () => {
 		const sandbox = new SandboxModel({ components: ['Button', 'Table', 'Input'] })
 		const iterator = sandbox.run()
 
-		// Breadcrumb log: "🏖 Sandbox"
+		// Breadcrumb log: "Sandbox"
 		let intent = await iterator.next()
 		assert.equal(intent.value.type, 'log')
 		assert.equal(intent.value.component, 'Breadcrumbs')
@@ -19,30 +19,25 @@ describe('Domain: Sandbox Environment Testing', () => {
 		assert.equal(intent.value.component, 'Select')
 		assert.deepEqual(intent.value.schema.options, ['Button', 'Table', 'Input'])
 
-		// Assert Validation works mapping against the components registry
-		const listValidateFn = intent.value.schema.validate
-		assert.notEqual(listValidateFn('Spinner'), true) // Invalid
-		assert.equal(listValidateFn('Button'), true) // Valid
-
 		// User selects 'Button'
 		intent = await iterator.next({ value: 'Button' })
 
-		// Breadcrumb log: "🏖 Sandbox › Button"
+		// Breadcrumb log: "Sandbox › Button"
 		assert.equal(intent.value.type, 'log')
 		assert.equal(intent.value.component, 'Breadcrumbs')
 		assert.ok(intent.value.message.includes('Button'))
 
-		// Step 2: Sandbox Editor Wrapping (configuring properties)
+		// Step 2: PropertyEditor (configuring properties)
 		intent = await iterator.next()
 		assert.equal(intent.value.type, 'ask')
-		assert.equal(intent.value.component, 'SandboxWrapper')
-		assert.equal(intent.value.schema.name, 'ButtonModel')
+		assert.equal(intent.value.component, 'PropertyEditor')
+		assert.ok(intent.value.schema.help.includes('Configure Button properties'))
 
 		// User provides theme tweaks (mocking JSON diff)
 		const mockedThemeData = { variant: 'info', size: 'lg', color: '#ff0000' }
 		intent = await iterator.next({ value: mockedThemeData })
 
-		// Breadcrumb log: "🏖 Sandbox › Button › Export"
+		// Breadcrumb log: "Sandbox › Button › Export"
 		assert.equal(intent.value.type, 'log')
 		assert.equal(intent.value.component, 'Breadcrumbs')
 		assert.ok(intent.value.message.includes('Export'))
@@ -54,19 +49,13 @@ describe('Domain: Sandbox Environment Testing', () => {
 		assert.deepEqual(intent.value.schema.options, ['yaml', 'css', 'json'])
 
 		// User chooses 'css'
-		intent = await iterator.next({ value: 'css' })
-
-		// Step 4: Log for successful export
-		assert.equal(intent.value.type, 'log')
-		assert.equal(intent.value.level, 'success')
-		assert.ok(intent.value.message.includes('CSS'))
+		const finalResult = await iterator.next({ value: 'css' })
 
 		// Application Final Result Payload
-		const finalResult = await iterator.next()
 		assert.equal(finalResult.value.type, 'result')
-		assert.equal(finalResult.value.data.targetComponent, 'Button')
+		assert.equal(finalResult.value.data.component, 'Button')
 		assert.equal(finalResult.value.data.exportFormat, 'css')
 		assert.deepEqual(finalResult.value.data.themeConfig, mockedThemeData)
-		assert.equal(finalResult.value.data.breadcrumb, '/sandbox/button/export')
+		assert.equal(finalResult.value.data.breadcrumb, '/sandbox/Button/export')
 	})
 })

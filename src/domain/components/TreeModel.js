@@ -1,26 +1,10 @@
-import { Model } from '@nan0web/core'
-
-/**
- * @typedef {Object} TreeNode
- * @property {string} label
- * @property {boolean} [expanded]
- * @property {TreeNode[]} [children]
- */
-
-/**
- * @typedef {Object} TreeData
- * @property {TreeNode[]} [data]
- */
+import { Model } from '@nan0web/types'
 
 /**
  * Model-as-Schema for Tree component.
  * Represents a hierarchical selection or navigation structure.
  */
 export class TreeModel extends Model {
-	// ==========================================
-	// 1. MODEL AS SCHEMA (Static Definition)
-	// ==========================================
-
 	static data = {
 		help: 'Tree nodes defining the hierarchy',
 		type: 'TreeNode[]',
@@ -28,24 +12,24 @@ export class TreeModel extends Model {
 	}
 
 	/**
-	 * @param {TreeData | any} [data]
+	 * @param {Partial<TreeModel> | Record<string, any>} data Model input data.
+	 * @param {object} [options] Extended options (db, etc.)
 	 */
-	constructor(data = {}) {
-		super(data)
-		/** @type {TreeNode[]|undefined} */ this.data
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {Array<{label: string, expanded?: boolean, children?: any[]}>} Tree nodes */ this.data
 	}
 
-	// ==========================================
-	// 2. AGNOSTIC LOGIC (Async Generator)
-	// ==========================================
-
+	/**
+	 * @returns {AsyncGenerator<any, any, any>}
+	 */
 	async *run() {
 		const response = yield {
 			type: 'ask',
 			field: 'selectedNode',
 			schema: { help: 'Select a node from the tree' },
 			component: 'Tree',
-			model: /** @type {any} */ (this),
+			model: this,
 		}
 
 		return { type: 'result', data: { selected: response.value } }

@@ -1,9 +1,4 @@
 /**
- * @typedef {Object} AutocompleteData
- * @property {string} [content]
- * @property {string[]} [options]
- */
-/**
  * Model-as-Schema for Autocomplete component.
  * Represents a text input with search suggestions.
  */
@@ -19,29 +14,15 @@ export class AutocompleteModel extends Model {
         type: string;
     };
     /**
-     * @param {AutocompleteData | any} [data]
+     * @param {Partial<AutocompleteModel> | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: AutocompleteData | any);
-    /** @type {string|undefined} */ content: string | undefined;
-    /** @type {string[]|undefined} */ options: string[] | undefined;
-    run(): AsyncGenerator<{
-        type: string;
-        field: string;
-        schema: {
-            help: string;
-            options: string[] | undefined;
-        };
-        component: string;
-        model: any;
-    }, {
-        type: string;
-        data: {
-            selected: string | undefined;
-        };
-    }, unknown>;
+    constructor(data?: Partial<AutocompleteModel> | Record<string, any>, options?: object);
+    /** @type {string} Current search text */ content: string;
+    /** @type {string[]} List of suggestions based on input */ options: string[];
+    /**
+     * @returns {AsyncGenerator<any, any, any>}
+     */
+    run(): AsyncGenerator<any, any, any>;
 }
-export type AutocompleteData = {
-    content?: string | undefined;
-    options?: string[] | undefined;
-};
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';

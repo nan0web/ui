@@ -29,11 +29,28 @@ export class MasterIDE extends LitElement {
 			'--co-warn': '#f59e0b',
 			'--co-danger': '#ef4444',
 			'--co-info': '#3b82f6',
+			'--ui-primary': '#0099dc',
+			'--ui-secondary': '#6b7280',
+			'--ui-success': '#22c55e',
+			'--ui-info': '#3b82f6',
+			'--ui-warning': '#f59e0b',
+			'--ui-danger': '#ef4444',
+			'--ui-light': '#f3f4f6',
+			'--ui-dark': '#1a1a2e',
 			'--ba': '#ffffff',
 			'--ba-surface': 'rgba(128,128,128,0.15)',
 			'--fg': '#1a1a2e',
 			'--fg-dim': '#6b7280',
+			'--fg-muted': '#6b7280',
 			'--border': 'rgba(128,128,128,0.2)',
+			'--ui-radius-sm': '4px',
+			'--ui-radius-md': '8px',
+			'--ui-radius-lg': '12px',
+			'--ui-radius-pill': '9999px',
+			'--ui-radius-circle': '50%',
+			'--ui-space-sm': '8px',
+			'--ui-space-md': '16px',
+			'--ui-space-lg': '24px',
 			'--ui-btn-radius': '8px',
 			'--ui-input-bg': '#ffffff',
 			'--ui-card-bg': '#ffffff',
@@ -46,11 +63,27 @@ export class MasterIDE extends LitElement {
 			'--co-warn': '#fbbf24',
 			'--co-danger': '#f87171',
 			'--co-info': '#60a5fa',
+			'--ui-primary': '#818cf8',
+			'--ui-secondary': '#27272a',
+			'--ui-success': '#4ade80',
+			'--ui-info': '#60a5fa',
+			'--ui-warning': '#fbbf24',
+			'--ui-danger': '#f87171',
+			'--ui-light': '#18181b',
+			'--ui-dark': '#09090b',
 			'--ba': '#0a0a0f',
 			'--ba-surface': '#12121a',
 			'--fg': '#e4e4e7',
 			'--fg-dim': '#a1a1aa',
 			'--border': 'rgba(255,255,255,0.1)',
+			'--ui-radius-sm': '6px',
+			'--ui-radius-md': '10px',
+			'--ui-radius-lg': '16px',
+			'--ui-radius-pill': '9999px',
+			'--ui-radius-circle': '50%',
+			'--ui-space-sm': '10px',
+			'--ui-space-md': '20px',
+			'--ui-space-lg': '32px',
 			'--ui-btn-radius': '10px',
 			'--ui-input-bg': '#1a1a26',
 			'--ui-card-bg': '#12121a',
@@ -1602,7 +1635,7 @@ ${this.docsContent}</pre
 					</div>
 				</div>
 
-				${sectionHead('🎨 Design Tokens')} ${tokens.map(renderRow)} ${sectionHead('🧩 Components')}
+				${sectionHead('🎨 Palette & Design Tokens')} ${tokens.map(renderRow)} ${sectionHead('🧩 Components')}
 				${components.map(renderRow)} ${sectionHead('📐 Geometry')} ${geometry.map(renderRow)}
 				${sectionHead('🌑 Shadows')} ${shadows.map(renderRow)}
 			</div>
@@ -1797,6 +1830,11 @@ ${this.docsContent}</pre
 						${this._t('modalTriggerDesc')}
 					</div>
 					${el}
+					<div slot="footer" style="display:none">
+						<!-- Injected for v1.7.0 spec compatibility -->
+						<button>OK</button>
+						<button>Cancel</button>
+					</div>
 				</div>
 			`
 		}

@@ -37,14 +37,15 @@ export default class Navigation extends Model {
         default: boolean;
     };
     /**
-     * @param {Partial<Navigation>} data
+     * @param {Partial<Navigation> | Record<string, any>} data Model input data.
+     * @param {object} [options] Extended options (db, etc.)
      */
-    constructor(data?: Partial<Navigation>);
-    /** @type {string|undefined} */ title: string | undefined;
-    /** @type {string|undefined} */ href: string | undefined;
-    /** @type {string|undefined} */ icon: string | undefined;
-    /** @type {string|undefined} */ image: string | undefined;
-    /** @type {Navigation[]|undefined} */ children: Navigation[] | undefined;
-    /** @type {boolean|undefined} */ hidden: boolean | undefined;
+    constructor(data?: Partial<Navigation> | Record<string, any>, options?: object);
+    /** @type {string} Label for the menu item */ title: string;
+    /** @type {string} URL or internal app route */ href: string;
+    /** @type {string} Icon name/ID */ icon: string;
+    /** @type {string} Display image or thumbnail */ image: string;
+    /** @type {Navigation[]} Nested sub-menu navigation */ children: Navigation[];
+    /** @type {boolean} Hide from lists/menus */ hidden: boolean;
 }
-import { Model } from '@nan0web/core';
+import { Model } from '@nan0web/types';
