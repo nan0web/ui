@@ -1,0 +1,5 @@
+[RENDER] <ui-button
+  variant="ghost"
+  outline="false"
+>Subtle</ui-button>
+[RESULT] {"ok":true}

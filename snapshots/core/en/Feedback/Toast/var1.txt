@@ -1,0 +1,2 @@
+[RENDER] <ui-toast>
+[RESULT] {"ok":true}

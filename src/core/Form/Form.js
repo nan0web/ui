@@ -106,10 +106,11 @@ export default class UIForm extends FormMessage {
 	/**
 	 * Validates the entire form.
 	 *
-	 * @returns {Map<string, string>} Map of validation errors, empty if valid.
+	 * @returns {any}
 	 */
 	validate() {
-		const errors = new Map()
+		/** @type {any} */
+		const errors = {}
 		let isValid = true
 
 		this.fields.forEach((field) => {
@@ -120,7 +121,7 @@ export default class UIForm extends FormMessage {
 				field.required &&
 				(fieldValue === '' || fieldValue === null || fieldValue === undefined)
 			) {
-				errors.set(field.name, 'This field is required')
+				errors[field.name] = 'This field is required'
 				isValid = false
 				return
 			}
@@ -132,14 +133,12 @@ export default class UIForm extends FormMessage {
 			)
 
 			if (!fieldValid) {
-				for (const [key, err] of Object.entries(fieldErrors)) {
-					errors.set(key, err)
-				}
+				Object.assign(errors, fieldErrors)
 				isValid = false
 			}
 		})
 
-		return errors
+		return { isValid, errors }
 	}
 
 	/**
@@ -239,6 +238,8 @@ export default class UIForm extends FormMessage {
 	 */
 	toJSON() {
 		return {
+			id: this.id,
+			type: this.type,
 			time: new Date(this.time).toISOString(),
 			title: this.title,
 			fields: this.fields.map((f) => (f.toJSON ? f.toJSON() : f)),

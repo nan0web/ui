@@ -112,7 +112,7 @@ describe('Task 3: Unique Variant Names in Button', () => {
 	})
 
 	it('Button YAML outline variant should get unique name from content, not variant', () => {
-		const yamlPath = path.resolve(__dirname, '../../../../../../docs/data/uk/Button.yaml')
+		const yamlPath = path.resolve(__dirname, '../../../../../../docs/data/en/Button.yaml')
 		const yaml = fs.readFileSync(yamlPath, 'utf-8')
 		// Verify we still have the outline variant data
 		assert.ok(yaml.includes('outline: true'), 'Button YAML should have outline variant')

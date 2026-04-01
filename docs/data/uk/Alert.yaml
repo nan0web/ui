@@ -6,9 +6,9 @@ $Alert:
     - warn
     - err
   title:
-    default: Heads up!
+    default: Зверніть увагу!
   content:
-    default: This is an informational alert.
+    default: Це інформаційне повідомлення.
     type: text
   icon:
     type: string
@@ -17,17 +17,17 @@ $Alert:
 content:
   - Alert:
       variant: info
-      title: Information
-      content: This is an info alert.
+      title: Інформація
+      content: Це інформаційне сповіщення.
   - Alert:
       variant: ok
-      title: Success
-      content: Action completed successfully.
+      title: Успіх
+      content: Дію успішно завершено.
   - Alert:
       variant: warn
-      title: Warning
-      content: Please be careful with this action.
+      title: Попередження
+      content: Будь ласка, будьте обережні з цією дією.
   - Alert:
       variant: err
-      title: Error
-      content: Something went wrong.
+      title: Помилка
+      content: Щось пішло не так.

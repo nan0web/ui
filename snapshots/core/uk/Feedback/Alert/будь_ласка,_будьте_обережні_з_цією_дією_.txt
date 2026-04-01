@@ -1,0 +1,5 @@
+[RENDER] <ui-alert
+  variant="warn"
+  title="Попередження"
+>Будь ласка, будьте обережні з цією дією.</ui-alert>
+[RESULT] {"ok":true}

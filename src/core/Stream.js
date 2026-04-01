@@ -44,19 +44,30 @@ export default class UIStream {
 	static async process(signal, generatorFn, onProgress, onError, onComplete) {
 		const iter = generatorFn()
 
+		/** @type {Promise<never>} */
+		const abortPromise = new Promise((_, reject) => {
+			const onAbort = () => reject(new DOMException('The operation was aborted', 'AbortError'))
+			if (signal.aborted) return onAbort()
+			signal.addEventListener('abort', onAbort, { once: true })
+		})
+
 		try {
-			for await (const item of iter) {
-				if (signal.aborted) {
-					throw new DOMException('Aborted', 'AbortError')
+			while (true) {
+				const { value: item, done } = await Promise.race([iter.next(), abortPromise])
+
+				if (done) {
+					if (item) onComplete?.(item)
+					break
 				}
 
 				if (item.done) {
 					onComplete?.(item)
 					break
-				} else if (item.error) {
+				}
+
+				if (item.error) {
 					onError?.(item.error, item)
 				} else {
-					// Intermediate results
 					onProgress?.(null, item)
 				}
 			}

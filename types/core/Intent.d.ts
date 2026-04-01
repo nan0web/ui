@@ -54,8 +54,16 @@ export function validateIntent(intent: any): intent is Intent;
  * @property {*} data - The raw result data (JSON-serializable).
  */
 /**
+ * Model requests rendering of a pure UI component (Header, Footer, Static Map).
+ * No response expected from the logic loop.
+ * @typedef {Object} RenderIntent
+ * @property {'render'} type
+ * @property {string} component - Component name (e.g. 'App.Layout.Header').
+ * @property {object} props - Static props for the component.
+ */
+/**
  * Union of all possible yielded intents.
- * @typedef {AskIntent | ProgressIntent | LogIntent} Intent
+ * @typedef {AskIntent | ProgressIntent | LogIntent | RenderIntent} Intent
  */
 /**
  * Response to an AskIntent. Adapter provides the collected value.
@@ -82,7 +90,7 @@ export function validateIntent(intent: any): intent is Intent;
  * Union of all possible responses an Adapter can send back via iterator.next().
  * @typedef {AskResponse | AbortResponse | undefined} IntentResponse
  */
-export const INTENT_TYPES: readonly ["ask", "progress", "log"];
+export const INTENT_TYPES: readonly ["ask", "progress", "log", "render"];
 export function ask(field: string, schema: object | Function): AskIntent;
 export function progress(message: any): {
     type: string;
@@ -92,6 +100,11 @@ export function log(level: any, message: any, data?: {}): {
     type: string;
     level: any;
     message: any;
+};
+export function render(component: any, props?: {}): {
+    type: string;
+    component: any;
+    props: {};
 };
 export function result(data: any): {
     type: string;
@@ -187,9 +200,24 @@ export type ResultIntent = {
     data: any;
 };
 /**
+ * Model requests rendering of a pure UI component (Header, Footer, Static Map).
+ * No response expected from the logic loop.
+ */
+export type RenderIntent = {
+    type: "render";
+    /**
+     * - Component name (e.g. 'App.Layout.Header').
+     */
+    component: string;
+    /**
+     * - Static props for the component.
+     */
+    props: object;
+};
+/**
  * Union of all possible yielded intents.
  */
-export type Intent = AskIntent | ProgressIntent | LogIntent;
+export type Intent = AskIntent | ProgressIntent | LogIntent | RenderIntent;
 /**
  * Response to an AskIntent. Adapter provides the collected value.
  * The value MUST conform to the type described in the requested FieldSchema.

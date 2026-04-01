@@ -89,9 +89,9 @@ export default class UIForm extends FormMessage {
     /**
      * Validates the entire form.
      *
-     * @returns {Map<string, string>} Map of validation errors, empty if valid.
+     * @returns {any}
      */
-    validate(): Map<string, string>;
+    validate(): any;
     /**
      * Validates a single field.
      *

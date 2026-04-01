@@ -1,0 +1,5 @@
+[RENDER] <ui-button
+  variant="primary"
+  outline="false"
+>Надіслати</ui-button>
+[RESULT] {"ok":true}

@@ -1,0 +1,2 @@
+[RENDER] <ui-autocomplete>
+[RESULT] {"ok":true}

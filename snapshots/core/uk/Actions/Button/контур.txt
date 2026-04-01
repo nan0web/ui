@@ -1,0 +1,5 @@
+[RENDER] <ui-button
+  variant="primary"
+  outline="true"
+>Контур</ui-button>
+[RESULT] {"ok":true}

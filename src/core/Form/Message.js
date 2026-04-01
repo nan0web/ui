@@ -14,7 +14,7 @@ export default class FormMessage extends UiMessage {
 	 * @param {Object} [input={}] - Message properties.
 	 */
 	constructor(input = {}) {
-		super(input)
+		super({ type: 'form', ...input })
 		const { data = {}, schema = {} } = input
 
 		// Store data and schema for easy access

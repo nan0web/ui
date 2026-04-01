@@ -1,0 +1,4 @@
+[RENDER] <ui-badge
+  variant="warn"
+>At Risk</ui-badge>
+[RESULT] {"ok":true}

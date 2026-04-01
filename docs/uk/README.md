@@ -91,14 +91,14 @@ const form = new UiForm({
       required: true,
     }),
   ],
-  state: {
-    email: 'invalid-email',
-    message: 'Hello!',
-  },
+	state: {
+		email: 'invalid-email',
+		message: 'Hello!',
+	},
 })
-const errors = form.validate()
-console.info(errors.size) // ← 1
-console.info(errors.get('email')) // ← Invalid email format
+const { isValid, errors } = form.validate()
+console.info(Object.keys(errors).length) // ← 1
+console.info(errors.email) // ← Invalid email format
 ```
 
 ### Компоненти

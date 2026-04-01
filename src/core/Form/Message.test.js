@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert'
 import FormMessage from './Message.js'
 
 describe('FormMessage', () => {
-	it.todo('should create instance with default values', () => {
+	it('should create instance with default values', () => {
 		const msg = new FormMessage()
 		assert.ok(msg instanceof FormMessage)
 		assert.deepEqual(msg.data, {})
@@ -11,7 +11,7 @@ describe('FormMessage', () => {
 		assert.equal(msg.type, 'form')
 	})
 
-	it.todo('should create instance with custom values', () => {
+	it('should create instance with custom values', () => {
 		const props = {
 			data: { name: 'John' },
 			schema: { name: { required: true } },

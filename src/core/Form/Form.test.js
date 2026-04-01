@@ -48,7 +48,7 @@ describe('UIForm', () => {
 		assert.deepEqual(values, { name: 'John', age: 30 })
 	})
 
-	it.todo('should validate form', () => {
+	it('should validate form', () => {
 		const fields = [new FormInput({ name: 'requiredField', required: true })]
 		const form = new UIForm({ fields, state: {} })
 		const result = form.validate()
@@ -64,7 +64,7 @@ describe('UIForm', () => {
 		assert.ok(result.errors.email)
 	})
 
-	it.todo('should convert to JSON', () => {
+	it('should convert to JSON', () => {
 		const form = new UIForm({ title: 'Test', state: { name: 'John' } })
 		const json = form.toJSON()
 		assert.ok(json.id)
@@ -96,7 +96,7 @@ describe('UIForm', () => {
 		assert.equal(ageField.label, 'User Age')
 	})
 
-	it.todo('supports static custom validations', () => {
+	it('supports static custom validations', () => {
 		// register a validation that ensures a string contains only digits
 		UIForm.addValidation('digitsOnly', (value) => {
 			return /^\d+$/.test(value) ? true : 'Must contain only digits'

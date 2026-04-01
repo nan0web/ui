@@ -23,6 +23,8 @@ import { IntentErrorModel } from './IntentErrorModel.js'
  *   Handler for 'progress' intents. Optional (defaults to no-op).
  * @property {(intent: import('./Intent.js').LogIntent) => void | Promise<void>} [log]
  *   Handler for 'log' intents. Optional (defaults to no-op).
+ * @property {(intent: import('./Intent.js').RenderIntent) => void | Promise<void>} [render]
+ *   Handler for 'render' intents (visual component injection). Optional.
  * @property {(intent: import('./Intent.js').ResultIntent) => void | Promise<void>} [result]
  *   Handler for the final 'result'. Optional (defaults to no-op).
  */
@@ -201,6 +203,14 @@ export async function runGenerator(generator, handlers, options = {}) {
 			case 'log': {
 				if (handlers.log) {
 					await handlers.log(intent)
+				}
+				nextVal = undefined
+				break
+			}
+
+			case 'render': {
+				if (handlers.render) {
+					await handlers.render(intent)
 				}
 				nextVal = undefined
 				break

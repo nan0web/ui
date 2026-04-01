@@ -1,10 +1,10 @@
 $Confirm:
   $search: "підтвердження діалог запит"
   message:
-    default: Are you sure?
+    default: Ви впевнені?
   confirmText:
-    default: 'Yes'
+    default: 'Так'
   cancelText:
-    default: 'No'
+    default: 'Ні'
 content:
   - Confirm: true

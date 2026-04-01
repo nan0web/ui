@@ -23,25 +23,25 @@ $Button:
 content:
   - Button:
       variant: primary
-      content: Submit
+      content: Надіслати
       outline: false
   - Button:
       variant: secondary
-      content: Cancel
+      content: Скасувати
       outline: false
   - Button:
       variant: ok
-      content: Accept
+      content: Підтвердити
       outline: false
   - Button:
       variant: err
-      content: Delete
+      content: Видалити
       outline: false
   - Button:
       variant: primary
-      content: Outline
+      content: Контур
       outline: true
   - Button:
       variant: ghost
-      content: Subtle
+      content: Легкий
       outline: false

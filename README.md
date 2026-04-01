@@ -90,9 +90,9 @@ const form = new UiForm({
 		message: 'Hello!',
 	},
 })
-const errors = form.validate()
-console.info(errors.size) // ← 1
-console.info(errors.get('email')) // ← Invalid email format
+const { isValid, errors } = form.validate()
+console.info(Object.keys(errors).length) // ← 1
+console.info(errors.email) // ← Invalid email format
 ```
 ### Components
 
@@ -148,18 +148,37 @@ const frame = new Frame({
 const rendered = frame.render()
 console.info(rendered.includes('Frame content')) // ← true
 ```
-### Models
+### Domain Models (v1.9.0)
 
-UI models are plain data objects managed by `Model` classes.
+v1.9.0 introduces a comprehensive set of domain models for layout and components.
+These models follow the **Model-as-Schema** pattern.
 
-- `User` – user data
+#### Layout Models
+- `HeaderModel` — title, logo, navigation actions
+- `FooterModel` — copyright, version, social links
+- `HeroModel` — prominent call-to-action
 
-How to use a User model?
+#### Component Models
+- `PricingModel` — plans with features and prices
+- `CommentModel` & `TestimonialModel` — social proof
+- `StatsModel` — data visualizations
+- `TimelineModel` — event history
+
+How to use the new Header and Hero models?
 ```js
 import { Model } from '@nan0web/ui'
-const user = new Model.User({ name: 'Charlie', email: 'charlie@example.com' })
-console.info(user.name) // ← Charlie
-console.info(user.email) // ← charlie@example.com
+const { HeaderModel, HeroModel } = Model
+const header = new HeaderModel({
+	title: 'NaN•Web',
+	logo: '/logo.svg',
+	actions: [{ title: 'Docs', href: '/docs' }],
+})
+const hero = new HeroModel({
+	title: 'One Logic — Many UI',
+	actions: [{ title: 'Get Started', href: '/start' }],
+})
+console.info(header.title) // ← NaN•Web
+console.info(hero.actions[0].title) // ← Get Started
 ```
 ### Testing UI
 

@@ -1,0 +1,2 @@
+[RENDER] <ui-sortable>
+[RESULT] {"ok":true}

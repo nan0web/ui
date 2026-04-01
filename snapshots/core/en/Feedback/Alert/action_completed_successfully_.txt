@@ -1,0 +1,5 @@
+[RENDER] <ui-alert
+  variant="ok"
+  title="Success"
+>Action completed successfully.</ui-alert>
+[RESULT] {"ok":true}

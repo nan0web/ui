@@ -1,0 +1,5 @@
+[RENDER] <ui-alert
+  variant="err"
+  title="Помилка"
+>Щось пішло не так.</ui-alert>
+[RESULT] {"ok":true}

@@ -59,8 +59,17 @@ import { IntentErrorModel } from './IntentErrorModel.js'
  */
 
 /**
+ * Model requests rendering of a pure UI component (Header, Footer, Static Map).
+ * No response expected from the logic loop.
+ * @typedef {Object} RenderIntent
+ * @property {'render'} type
+ * @property {string} component - Component name (e.g. 'App.Layout.Header').
+ * @property {object} props - Static props for the component.
+ */
+
+/**
  * Union of all possible yielded intents.
- * @typedef {AskIntent | ProgressIntent | LogIntent} Intent
+ * @typedef {AskIntent | ProgressIntent | LogIntent | RenderIntent} Intent
  */
 
 // ─── Response Types (Adapter → Model) ───
@@ -95,7 +104,7 @@ import { IntentErrorModel } from './IntentErrorModel.js'
  * @typedef {AskResponse | AbortResponse | undefined} IntentResponse
  */
 
-export const INTENT_TYPES = /** @type {const} */ (['ask', 'progress', 'log'])
+export const INTENT_TYPES = /** @type {const} */ (['ask', 'progress', 'log', 'render'])
 
 /**
  * Detects if a value is a Model-as-Schema class (has static fields with `help`).
@@ -143,6 +152,11 @@ export function validateIntent(intent) {
 			throw IntentErrorModel.error('intent_missing_message', { type: intent.type })
 		}
 	}
+	if (intent.type === 'render') {
+		if (typeof intent.component !== 'string' || !intent.component) {
+			throw IntentErrorModel.error('render_missing_component')
+		}
+	}
 	return true
 }
 
@@ -166,4 +180,5 @@ export const ask = (field, schema) => {
 
 export const progress = (message) => ({ type: 'progress', message })
 export const log = (level, message, data = {}) => ({ type: 'log', level, message, ...data })
+export const render = (component, props = {}) => ({ type: 'render', component, props })
 export const result = (data) => ({ type: 'result', data })

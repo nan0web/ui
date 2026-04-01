@@ -8,6 +8,7 @@
 	"files": [
 		"src/**/*.js",
 		"!src/**/*.test.js",
+		"!src/README.md.js",
 		"types/**/*.d.ts"
 	],
 	"scripts": {
@@ -23,10 +24,13 @@
 		"test:release": "node --test \"releases/**/*.test.js\"",
 		"test:status": "nan0test status --hide-name",
 		"test:play": "node --test --test-timeout=3333 \"play/**/*.test.js\"",
+		"test:snapshots": "node src/testing/GalleryGenerator.js",
+		"test:gallery": "npm run test:snapshots && npx nan0gallery --dir=snapshots/core",
+		"test:audit": "node --test src/test/gallery_audit.test.js",
 		"test:ssg": "node --test --test-timeout=5000 \"src/test/ssg.test.js\"",
 		"test:e2e": "playwright test --ignore-snapshots test/e2e/components.spec.js test/e2e/debug-label.spec.js",
 		"test:e2e:slow": "E2E_SLOW=1 playwright test test/e2e/visual.spec.js",
-		"test:all": "npm run test && npm run test:docs && npm run test:play && npm run test:e2e && npm run knip",
+		"test:all": "npm run test && npm run test:docs && npm run test:play && npm run test:gallery && npm run test:audit && npm run test:e2e && npm run knip",
 		"knip": "knip --production",
 		"precommit": "npm test",
 		"prepush": "npm test",
@@ -43,17 +47,10 @@
 			"import": "./src/index.js",
 			"types": "./types/index.d.ts"
 		},
-		"./components": {
-			"import": "./src/Component/index.js",
-			"types": "./types/Component/index.d.ts"
-		},
-		"./core": {
-			"import": "./src/core/index.js",
-			"types": "./types/core/index.d.ts"
-		},
-		"./domain": {
-			"import": "./src/domain/index.js"
-		},
+		"./components": "./src/Component/index.js",
+		"./core": "./src/core/index.js",
+		"./domain": "./src/domain/index.js",
+		"./testing": "./src/testing/index.js",
 		"./cli-app": "./apps/cli/src/index.js",
 		"./mobile-app": "./apps/mobile/src/index.js",
 		"./web-app": "./apps/web/src/App.jsx"

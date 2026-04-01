@@ -33,6 +33,10 @@ export type AdapterHandlers = {
      */
     log?: ((intent: import("./Intent.js").LogIntent) => void | Promise<void>) | undefined;
     /**
+     * Handler for 'render' intents (visual component injection). Optional.
+     */
+    render?: ((intent: import("./Intent.js").RenderIntent) => void | Promise<void>) | undefined;
+    /**
      * Handler for the final 'result'. Optional (defaults to no-op).
      */
     result?: ((intent: import("./Intent.js").ResultIntent) => void | Promise<void>) | undefined;

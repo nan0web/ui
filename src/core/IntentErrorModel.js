@@ -39,7 +39,12 @@ export class IntentErrorModel {
 
 	static intent_missing_message = {
 		help: 'Progress and Log intents require a message',
-		error: '\'{type}\' intent requires a "message" string',
+		error: "'{type}' intent requires a \"message\" string",
+	}
+
+	static render_missing_component = {
+		help: 'Render intent requires a component name',
+		error: 'Render intent requires a non-empty "component" string',
 	}
 
 	// ─── Runner Contract Errors ───

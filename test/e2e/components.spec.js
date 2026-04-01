@@ -461,7 +461,7 @@ test.describe('v1.5.0 — Unique Variant Names', () => {
 		await expect(page.locator('.toolbar h2')).toHaveText('Button', { timeout: 10000 })
 
 		// Should have an "Outline" pill (from label), not a duplicate "Primary"
-		const outlinePill = page.locator('.variant-pill').filter({ hasText: 'Outline' })
+		const outlinePill = page.locator('.variant-pill').filter({ hasText: 'Контур' })
 		await expect(outlinePill).toBeVisible()
 	})
 })

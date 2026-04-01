@@ -1,0 +1,5 @@
+[RENDER] <ui-button
+  variant="ok"
+  outline="false"
+>Підтвердити</ui-button>
+[RESULT] {"ok":true}

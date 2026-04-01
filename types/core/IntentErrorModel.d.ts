@@ -19,6 +19,10 @@ export class IntentErrorModel {
         help: string;
         error: string;
     };
+    static render_missing_component: {
+        help: string;
+        error: string;
+    };
     static adapter_missing_ask: {
         help: string;
         error: string;

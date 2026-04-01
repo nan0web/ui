@@ -1,0 +1,9 @@
+[RENDER] <ui-input
+  label="Number with Range"
+  type="number"
+  min="0"
+  max="100"
+  step="10"
+  hint="Range 0-100, step 10"
+>123</ui-input>
+[RESULT] {"ok":true}

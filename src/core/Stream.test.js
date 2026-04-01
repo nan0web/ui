@@ -37,7 +37,7 @@ describe('UIStream', () => {
 		assert.equal(completeCount, 1)
 	})
 
-	it.todo('should handle abort signal', async () => {
+	it('should handle abort signal', async () => {
 		const controller = new AbortController()
 		const generatorFn = async function* () {
 			controller.abort()
@@ -45,13 +45,17 @@ describe('UIStream', () => {
 			throw new Error('should not reach')
 		}
 		let errorMessage = ''
-		await UIStream.process(
-			controller.signal,
-			generatorFn,
-			() => {},
-			(error) => (errorMessage = error),
-			() => {},
-		)
+		try {
+			await UIStream.process(
+				controller.signal,
+				generatorFn,
+				() => {},
+				(error) => (errorMessage = error),
+				() => {},
+			)
+		} catch (/** @type {any} */ error) {
+			errorMessage = error.message
+		}
 		assert.equal(errorMessage, 'The operation was aborted')
 	})
 })

@@ -1,0 +1,5 @@
+[RENDER] <ui-button
+  variant="secondary"
+  outline="false"
+>Cancel</ui-button>
+[RESULT] {"ok":true}

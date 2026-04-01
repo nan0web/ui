@@ -1,0 +1,2 @@
+[RENDER] <ui-confirm>
+[RESULT] {"ok":true}

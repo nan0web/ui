@@ -1,0 +1,5 @@
+[RENDER] <ui-shadow
+  value="0 10px 15px rgba(0,0,0,0.2)"
+  label="Soft Floating"
+>
+[RESULT] {"ok":true}

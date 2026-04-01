@@ -1,0 +1,5 @@
+[RENDER] <ui-button
+  variant="err"
+  outline="false"
+>Видалити</ui-button>
+[RESULT] {"ok":true}

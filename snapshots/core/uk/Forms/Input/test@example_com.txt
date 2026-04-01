@@ -1,0 +1,6 @@
+[RENDER] <ui-input
+  type="email"
+  label="Email"
+  required="true"
+>test@example.com</ui-input>
+[RESULT] {"ok":true}

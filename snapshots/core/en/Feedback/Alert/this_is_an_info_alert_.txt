@@ -1,0 +1,5 @@
+[RENDER] <ui-alert
+  variant="info"
+  title="Information"
+>This is an info alert.</ui-alert>
+[RESULT] {"ok":true}
