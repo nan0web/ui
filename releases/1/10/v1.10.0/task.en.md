@@ -24,11 +24,11 @@ This release adds 20 new domain models to the `@nan0web/ui` ecosystem, transform
 
 ## Acceptance Criteria (Definition of Done)
 
-- [ ] All 20 new models are available through `import { Model } from '@nan0web/ui'`.
-- [ ] `npm run test:docs` passed successfully (`README.md` generated).
-- [ ] `docs/uk/README.md` has 100% parity with EN version in content (code in EN).
-- [ ] `.npmignore` correctly filters artifacts (verification through `npm pack --dry-run`).
-- [ ] Regression tests (v1.2.0–v1.10.0) passing at 100% (491+ tests).
+- [x] All 20 new models are available through `import { Model } from '@nan0web/ui'`.
+- [x] `npm run test:docs` passed successfully (`README.md` generated).
+- [x] `docs/uk/README.md` has 100% parity with EN version in content (code in EN).
+- [x] `.npmignore` correctly filters artifacts (verification through `npm pack --dry-run`).
+- [x] Regression tests (v1.2.0–v1.10.0) passing at 100% (491+ tests).
 
 ## Architecture Audit (Checklist)
 

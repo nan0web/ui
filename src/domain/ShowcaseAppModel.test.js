@@ -38,14 +38,14 @@ describe('Domain: OLMUI Application Scenario Testing (Phase 2)', () => {
 		intent = await iterator.next() // Spinner completes
 
 		// Step 5: Success Toast
-		assert.equal(intent.value.type, 'log')
+		assert.equal(intent.value.type, 'show')
 		assert.equal(intent.value.component, 'Toast')
 		assert.equal(intent.value.level, 'info')
 
 		intent = await iterator.next() // Toast completes
 
 		// Step 6: Result Table
-		assert.equal(intent.value.type, 'log')
+		assert.equal(intent.value.type, 'show')
 		assert.equal(intent.value.component, 'Table')
 		assert.equal(intent.value.model.rows.length, 4)
 
@@ -70,7 +70,7 @@ describe('Domain: OLMUI Application Scenario Testing (Phase 2)', () => {
 		intent = await iterator.next({ value: false })
 
 		// Application should yield a Toast message
-		assert.equal(intent.value.type, 'log')
+		assert.equal(intent.value.type, 'show')
 		assert.equal(intent.value.component, 'Toast')
 		assert.equal(intent.value.level, 'info') // 'cancelled' variant is 'info'
 

@@ -1,5 +1,0 @@
-[RENDER] <ui-alert
-  variant="warn"
-  title="Warning"
->Please be careful with this action.</ui-alert>
-[RESULT] {"ok":true}

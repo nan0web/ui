@@ -7,7 +7,7 @@ describe('LogicInspector', () => {
         async function* mockModel() {
             yield { type: 'progress', message: 'Starting' }
             const { value: name } = yield { type: 'ask', field: 'name', schema: { type: 'string', help: 'Enter your name' } }
-            yield { type: 'log', level: 'info', message: `Hello ${name}` }
+            yield { type: 'show', level: 'info', message: `Hello ${name}` }
             yield { type: 'render', component: 'ui-button', props: { content: 'Click me' } }
             return { type: 'result', data: { ok: true } }
         }
@@ -19,7 +19,7 @@ describe('LogicInspector', () => {
         assert.equal(intents.length, 5)
         assert.deepEqual(intents[0], { type: 'progress', message: 'Starting' })
         assert.deepEqual(intents[1], { type: 'ask', field: 'name', schema: { type: 'string', help: 'Enter your name' }, input: 'Yaro' })
-        assert.deepEqual(intents[2], { type: 'log', level: 'info', message: 'Hello Yaro' })
+        assert.deepEqual(intents[2], { type: 'show', level: 'info', message: 'Hello Yaro' })
         assert.deepEqual(intents[3], { type: 'render', component: 'ui-button', props: { content: 'Click me' } })
         assert.deepEqual(intents[4], { type: 'result', data: { ok: true } })
     })

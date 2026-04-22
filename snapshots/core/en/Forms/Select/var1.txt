@@ -1,2 +1,0 @@
-[RENDER] <ui-select>
-[RESULT] {"ok":true}

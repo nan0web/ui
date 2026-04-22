@@ -1,2 +1,0 @@
-[RENDER] <ui-accordion>
-[RESULT] {"ok":true}

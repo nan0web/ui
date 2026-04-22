@@ -4,6 +4,16 @@
  */
 export class SandboxModel extends Model {
     static $id: string;
+    static UI: {
+        breadcrumb: string;
+        componentsHelp: string;
+        selectedComponentHelp: string;
+        selectedComponentPlaceholder: string;
+        themeFormatHelp: string;
+        selectComponentHelp: string;
+        configurePropertiesHelp: string;
+        exportFormatHelp: string;
+    };
     static components: {
         help: string;
         type: string;

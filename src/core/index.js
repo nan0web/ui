@@ -46,3 +46,4 @@ export { IntentErrorModel } from './IntentErrorModel.js'
 export { runGenerator } from './GeneratorRunner.js'
 
 export { MaskHandler } from './MaskHandler.js'
+export { LayoutModel } from '../domain/LayoutModel.js'

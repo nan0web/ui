@@ -5,8 +5,8 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const siteDir = path.resolve(__dirname, '../../../../../../docs/site')
-const ideJsPath = path.join(siteDir, 'src/ide.js')
+const siteDir = path.resolve(__dirname, '../../../../../dist')
+const ideJsPath = path.join(siteDir, 'ui.js')
 
 // ─── Task 1: URL Update on Save Variation ───────────────────
 

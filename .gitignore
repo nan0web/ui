@@ -40,3 +40,7 @@ docs/site/Feedback/
 docs/site/Forms/
 docs/site/System/
 docs/site/public/data/
+
+# Logs
+logs/
+*.log

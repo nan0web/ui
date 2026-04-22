@@ -5,11 +5,11 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const siteDir = path.resolve(__dirname, '../../../../../../docs/site')
-const ideJsPath = path.join(siteDir, 'src/ide.js')
-const mainJsPath = path.join(siteDir, 'src/main.js')
-const dataDir = path.resolve(__dirname, '../../../../../../docs/data/uk')
-const dataEnDir = path.resolve(__dirname, '../../../../../../docs/data/en')
+const siteDir = path.resolve(__dirname, '../../../../../dist')
+const ideJsPath = path.join(siteDir, 'ui.js')
+const mainJsPath = path.join(siteDir, 'ui.js')
+const dataDir = path.resolve(__dirname, '../../../../../docs/uk/components')
+const dataEnDir = path.resolve(__dirname, '../../../../../docs/en/components')
 
 // ─── Task 1: Content vs Label ─────────────────────────────────
 

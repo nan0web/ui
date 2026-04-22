@@ -1,4 +1,0 @@
-[RENDER] <ui-badge
-  variant="primary"
->Draft</ui-badge>
-[RESULT] {"ok":true}

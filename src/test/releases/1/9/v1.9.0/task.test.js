@@ -9,7 +9,7 @@ const root = path.resolve(import.meta.dirname, '../../../../../../')
 describe('v1.9.0 Phase 1: Layout Models', () => {
 	it('HeaderModel extends Model with $id and Navigation[] actions', async () => {
 		const { Model } = await import('@nan0web/core')
-		const { default: HeaderModel } = await import(path.join(root, 'src/domain/HeaderModel.js'))
+		const { HeaderModel } = await import(path.join(root, 'src/domain/HeaderModel.js'))
 		assert.equal(HeaderModel.$id, '@nan0web/ui/HeaderModel')
 		const h = new HeaderModel({ title: 'Site', logo: '/logo.svg' })
 		assert.ok(h instanceof Model)
@@ -21,7 +21,7 @@ describe('v1.9.0 Phase 1: Layout Models', () => {
 
 	it('FooterModel extends Model with copyright, version, license, nav[], share[], langs[]', async () => {
 		const { Model } = await import('@nan0web/core')
-		const { default: FooterModel } = await import(path.join(root, 'src/domain/FooterModel.js'))
+		const { FooterModel } = await import(path.join(root, 'src/domain/FooterModel.js'))
 		assert.equal(FooterModel.$id, '@nan0web/ui/FooterModel')
 		const f = new FooterModel({ copyright: '© 2026', version: '1.9.0', license: 'ISC' })
 		assert.ok(f instanceof Model)
@@ -32,7 +32,7 @@ describe('v1.9.0 Phase 1: Layout Models', () => {
 
 	it('HeroModel extends Model with actions[] replacing single CTA', async () => {
 		const { Model } = await import('@nan0web/core')
-		const { default: HeroModel } = await import(path.join(root, 'src/domain/HeroModel.js'))
+		const { HeroModel } = await import(path.join(root, 'src/domain/HeroModel.js'))
 		assert.equal(HeroModel.$id, '@nan0web/ui/HeroModel')
 		const hero = new HeroModel({
 			title: 'Welcome',

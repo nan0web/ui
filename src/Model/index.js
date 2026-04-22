@@ -1,13 +1,35 @@
 import User from './User/User.js'
-import * as DomainModels from '../domain/index.js'
+import { HeaderModel } from '../domain/HeaderModel.js'
+import { FooterModel } from '../domain/FooterModel.js'
+import { HeroModel } from '../domain/HeroModel.js'
+import {
+	ButtonModel,
+	ConfirmModel,
+	InputModel,
+	SpinnerModel,
+	TableModel,
+	ToastModel,
+	SelectModel,
+	AutocompleteModel,
+	TreeModel,
+	TabsModel,
+	AccordionModel,
+	GalleryModel,
+	PriceModel,
+	PricingModel,
+	CommentModel,
+	TestimonialModel,
+	StatsItemModel,
+	StatsModel,
+	TimelineItemModel,
+	TimelineModel,
+	EmptyStateModel,
+	BannerModel,
+	ProfileDropdownModel,
+} from '../domain/components/index.js'
 
-const Model = {
+export {
 	User,
-	...DomainModels,
-}
-
-export { User }
-export const {
 	HeaderModel,
 	FooterModel,
 	HeroModel,
@@ -31,6 +53,39 @@ export const {
 	StatsModel,
 	TimelineItemModel,
 	TimelineModel,
-} = DomainModels
+	EmptyStateModel,
+	BannerModel,
+	ProfileDropdownModel,
+}
+
+const Model = {
+	User,
+	HeaderModel,
+	FooterModel,
+	HeroModel,
+	ButtonModel,
+	ConfirmModel,
+	InputModel,
+	SpinnerModel,
+	TableModel,
+	ToastModel,
+	SelectModel,
+	AutocompleteModel,
+	TreeModel,
+	TabsModel,
+	AccordionModel,
+	GalleryModel,
+	PriceModel,
+	PricingModel,
+	CommentModel,
+	TestimonialModel,
+	StatsItemModel,
+	StatsModel,
+	TimelineItemModel,
+	TimelineModel,
+	EmptyStateModel,
+	BannerModel,
+	ProfileDropdownModel,
+}
 
 export default Model

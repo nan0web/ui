@@ -77,7 +77,7 @@ describe('v1.2.0 — Extended FormInput Types', () => {
 	 */
 	it.skip('package.json version is 1.2.0', () => {
 		const pkg = JSON.parse(
-			readFileSync(new URL('../../../../../../package.json', import.meta.url), 'utf8'),
+			readFileSync(new URL('../../../../../package.json', import.meta.url), 'utf8'),
 		)
 		assert.equal(pkg.version, '1.2.0')
 	})

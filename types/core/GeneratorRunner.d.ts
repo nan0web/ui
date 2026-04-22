@@ -29,9 +29,17 @@ export type AdapterHandlers = {
      */
     progress?: ((intent: import("./Intent.js").ProgressIntent) => void | Promise<void>) | undefined;
     /**
-     * Handler for 'log' intents. Optional (defaults to no-op).
+     * Handler for 'show' intents. Optional (defaults to no-op).
+     */
+    show?: ((intent: import("./Intent.js").ShowIntent) => void | Promise<void>) | undefined;
+    /**
+     * Handler for 'log' intents. Optional.
      */
     log?: ((intent: import("./Intent.js").LogIntent) => void | Promise<void>) | undefined;
+    /**
+     * Handler for 'agent' intents (AI Subagents). Optional (fallback to show if not implemented).
+     */
+    agent?: ((intent: import("./Intent.js").AgentIntent) => Promise<import("./Intent.js").AgentResponse>) | undefined;
     /**
      * Handler for 'render' intents (visual component injection). Optional.
      */
@@ -52,4 +60,9 @@ export type RunnerOptions = {
      * External AbortSignal for cancellation from outside.
      */
     signal?: AbortSignal | undefined;
+    /**
+     * Array where all executed intents will be sequentially recorded.
+     * Useful for generating 'crash reports' or Nan0Spec files on failure.
+     */
+    trace?: import("./Intent.js").Intent[] | undefined;
 };

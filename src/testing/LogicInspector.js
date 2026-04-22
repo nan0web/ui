@@ -29,9 +29,9 @@ export class LogicInspector {
                 intents.push(entry)
                 return { value }
             },
-            /** @param {import('../core/Intent.js').LogIntent} i */
-            log: async (i) => {
-                intents.push({ type: 'log', level: i.level || 'info', message: i.message })
+            /** @param {import('../core/Intent.js').ShowIntent} i */
+            show: async (i) => {
+                intents.push({ type: 'show', level: i.level || 'info', message: i.message })
             },
             /** @param {import('../core/Intent.js').ProgressIntent} i */
             progress: async (i) => {

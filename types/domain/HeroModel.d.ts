@@ -1,43 +1,45 @@
 /**
- * HeroModel — OLMUI Model-as-Schema
- * Universal hero/banner section for landing pages.
- * Uses Navigation[] for actions instead of a single CTA.
+ * HeroModel — OLMUI Component Model
+ * Represents the top presentation section of a page.
  */
-export default class HeroModel extends Model {
+export class HeroModel extends Model {
     static $id: string;
+    static badge: {
+        help: string;
+        placeholder: string;
+        default: string;
+    };
     static title: {
         help: string;
         placeholder: string;
         default: string;
         required: boolean;
     };
-    static description: {
+    static subtitle: {
         help: string;
         placeholder: string;
         default: string;
     };
-    static image: {
+    static code: {
         help: string;
-        placeholder: string;
-        hint: string;
-        upload: boolean;
         default: string;
     };
     static actions: {
         help: string;
         type: string;
-        hint: typeof Navigation;
+        model: typeof Navigation;
         default: never[];
     };
     /**
-     * @param {Partial<HeroModel> | Record<string, any>} data Model input data.
-     * @param {object} [options] Extended options (db, etc.)
+     * @param {Partial<HeroModel | Record<string, any>>} [data={}]
+     * @param {import('@nan0web/types').ModelOptions} [options={}]
      */
-    constructor(data?: Partial<HeroModel> | Record<string, any>, options?: object);
-    /** @type {string} Hero main headline */ title: string;
-    /** @type {string} Hero sub-headline or description text */ description: string;
-    /** @type {string} Hero background or feature image URL */ image: string;
-    /** @type {Navigation[]} Call-to-action buttons (multiple CTA support) */ actions: Navigation[];
+    constructor(data?: Partial<HeroModel | Record<string, any>>, options?: import("@nan0web/types").ModelOptions);
+    /** @type {string} Top small badge text ior icon */ badge: string;
+    /** @type {string} Hero heading */ title: string;
+    /** @type {string} Hero secondary text */ subtitle: string;
+    /** @type {string} Code snippet or secondary markup */ code: string;
+    /** @type {Navigation[]} CTA buttons */ actions: Navigation[];
 }
 import { Model } from '@nan0web/types';
 import Navigation from './Navigation.js';

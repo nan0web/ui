@@ -12,7 +12,7 @@
  * instead of writing its own while(true) loop.
  */
 
-import { validateIntent } from './Intent.js'
+import { validateIntent, result } from './Intent.js'
 import { IntentErrorModel } from './IntentErrorModel.js'
 
 /**
@@ -21,8 +21,12 @@ import { IntentErrorModel } from './IntentErrorModel.js'
  *   Handler for 'ask' intents. Must return { value: ... }.
  * @property {(intent: import('./Intent.js').ProgressIntent) => void | Promise<void>} [progress]
  *   Handler for 'progress' intents. Optional (defaults to no-op).
+ * @property {(intent: import('./Intent.js').ShowIntent) => void | Promise<void>} [show]
+ *   Handler for 'show' intents. Optional (defaults to no-op).
  * @property {(intent: import('./Intent.js').LogIntent) => void | Promise<void>} [log]
- *   Handler for 'log' intents. Optional (defaults to no-op).
+ *   Handler for 'log' intents. Optional.
+ * @property {(intent: import('./Intent.js').AgentIntent) => Promise<import('./Intent.js').AgentResponse>} [agent]
+ *   Handler for 'agent' intents (AI Subagents). Optional (fallback to show if not implemented).
  * @property {(intent: import('./Intent.js').RenderIntent) => void | Promise<void>} [render]
  *   Handler for 'render' intents (visual component injection). Optional.
  * @property {(intent: import('./Intent.js').ResultIntent) => void | Promise<void>} [result]
@@ -37,6 +41,9 @@ import { IntentErrorModel } from './IntentErrorModel.js'
  *   Set to a positive value for CLI/Chat adapters where hanging is unacceptable.
  * @property {AbortSignal} [signal]
  *   External AbortSignal for cancellation from outside.
+ * @property {import('./Intent.js').Intent[]} [trace]
+ *   Array where all executed intents will be sequentially recorded.
+ *   Useful for generating 'crash reports' or Nan0Spec files on failure.
  */
 
 /**
@@ -53,18 +60,18 @@ function withTimeout(promise, ms, label) {
 	if (!ms || ms <= 0) return promise
 
 	return new Promise((resolve, reject) => {
-		const timer = setTimeout(() => {
+		const timer = globalThis.setTimeout(() => {
 			const error = IntentErrorModel.error('timeout', { label, ms })
 			reject(error)
 		}, ms)
 
 		promise.then(
 			(val) => {
-				clearTimeout(timer)
+				globalThis.clearTimeout(timer)
 				resolve(val)
 			},
 			(err) => {
-				clearTimeout(timer)
+				globalThis.clearTimeout(timer)
 				reject(err)
 			},
 		)
@@ -105,7 +112,7 @@ export async function runGenerator(generator, handlers, options = {}) {
 	while (true) {
 		// ─── Check external abort signal ───
 		if (signal?.aborted) {
-			await generator.return({ type: 'result', data: null })
+			await generator.return(/** @type {any} */ (result(null)))
 			const error = IntentErrorModel.error('aborted')
 			error.name = 'AbortError'
 			throw error
@@ -140,6 +147,11 @@ export async function runGenerator(generator, handlers, options = {}) {
 		// ─── Validate intent structure (the Judge) ───
 		validateIntent(intent)
 
+		// Record intent into the global trace if provided (for Crash Reports in Nan0Spec format).
+		if (options.trace && Array.isArray(options.trace)) {
+			options.trace.push(intent)
+		}
+
 		// ─── Dispatch to adapter handler ───
 		switch (intent.type) {
 			case 'ask': {
@@ -167,7 +179,7 @@ export async function runGenerator(generator, handlers, options = {}) {
 					break
 				}
 
-				// Run field validation if schema has a validator (the Judge again)
+				// Run field validation if schema has a validator
 				if (!intent.model) {
 					/** @type {import('./Intent.js').FieldSchema} */
 					const fieldSchema = /** @type {import('./Intent.js').FieldSchema} */ (intent.schema)
@@ -179,6 +191,17 @@ export async function runGenerator(generator, handlers, options = {}) {
 								reason: validationResult,
 							})
 						}
+					}
+				}
+
+				if (options.trace && Array.isArray(options.trace)) {
+					const lastTrace = options.trace[options.trace.length - 1]
+					if (lastTrace && lastTrace.type === 'ask') {
+						// Store raw data for Crash Reports & Nan0Spec serialization
+						lastTrace.$value =
+							typeof response.value === 'object' && response.value !== null
+								? JSON.parse(JSON.stringify(response.value))
+								: response.value
 					}
 				}
 
@@ -200,6 +223,14 @@ export async function runGenerator(generator, handlers, options = {}) {
 				break
 			}
 
+			case 'show': {
+				if (handlers.show) {
+					await handlers.show(intent)
+				}
+				nextVal = undefined
+				break
+			}
+
 			case 'log': {
 				if (handlers.log) {
 					await handlers.log(intent)
@@ -213,6 +244,35 @@ export async function runGenerator(generator, handlers, options = {}) {
 					await handlers.render(intent)
 				}
 				nextVal = undefined
+				break
+			}
+
+			case 'agent': {
+				if (handlers.agent) {
+					const response = await handlers.agent(intent)
+
+					if (options.trace && Array.isArray(options.trace)) {
+						const lastTrace = options.trace[options.trace.length - 1]
+						if (lastTrace && lastTrace.type === 'agent') {
+							// Record agent response for full trace replayability
+							/** @type {any} */ ;(lastTrace).$success = response.success
+							if (response.files) /** @type {any} */ (lastTrace).$files = response.files
+							if (response.message) /** @type {any} */ (lastTrace).$message = response.message
+						}
+					}
+
+					nextVal = response
+				} else {
+					// Fallback to show if agent goes unsupported by adapter
+					if (handlers.show) {
+						await handlers.show({
+							type: 'show',
+							level: 'warn',
+							message: `[Agent Task] ${intent.task}`,
+						})
+					}
+					nextVal = { success: false, message: 'Agent not supported by current UI adapter' }
+				}
 				break
 			}
 

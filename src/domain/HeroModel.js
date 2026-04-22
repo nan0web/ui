@@ -2,47 +2,49 @@ import { Model } from '@nan0web/types'
 import Navigation from './Navigation.js'
 
 /**
- * HeroModel — OLMUI Model-as-Schema
- * Universal hero/banner section for landing pages.
- * Uses Navigation[] for actions instead of a single CTA.
+ * HeroModel — OLMUI Component Model
+ * Represents the top presentation section of a page.
  */
-export default class HeroModel extends Model {
+export class HeroModel extends Model {
 	static $id = '@nan0web/ui/HeroModel'
 
+	static badge = {
+		help: 'Top small badge text or icon',
+		placeholder: 'v1.4.0 out now',
+		default: '',
+	}
 	static title = {
-		help: 'Hero main headline',
-		placeholder: 'Welcome to Our Platform',
+		help: 'Hero heading',
+		placeholder: 'Build Amazing Apps',
 		default: '',
 		required: true,
 	}
-	static description = {
-		help: 'Hero sub-headline or description text',
-		placeholder: 'Build something amazing...',
+	static subtitle = {
+		help: 'Hero secondary text',
+		placeholder: 'The open architecture for the next web.',
 		default: '',
 	}
-	static image = {
-		help: 'Hero background or feature image URL',
-		placeholder: 'https://...',
-		hint: 'image',
-		upload: true,
+	static code = {
+		help: 'Code snippet or secondary markup',
 		default: '',
 	}
 	static actions = {
-		help: 'Call-to-action buttons (multiple CTA support)',
+		help: 'CTA buttons',
 		type: 'Navigation[]',
-		hint: Navigation,
+		model: Navigation,
 		default: [],
 	}
 
 	/**
-	 * @param {Partial<HeroModel> | Record<string, any>} data Model input data.
-	 * @param {object} [options] Extended options (db, etc.)
+	 * @param {Partial<HeroModel | Record<string, any>>} [data={}]
+	 * @param {import('@nan0web/types').ModelOptions} [options={}]
 	 */
 	constructor(data = {}, options = {}) {
 		super(data, options)
-		/** @type {string} Hero main headline */ this.title
-		/** @type {string} Hero sub-headline or description text */ this.description
-		/** @type {string} Hero background or feature image URL */ this.image
-		/** @type {Navigation[]} Call-to-action buttons (multiple CTA support) */ this.actions
+		/** @type {string} Top small badge text ior icon */ this.badge
+		/** @type {string} Hero heading */ this.title
+		/** @type {string} Hero secondary text */ this.subtitle
+		/** @type {string} Code snippet or secondary markup */ this.code
+		/** @type {Navigation[]} CTA buttons */ this.actions
 	}
 }

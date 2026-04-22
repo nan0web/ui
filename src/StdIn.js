@@ -14,12 +14,6 @@ export default class StdIn extends EventProcessor {
 	/** @type {string[]} Messages to ignore */
 	static IGNORE_MESSAGES = ['', 'undefined']
 
-	/** @type {UiMessage[]} Input message buffer */
-	stream = []
-
-	/** @type {Processor} Input processor */
-	processor
-
 	/**
 	 * Creates a new StdIn instance.
 	 * @param {object} props - StdIn properties
@@ -29,7 +23,9 @@ export default class StdIn extends EventProcessor {
 	constructor(props = {}) {
 		super()
 		const { processor = new Processor(), stream = [] } = props
+		/** @type {Processor} Input processor */
 		this.processor = processor
+		/** @type {UiMessage[]} Input message buffer */
 		this.stream = stream
 		this.processor?.on('data', (data) => {
 			this.write(data)

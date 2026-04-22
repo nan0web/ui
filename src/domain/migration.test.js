@@ -2,9 +2,9 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import { Model } from '@nan0web/core'
 
-import HeaderModel from './HeaderModel.js'
-import FooterModel from './FooterModel.js'
-import HeroModel from './HeroModel.js'
+import { HeaderModel } from './HeaderModel.js'
+import { FooterModel } from './FooterModel.js'
+import { HeroModel } from './HeroModel.js'
 
 import {
 	PriceModel,

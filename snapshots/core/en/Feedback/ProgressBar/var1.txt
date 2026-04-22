@@ -1,6 +1,0 @@
-[RENDER] <ui-progressbar
-  variant="primary"
-  value="75"
-  show-label="true"
->
-[RESULT] {"ok":true}

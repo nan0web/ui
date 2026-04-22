@@ -1,10 +1,17 @@
 import { Model } from '@nan0web/types'
+import { show, result } from '../../core/Intent.js'
 
 /**
  * Model-as-Schema for Table Data component.
  * Displays tabular string data in rows and columns.
  */
 export class TableModel extends Model {
+	static $id = '@nan0web/ui/TableModel'
+
+	static UI = {
+		displayingTable: 'Displaying table with {count} rows',
+	}
+
 	static columns = {
 		help: 'Array of column headers',
 		type: 'string[]',
@@ -34,14 +41,11 @@ export class TableModel extends Model {
 	 * @returns {AsyncGenerator<any, any, any>}
 	 */
 	async *run() {
-		yield {
-			type: 'log',
-			level: 'info',
-			message: `Displaying table with ${this.rows?.length || 0} rows`,
+		yield show(this._.t(TableModel.UI.displayingTable, { count: this.rows?.length || 0 }), 'info', {
 			component: 'Table',
 			model: this,
-		}
+		})
 
-		return { type: 'result', data: { rowsCount: this.rows?.length || 0 } }
+		return result({ rowsCount: this.rows?.length || 0 })
 	}
 }

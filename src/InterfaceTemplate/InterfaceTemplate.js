@@ -22,13 +22,15 @@ export default class InterfaceTemplate {
 	 */
 	static requiredMethods = ['render', 'ask']
 
-	/**
-	 * The name of this interface (e.g. 'cli', 'web', 'mobile').
-	 * Override in subclass.
-	 *
-	 * @type {string}
-	 */
-	name = 'base'
+	constructor() {
+		/**
+		 * The name of this interface (e.g. 'cli', 'web', 'mobile').
+		 * Override in subclass.
+		 *
+		 * @type {string}
+		 */
+		this.name = 'base'
+	}
 
 	/**
 	 * Render data to the user through the interface.

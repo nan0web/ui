@@ -2,8 +2,8 @@ import test, { describe } from 'node:test'
 import assert from 'node:assert/strict'
 import { Model } from '@nan0web/core'
 
-import { InputModel } from '../../../../../../src/domain/components/InputModel.js'
-import { AutocompleteModel } from '../../../../../../src/domain/components/AutocompleteModel.js'
+import { InputModel } from '../../../../../domain/components/InputModel.js'
+import { AutocompleteModel } from '../../../../../domain/components/AutocompleteModel.js'
 
 describe('Release v1.7.1: UI Models Migration', () => {
     test('InputModel extends Model correctly', () => {

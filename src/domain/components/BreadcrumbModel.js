@@ -1,4 +1,5 @@
 import { Model } from '@nan0web/types'
+import { show, result } from '../../core/Intent.js'
 
 /**
  * @typedef {Object} BreadcrumbItem
@@ -28,6 +29,12 @@ import { Model } from '@nan0web/types'
  * Ctrl+C   = always exit (adapter responsibility).
  */
 export class BreadcrumbModel extends Model {
+	static $id = '@nan0web/ui/BreadcrumbModel'
+
+	static UI = {
+		navigated: 'Navigated to Context',
+	}
+
 	// ==========================================
 	// 1. MODEL AS SCHEMA (Static Definition)
 	// ==========================================
@@ -243,17 +250,14 @@ export class BreadcrumbModel extends Model {
 	// ==========================================
 
 	/**
-	 * Yields a log intent with the current breadcrumb path.
+	 * Yields a show intent with the current breadcrumb path.
 	 * This is a "display-only" run — it shows the navigation state.
 	 */
 	async *run() {
-		yield {
-			type: 'log',
-			level: 'info',
-			message: this.toString(),
+		yield show(this._.t(BreadcrumbModel.UI.navigated, {}), 'info', {
 			component: 'Breadcrumbs',
 			model: /** @type {BreadcrumbModel} */ (this),
-		}
+		})
 
 		return {
 			type: 'result',

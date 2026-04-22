@@ -1,6 +1,0 @@
-[RENDER] <ui-input
-  label="RegExp Pattern"
-  pattern="[A-Z]{3}"
-  hint="Exactly 3 uppercase letters"
->ABC</ui-input>
-[RESULT] {"ok":true}

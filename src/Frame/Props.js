@@ -53,24 +53,6 @@ class FrameProps extends ObjectWithAlias {
 		s: 'strikethrough',
 	}
 
-	/** @type {string} Text color */
-	color = ''
-
-	/** @type {string} Background color */
-	bgColor = ''
-
-	/** @type {boolean} Bold text flag */
-	bold = false
-
-	/** @type {boolean} Italic text flag */
-	italic = false
-
-	/** @type {boolean} Underline text flag */
-	underline = false
-
-	/** @type {boolean} Strikethrough text flag */
-	strikethrough = false
-
 	/**
 	 * @param {object} props - Frame properties
 	 * @param {string} [props.color=""] - Text color
@@ -90,11 +72,23 @@ class FrameProps extends ObjectWithAlias {
 			underline = false,
 			strikethrough = false,
 		} = props
+		
+		/** @type {string} Text color */
 		this.color = color
+		
+		/** @type {string} Background color */
 		this.bgColor = bgColor
+		
+		/** @type {boolean} Bold text flag */
 		this.bold = bold
+		
+		/** @type {boolean} Italic text flag */
 		this.italic = italic
+		
+		/** @type {boolean} Underline text flag */
 		this.underline = underline
+		
+		/** @type {boolean} Strikethrough text flag */
 		this.strikethrough = strikethrough
 	}
 }

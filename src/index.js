@@ -12,7 +12,6 @@ import App from './App/index.js'
 export { Frame, FrameProps, Locale, StdIn, StdOut, View, RenderOptions, Model, Component, App }
 export { format } from './format.js'
 export { default as Navigation } from './domain/Navigation.js'
-export { Language } from '@nan0web/i18n/src/domain/Language.js'
 
 // export default App
 export { default as FormMessage } from './core/Form/Message.js'
@@ -27,6 +26,26 @@ export { default as Error, CancelError } from './core/Error/index.js'
 export { default as UiAdapter } from './core/UiAdapter.js'
 
 // OLMUI Generator Engine
-export { validateIntent, ask, progress, log, result, INTENT_TYPES, isModelSchema } from './core/Intent.js'
+/** @typedef {import('./core/Intent.js').LogLevel} LogLevel */
+/** @typedef {import('./core/Intent.js').ShowLevel} ShowLevel */
+/** @typedef {import('./core/Intent.js').FieldSchema} FieldSchema */
+/** @typedef {import('./core/Intent.js').Intent} Intent */
+/** @typedef {import('./core/Intent.js').IntentResponse} IntentResponse */
+/** @typedef {import('./core/Intent.js').AskIntent} AskIntent */
+/** @typedef {import('./core/Intent.js').ProgressIntent} ProgressIntent */
+/** @typedef {import('./core/Intent.js').LogIntent} LogIntent */
+/** @typedef {import('./core/Intent.js').ShowIntent} ShowIntent */
+/** @typedef {import('./core/Intent.js').RenderIntent} RenderIntent */
+/** @typedef {import('./core/Intent.js').ResultIntent} ResultIntent */
+/** @typedef {import('./core/Intent.js').IntentType} IntentType */
+/** @typedef {import('./core/Intent.js').AskResponse} AskResponse */
+/** @typedef {import('./core/Intent.js').AbortResponse} AbortResponse */
+/** @typedef {import('./core/Intent.js').ShowData} ShowData */
+export * from './core/Intent.js'
+
 export { IntentErrorModel } from './core/IntentErrorModel.js'
 export { runGenerator } from './core/GeneratorRunner.js'
+export { buildNan0SpecFromTrace } from './testing/CrashReporter.js'
+
+/** @typedef {import('./domain/index.js').ModelAsAppOptions} ModelAsAppOptions */
+export * from './domain/index.js'

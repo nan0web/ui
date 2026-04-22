@@ -20,6 +20,7 @@ export { GalleryModel } from './GalleryModel.js'
 export { PriceModel } from './PriceModel.js'
 export { PricingModel } from './PricingModel.js'
 export { PricingSectionModel } from './PricingSectionModel.js'
+export { FeatureGridModel, FeatureItemModel } from './FeatureGridModel.js'
 
 // Hero
 
@@ -39,7 +40,8 @@ export { HeaderConfigModel } from './HeaderConfigModel.js'
 export { FooterVisibilityModel } from './FooterVisibilityModel.js'
 export { FooterConfigModel } from './FooterConfigModel.js'
 
-// Business Critical
 export { EmptyStateModel } from './EmptyStateModel.js'
 export { BannerModel } from './BannerModel.js'
 export { ProfileDropdownModel } from './ProfileDropdownModel.js'
+export { MarkdownModel } from './MarkdownModel.js'
+export { ShellModel } from './ShellModel.js'

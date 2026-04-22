@@ -7,6 +7,7 @@ export { default as UiAdapter } from "./UiAdapter.js";
 export { IntentErrorModel } from "./IntentErrorModel.js";
 export { runGenerator } from "./GeneratorRunner.js";
 export { MaskHandler } from "./MaskHandler.js";
+export { LayoutModel } from "../domain/LayoutModel.js";
 import UIStream from './Stream.js';
 import StreamEntry from './StreamEntry.js';
 import UIForm from './Form/Form.js';

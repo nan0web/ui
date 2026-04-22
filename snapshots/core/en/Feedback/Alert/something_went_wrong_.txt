@@ -1,5 +1,0 @@
-[RENDER] <ui-alert
-  variant="err"
-  title="Error"
->Something went wrong.</ui-alert>
-[RESULT] {"ok":true}

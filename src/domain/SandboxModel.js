@@ -1,5 +1,6 @@
 import { Model } from '@nan0web/types'
 import { BreadcrumbModel } from './components/BreadcrumbModel.js'
+import { show, result, ask } from '../core/Intent.js'
 
 /**
  * SandboxModel — OLMUI Model-as-Schema
@@ -8,8 +9,19 @@ import { BreadcrumbModel } from './components/BreadcrumbModel.js'
 export class SandboxModel extends Model {
 	static $id = '@nan0web/ui/SandboxModel'
 
+	static UI = {
+		breadcrumb: '\n{path}',
+		componentsHelp: 'List of registered UI components available for inspection',
+		selectedComponentHelp: 'The component currently being inspected in the sandbox',
+		selectedComponentPlaceholder: 'Button',
+		themeFormatHelp: 'The file format chosen to export the custom theme configuration',
+		selectComponentHelp: 'Select a component to inspect',
+		configurePropertiesHelp: 'Configure {component} properties',
+		exportFormatHelp: 'Choose export format',
+	}
+
 	static components = {
-		help: 'List of registered UI components available for inspection',
+		help: SandboxModel.UI.componentsHelp,
 		type: 'string[]',
 		default: [],
 	}
@@ -52,13 +64,10 @@ export class SandboxModel extends Model {
 
 			if (!this.selectedComponent) {
 				// Show breadcrumb
-				yield {
-					type: 'log',
-					level: 'info',
-					message: `\n${nav}`,
+				yield show(this._.t(SandboxModel.UI.breadcrumb, { path: String(nav) }), 'info', {
 					component: 'Breadcrumbs',
 					model: nav,
-				}
+				})
 
 				const response = yield {
 					type: 'ask',
@@ -79,13 +88,10 @@ export class SandboxModel extends Model {
 			// 2. Component Configuration Mode
 			let configResponse
 			try {
-				yield {
-					type: 'log',
-					level: 'info',
-					message: `\n${nav}`,
+				yield show(this._.t(SandboxModel.UI.breadcrumb, { path: String(nav) }), 'info', {
 					component: 'Breadcrumbs',
 					model: nav,
-				}
+				})
 
 				configResponse = yield {
 					type: 'ask',
@@ -107,13 +113,10 @@ export class SandboxModel extends Model {
 			// 3. Theme Export Mode
 			try {
 				nav.push('Export', 'export')
-				yield {
-					type: 'log',
-					level: 'info',
-					message: `\n${nav}`,
+				yield show(this._.t(SandboxModel.UI.breadcrumb, { path: String(nav) }), 'info', {
 					component: 'Breadcrumbs',
 					model: nav,
-				}
+				})
 
 				const themeResponse = yield {
 					type: 'ask',

@@ -10,7 +10,7 @@ describe('Domain: Sandbox Environment Testing', () => {
 
 		// Breadcrumb log: "Sandbox"
 		let intent = await iterator.next()
-		assert.equal(intent.value.type, 'log')
+		assert.equal(intent.value.type, 'show')
 		assert.equal(intent.value.component, 'Breadcrumbs')
 
 		// Step 1: Component Selection
@@ -23,9 +23,9 @@ describe('Domain: Sandbox Environment Testing', () => {
 		intent = await iterator.next({ value: 'Button' })
 
 		// Breadcrumb log: "Sandbox › Button"
-		assert.equal(intent.value.type, 'log')
+		assert.equal(intent.value.type, 'show')
 		assert.equal(intent.value.component, 'Breadcrumbs')
-		assert.ok(intent.value.message.includes('Button'))
+		assert.equal(intent.value.model.path, '/sandbox/Button')
 
 		// Step 2: PropertyEditor (configuring properties)
 		intent = await iterator.next()
@@ -38,9 +38,9 @@ describe('Domain: Sandbox Environment Testing', () => {
 		intent = await iterator.next({ value: mockedThemeData })
 
 		// Breadcrumb log: "Sandbox › Button › Export"
-		assert.equal(intent.value.type, 'log')
+		assert.equal(intent.value.type, 'show')
 		assert.equal(intent.value.component, 'Breadcrumbs')
-		assert.ok(intent.value.message.includes('Export'))
+		assert.equal(intent.value.model.path, '/sandbox/Button/export')
 
 		// Step 3: Format Output Selection
 		intent = await iterator.next()

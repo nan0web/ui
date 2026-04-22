@@ -22,10 +22,10 @@ export default class StdIn extends EventProcessor {
         processor?: Processor | undefined;
         stream?: UiMessage[] | undefined;
     });
-    /** @type {UiMessage[]} Input message buffer */
-    stream: UiMessage[];
     /** @type {Processor} Input processor */
     processor: Processor;
+    /** @type {UiMessage[]} Input message buffer */
+    stream: UiMessage[];
     /**
      * Checks if there are messages waiting in the input stream.
      * @returns {boolean} True if waiting messages, false otherwise
@@ -56,7 +56,7 @@ export default class StdIn extends EventProcessor {
     decode(message: UiMessage | string[] | any): UiMessage;
 }
 import EventProcessor from '@nan0web/event/oop';
-import { UiMessage } from './core/index.js';
 declare class Processor extends EventProcessor {
 }
+import { UiMessage } from './core/index.js';
 export {};

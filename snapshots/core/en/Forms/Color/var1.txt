@@ -1,5 +1,0 @@
-[RENDER] <ui-color
-  value="#22c55e"
-  label="Success Color (Hex)"
->
-[RESULT] {"ok":true}

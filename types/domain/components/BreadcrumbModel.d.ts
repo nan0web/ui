@@ -24,6 +24,10 @@
  * Ctrl+C   = always exit (adapter responsibility).
  */
 export class BreadcrumbModel extends Model {
+    static $id: string;
+    static UI: {
+        navigated: string;
+    };
     static items: {
         help: string;
         type: string;
@@ -136,16 +140,10 @@ export class BreadcrumbModel extends Model {
      */
     toDataPath(filename?: string): string;
     /**
-     * Yields a log intent with the current breadcrumb path.
+     * Yields a show intent with the current breadcrumb path.
      * This is a "display-only" run — it shows the navigation state.
      */
-    run(): AsyncGenerator<{
-        type: string;
-        level: string;
-        message: string;
-        component: string;
-        model: BreadcrumbModel;
-    }, {
+    run(): AsyncGenerator<import("../../core/Intent.js").ShowIntent, {
         type: string;
         data: {
             path: string;

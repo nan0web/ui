@@ -5,9 +5,9 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const pkgDir = path.resolve(__dirname, '../../../../../../')
-const docsDir = path.join(pkgDir, 'docs/site')
-const ideJsPath = path.join(docsDir, 'src/ide.js')
+const pkgDir = path.resolve(__dirname, '../../../../../')
+const docsDir = path.join(pkgDir, 'dist')
+const ideJsPath = path.join(docsDir, 'ui.js')
 const indexHtmlPath = path.join(docsDir, 'index.html')
 const ideHtmlPath = path.join(docsDir, 'ide.html')
 
@@ -15,8 +15,8 @@ describe('v1.6.1: Unified Navigation & Theme Editor', () => {
 	it('Navbar labels are unified across index.html and ide.html', () => {
 		const indexHtml = fs.readFileSync(indexHtmlPath, 'utf-8')
 		const ideHtml = fs.readFileSync(ideHtmlPath, 'utf-8')
-		const indexNavLinks = indexHtml.match(/<div class="nav-links">([\s\S]*?)<\/div>/)[1]
-		const ideNavLinks = ideHtml.match(/<div class="nav-links">([\s\S]*?)<\/div>/)[1]
+		const indexNavLinks = indexHtml.match(/<div class="nav-links">([\s\S]*?)<\/div>/)?.[1] || ''
+		const ideNavLinks = ideHtml.match(/<div class="nav-links">([\s\S]*?)<\/div>/)?.[1] || ''
 		assert.ok(!indexNavLinks.includes('📖'), 'index.html navbar should not have emojis')
 		assert.ok(!ideNavLinks.includes('📖'), 'ide.html navbar should not have emojis')
 		assert.ok(indexNavLinks.includes('Документація'), 'index.html has Documentation')

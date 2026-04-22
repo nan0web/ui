@@ -61,9 +61,9 @@ export default class UiMessage extends Message {
      */
     constructor(input?: any);
     /** @type {string} */
-    type: string;
-    /** @type {string} */
     id: string;
+    /** @type {string} */
+    type: string;
     /**
      * Validates the message body against its schema.
      *

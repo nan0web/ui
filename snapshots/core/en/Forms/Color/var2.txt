@@ -1,6 +1,0 @@
-[RENDER] <ui-color
-  value="rgba(239, 68, 68, 0.5)"
-  label="Error Color (RGBA)"
-  alpha="true"
->
-[RESULT] {"ok":true}

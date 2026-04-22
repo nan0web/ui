@@ -1,12 +1,7 @@
 # ShowcaseAppModel — Main Manifest
 $id: '@nan0web/ui/ShowcaseAppModel'
 title: '@nan0web/ui Showcase'
-version: 1.9.0
 $lang: uk
-author:
-  - ЯRаСлав / ЯRasLove / ЯR <yaro.page>
-  - Колективно Штучний Інтелект <nan0web.yaro.page>
-license: ISC
 
 # ─── Content ──────────────────────────────────────
 $content:

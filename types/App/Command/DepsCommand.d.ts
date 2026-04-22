@@ -1,8 +1,6 @@
 export class DepsCommand extends UiMessage {
     static Body: typeof DepsCommandBody;
     constructor(input?: {});
-    /** @type {DepsCommandBody} */
-    body: DepsCommandBody;
 }
 export default DepsCommand;
 import UiMessage from '../../core/Message/Message.js';

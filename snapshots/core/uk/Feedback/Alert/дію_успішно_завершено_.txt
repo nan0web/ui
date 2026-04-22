@@ -1,5 +1,0 @@
-[RENDER] <ui-alert
-  variant="ok"
-  title="Успіх"
->Дію успішно завершено.</ui-alert>
-[RESULT] {"ok":true}

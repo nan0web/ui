@@ -18,8 +18,6 @@ export default class OutputMessage extends UiMessage {
      * @returns {OutputMessage}
      */
     static from(input: any): OutputMessage;
-    /** @type {string[]} */
-    body: string[];
     /** @type {Object} */
     meta: any;
     /** @type {Error|null} */

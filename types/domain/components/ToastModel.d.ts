@@ -2,6 +2,10 @@
  * Model-as-Schema for Toast notification.
  */
 export class ToastModel extends Model {
+    static $id: string;
+    static UI: {
+        toastLog: string;
+    };
     static variant: {
         help: string;
         default: string;

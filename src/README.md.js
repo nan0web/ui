@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import FS from '@nan0web/db-fs'
 import { NoConsole } from '@nan0web/log'
 import { DatasetParser, DocsParser, runSpawn } from '@nan0web/test'
-import { Frame, Model, OutputMessage, View, FormInput, UiMessage, UiForm } from './index.js'
+import { Frame, Model, OutputMessage, View, FormInput, UiMessage, UiForm, ask, progress, show, result, render } from './index.js'
 import { Welcome } from './Component/index.js'
 
 const fs = new FS()
@@ -252,8 +252,13 @@ function testRender() {
 	 * - `FooterModel` — copyright, version, social links
 	 * - `HeroModel` — prominent call-to-action
 	 *
+	 * #### HTML5 Base Elements
+	 * Fully typed zero-cost support for standard tags: `div`, `span`, `p`, `h1`-`h6`, `a`, `ul`, `table`, etc., plus SVG basics (`svg`, `path`, `rect`). Data must be standard `camelCase`.
+	 *
 	 * #### Component Models
-	 * - `PricingModel` — plans with features and prices
+	 * - `PricingModel` / `PricingSection` — plans with features and prices
+	 * - `FeatureGrid` — grid of feature highlights
+	 * - `ProfileDropdown` — user avatar and settings menu
 	 * - `CommentModel` & `TestimonialModel` — social proof
 	 * - `StatsModel` — data visualizations
 	 * - `TimelineModel` — event history
@@ -312,14 +317,105 @@ function testRender() {
 
 	/**
 	 * @docs
-	 * ### Testing UI
+	 * ### Intent Generators (v1.11.0)
+	 *
+	 * From v1.11.0, Intent creators are standard named functions generating
+	 * strict interactions (ask, progress, show, render, result).
+	 *
+	 * - `ask(field, schema)` — requests input from the environment.
+	 * - `progress(message)` — updates a visual loader.
+	 * - `show(message, level, data)` — displays a notification (replaces deprecated `log`).
+	 * - `render(component, props)` — renders a specific component view.
+	 * - `result(data)` — ends the model execution cleanly.
+	 */
+	it('How to use Intent generators? (v1.11.0)', () => {
+		//import { ask, show, result } from '@nan0web/ui'
+
+		const nameIntent = ask('name', { help: 'Your name' })
+		const msgIntent = show('Processing...', 'info')
+		const endIntent = result({ ok: true })
+
+		assert.equal(nameIntent.type, 'ask')
+		assert.equal(msgIntent.type, 'show')
+		assert.equal(msgIntent.message, 'Processing...')
+		assert.equal(endIntent.type, 'result')
+		assert.equal(typeof show, 'function')
+	})
+
+	/**
+	 * @docs
+	 * ### Testing UI (v1.11.0 Deterministic Testing)
 	 *
 	 * Core unit-tested to ensure stability in different environments.
+	 * With **v1.11.0**, the architecture formally introduces `ScenarioTest` for zero-I/O deterministic testing.
 	 *
+	 * By lifting the asynchronous logic and providing an explicit scenario array, models are evaluated instantly without waiting on user prompt delays.
+	 */
+	it('How to test Model pipelines deterministically?', async () => {
+		//import { ModelAsApp, ask, result, show } from '@nan0web/ui'
+		//import { ScenarioTest } from '@nan0web/ui/test/ScenarioTest.js'
+		const { ModelAsApp, ask, result, show } = await import('./index.js')
+		const { ScenarioTest } = await import('./test/ScenarioTest.js')
+		
+		class ShoppingCartApp extends ModelAsApp {
+			*run() {
+				const product = yield ask('product', { help: 'Select product' })
+				if (product?.value === 'laptop') {
+					yield show('Good choice!', 'ok')
+				}
+				const confirm = yield ask('confirm', { help: 'Confirm purchase?' })
+				return result({ product: product?.value, confirm: confirm?.value })
+			}
+		}
+
+		const res = await ScenarioTest.run(ShoppingCartApp, [
+			{ field: 'product', value: 'laptop' },
+			{ field: 'confirm', value: true }
+		])
+
+		assert.ok(!res.error, 'Should not have an error')
+		assert.equal(res.value.product, 'laptop')
+		assert.equal(res.value.confirm, true)
+
+		// The show intent was also collected inside ScenarioTest
+		// Product ask (1), Show (2), Confirm ask (3), Result (4)
+		const shows = res.intents.filter(i => i.type === 'show')
+		assert.equal(shows.length, 1)
+		assert.equal(shows[0].message, 'Good choice!')
+	})
+
+	/**
+	 * @docs
+	 * You can also verify exceptions and validation rules by observing the final error in ScenarioTest.
+	 */
+	it('How to test validation errors with ScenarioTest?', async () => {
+		//import { ModelAsApp, ask, result } from '@nan0web/ui'
+		//import { ScenarioTest } from '@nan0web/ui/test/ScenarioTest.js'
+		const { ModelAsApp, ask, result } = await import('./index.js')
+		const { ScenarioTest } = await import('./test/ScenarioTest.js')
+
+		class ValidatedApp extends ModelAsApp {
+			*run() {
+				const code = yield ask('code', { help: 'Enter code', required: true })
+				if (!code?.value) throw new Error('Code is mandatory')
+				return result({ code: code?.value })
+			}
+		}
+
+		const res = await ScenarioTest.run(ValidatedApp, [
+			{ field: 'code', value: '' } // Simulating empty response
+		])
+
+		assert.ok(res.error instanceof Error)
+		assert.equal(res.error.message, 'Code is mandatory')
+	})
+
+	/**
+	 * @docs
 	 * All components, adapters, and models are designed to be testable
 	 * with minimal setup.
 	 */
-	it('How to test UI components with assertions?', () => {
+	it('How to test visual UI components with assertions?', () => {
 		//import { Welcome } from '@nan0web/ui'
 
 		const output = Welcome({ user: { name: 'Test' } })

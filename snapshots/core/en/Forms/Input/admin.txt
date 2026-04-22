@@ -1,4 +1,0 @@
-[RENDER] <ui-input
-  label="Username"
->Admin</ui-input>
-[RESULT] {"ok":true}

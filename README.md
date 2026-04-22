@@ -158,8 +158,13 @@ These models follow the **Model-as-Schema** pattern.
 - `FooterModel` — copyright, version, social links
 - `HeroModel` — prominent call-to-action
 
+#### HTML5 Base Elements
+Fully typed zero-cost support for standard tags: `div`, `span`, `p`, `h1`-`h6`, `a`, `ul`, `table`, etc., plus SVG basics (`svg`, `path`, `rect`). Data must be standard `camelCase`.
+
 #### Component Models
-- `PricingModel` — plans with features and prices
+- `PricingModel` / `PricingSection` — plans with features and prices
+- `FeatureGrid` — grid of feature highlights
+- `ProfileDropdown` — user avatar and settings menu
 - `CommentModel` & `TestimonialModel` — social proof
 - `StatsModel` — data visualizations
 - `TimelineModel` — event history
@@ -180,14 +185,75 @@ const hero = new HeroModel({
 console.info(header.title) // ← NaN•Web
 console.info(hero.actions[0].title) // ← Get Started
 ```
-### Testing UI
+### Intent Generators (v1.11.0)
+
+From v1.11.0, Intent creators are standard named functions generating
+strict interactions (ask, progress, show, render, result).
+
+- `ask(field, schema)` — requests input from the environment.
+- `progress(message)` — updates a visual loader.
+- `show(message, level, data)` — displays a notification (replaces deprecated `log`).
+- `render(component, props)` — renders a specific component view.
+- `result(data)` — ends the model execution cleanly.
+
+How to use Intent generators? (v1.11.0)
+```js
+import { ask, show, result } from '@nan0web/ui'
+const nameIntent = ask('name', { help: 'Your name' })
+const msgIntent = show('Processing...', 'info')
+const endIntent = result({ ok: true })
+```
+### Testing UI (v1.11.0 Deterministic Testing)
 
 Core unit-tested to ensure stability in different environments.
+With **v1.11.0**, the architecture formally introduces `ScenarioTest` for zero-I/O deterministic testing.
 
+By lifting the asynchronous logic and providing an explicit scenario array, models are evaluated instantly without waiting on user prompt delays.
+
+How to test Model pipelines deterministically?
+```js
+import { ModelAsApp, ask, result, show } from '@nan0web/ui'
+import { ScenarioTest } from '@nan0web/ui/test/ScenarioTest.js'
+const { ModelAsApp, ask, result, show } = await import('./index.js')
+const { ScenarioTest } = await import('./test/ScenarioTest.js')
+class ShoppingCartApp extends ModelAsApp {
+	*run() {
+		const product = yield ask('product', { help: 'Select product' })
+		if (product?.value === 'laptop') {
+			yield show('Good choice!', 'ok')
+		}
+		const confirm = yield ask('confirm', { help: 'Confirm purchase?' })
+		return result({ product: product?.value, confirm: confirm?.value })
+	}
+}
+const res = await ScenarioTest.run(ShoppingCartApp, [
+	{ field: 'product', value: 'laptop' },
+	{ field: 'confirm', value: true }
+])
+```
+You can also verify exceptions and validation rules by observing the final error in ScenarioTest.
+
+How to test validation errors with ScenarioTest?
+```js
+import { ModelAsApp, ask, result } from '@nan0web/ui'
+import { ScenarioTest } from '@nan0web/ui/test/ScenarioTest.js'
+const { ModelAsApp, ask, result } = await import('./index.js')
+const { ScenarioTest } = await import('./test/ScenarioTest.js')
+class ValidatedApp extends ModelAsApp {
+	*run() {
+		const code = yield ask('code', { help: 'Enter code', required: true })
+		if (!code?.value) throw new Error('Code is mandatory')
+		return result({ code: code?.value })
+	}
+}
+const res = await ScenarioTest.run(ValidatedApp, [
+	{ field: 'code', value: '' } // Simulating empty response
+])
+```
 All components, adapters, and models are designed to be testable
 with minimal setup.
 
-How to test UI components with assertions?
+How to test visual UI components with assertions?
 ```js
 import { Welcome } from '@nan0web/ui'
 const output = Welcome({ user: { name: 'Test' } })

@@ -1,9 +1,16 @@
 import { Model } from '@nan0web/types'
+import { show, result } from '../../core/Intent.js'
 
 /**
  * Model-as-Schema for Toast notification.
  */
 export class ToastModel extends Model {
+	static $id = '@nan0web/ui/ToastModel'
+
+	static UI = {
+		toastLog: '{message}',
+	}
+
 	static variant = {
 		help: 'Notification color scheme',
 		default: 'info',
@@ -37,14 +44,11 @@ export class ToastModel extends Model {
 	 * @returns {AsyncGenerator<any, any, any>}
 	 */
 	async *run() {
-		yield {
-			type: 'log',
-			level: this.variant === 'error' ? 'error' : 'info',
-			message: this.message,
+		yield show(this._.t(ToastModel.UI.toastLog, { message: this.message }), this.variant === 'error' ? 'error' : 'info', {
 			component: 'Toast',
 			model: this,
-		}
+		})
 
-		return { type: 'result', data: { shown: true } }
+		return result({ dismissed: true })
 	}
 }

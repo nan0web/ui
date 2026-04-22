@@ -1,8 +1,8 @@
 /**
- * FooterModel — OLMUI Model-as-Schema
- * Universal footer structure: copyright, version, license, navigation, sharing, languages.
+ * FooterModel — OLMUI Component Model
+ * Universal footer structure.
  */
-export default class FooterModel extends Model {
+export class FooterModel extends Model {
     static $id: string;
     static copyright: {
         help: string;
@@ -31,22 +31,32 @@ export default class FooterModel extends Model {
         hint: typeof Navigation;
         default: never[];
     };
+    static lang: {
+        help: string;
+        default: null;
+    };
     static langs: {
         help: string;
         type: string;
+        hint: any;
         default: never[];
     };
     /**
-     * @param {Partial<FooterModel> | Record<string, any>} data Model input data.
-     * @param {object} [options] Extended options (db, etc.)
+     * @param {Partial<FooterModel>} data
      */
-    constructor(data?: Partial<FooterModel> | Record<string, any>, options?: object);
-    /** @type {string} Copyright text */ copyright: string;
-    /** @type {string} Application version string */ version: string;
-    /** @type {string} License type */ license: string;
-    /** @type {Navigation[]} Footer navigation links */ nav: Navigation[];
-    /** @type {Navigation[]} Social sharing links */ share: Navigation[];
-    /** @type {any[]} Available languages for switcher */ langs: any[];
+    constructor(data?: Partial<FooterModel>);
+    /** @type {string} */ copyright: string;
+    /** @type {string} */ version: string;
+    /** @type {string} */ license: string;
+    /** @type {Navigation[]} */
+    nav: Navigation[];
+    /** @type {Navigation[]} */
+    share: Navigation[];
+    /** @type {Language|null} */
+    lang: Language | null;
+    /** @type {Language[]} */
+    langs: Language[];
+    #private;
 }
 import { Model } from '@nan0web/types';
 import Navigation from './Navigation.js';

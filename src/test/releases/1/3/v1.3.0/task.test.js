@@ -129,7 +129,7 @@ describe('v1.3.0 — SortableList Component', () => {
 	 */
 	it.skip('package.json version is 1.3.0', () => {
 		const pkg = JSON.parse(
-			readFileSync(new URL('../../../../../../package.json', import.meta.url), 'utf8'),
+			readFileSync(new URL('../../../../../package.json', import.meta.url), 'utf8'),
 		)
 		assert.equal(pkg.version, '1.3.0')
 	})

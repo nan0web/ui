@@ -14,15 +14,6 @@ export default class OutputMessage extends UiMessage {
 		CRITICAL: 3,
 	}
 
-	/** @type {string[]} */
-	body
-	/** @type {Object} */
-	meta = {}
-	/** @type {Error|null} */
-	error = null
-	/** @type {number} */
-	priority = OutputMessage.PRIORITY.NORMAL
-
 	/**
 	 * Creates an OutputMessage.
 	 *
@@ -41,14 +32,18 @@ export default class OutputMessage extends UiMessage {
 
 		const contentSource = 'body' in input ? body : 'content' in input ? content : []
 
+		/** @type {string[]} */
 		this.body = Array.isArray(contentSource)
 			? contentSource
 			: contentSource
 				? [String(contentSource)]
 				: []
 
+		/** @type {Object} */
 		this.meta = meta
+		/** @type {Error|null} */
 		this.error = error instanceof Error ? error : error ? new Error(String(error)) : null
+		/** @type {number} */
 		this.priority = Number(priority)
 
 		if (!this.type && this.error) {

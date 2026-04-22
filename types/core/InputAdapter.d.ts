@@ -4,7 +4,7 @@
  * @class InputAdapter
  * @extends Event
  */
-export default class InputAdapter extends Event {
+export class InputAdapter extends Event {
     static CancelError: typeof CancelError;
     /** @returns {typeof CancelError} */
     get CancelError(): typeof CancelError;
@@ -42,5 +42,6 @@ export default class InputAdapter extends Event {
         value: string | null;
     }>;
 }
+export default InputAdapter;
 import Event from '@nan0web/event/oop';
 import CancelError from './Error/CancelError.js';

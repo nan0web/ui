@@ -1,2 +1,0 @@
-[RENDER] <ui-langselect>
-[RESULT] {"ok":true}

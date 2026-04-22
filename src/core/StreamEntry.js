@@ -3,30 +3,6 @@
  */
 export default class StreamEntry {
 	/**
-	 * The value of the stream entry.
-	 * @type {any}
-	 */
-	value = undefined
-
-	/**
-	 * Indicates if the stream entry is done (completed).
-	 * @type {boolean}
-	 */
-	done = false
-
-	/**
-	 * Indicates if the stream entry has been cancelled.
-	 * @type {boolean}
-	 */
-	cancelled = false
-
-	/**
-	 * Error message associated with the stream entry.
-	 * @type {string}
-	 */
-	error = ''
-
-	/**
 	 * Creates a new StreamEntry instance.
 	 * @param {Object} [input={}] - Input object to initialize the stream entry.
 	 * @param {any} [input.value] - The value for the stream entry.
@@ -36,14 +12,30 @@ export default class StreamEntry {
 	 */
 	constructor(input = {}) {
 		const {
-			value = this.value,
-			done = this.done,
-			cancelled = this.cancelled,
-			error = this.error,
+			value = undefined,
+			done = false,
+			cancelled = false,
+			error = '',
 		} = input
+		/**
+		 * The value of the stream entry.
+		 * @type {any}
+		 */
 		this.value = value
+		/**
+		 * Indicates if the stream entry is done (completed).
+		 * @type {boolean}
+		 */
 		this.done = Boolean(done)
+		/**
+		 * Indicates if the stream entry has been cancelled.
+		 * @type {boolean}
+		 */
 		this.cancelled = Boolean(cancelled)
+		/**
+		 * Error message associated with the stream entry.
+		 * @type {string}
+		 */
 		this.error = String(error)
 	}
 

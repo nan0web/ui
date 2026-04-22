@@ -72,26 +72,26 @@ describe('Domain: OLMUI Components (Phase 1)', () => {
 		assert.equal(result.done, true)
 	})
 	
-	it('ToastModel yields log intent mapped to correct severity level', async () => {
+	it('ToastModel yields show intent mapped to correct severity level', async () => {
 		const toast = new ToastModel({ variant: 'error', duration: 0 })
 		const iterator = toast.run()
 		
-		const logIntent = await iterator.next()
-		assert.equal(logIntent.value.type, 'log')
-		assert.equal(logIntent.value.level, 'error')
-		assert.equal(logIntent.value.component, 'Toast')
+		const showIntent = await iterator.next()
+		assert.equal(showIntent.value.type, 'show')
+		assert.equal(showIntent.value.level, 'error')
+		assert.equal(showIntent.value.component, 'Toast')
 		
 		const result = await iterator.next()
 		assert.equal(result.done, true)
 	})
 
-	it('TableModel yields log reporting data size immediately', async () => {
+	it('TableModel yields show reporting data size immediately', async () => {
 		const table = new TableModel({ rows: [['A'], ['B'], ['C']] })
 		const iterator = table.run()
 		
-		const logIntent = await iterator.next()
-		assert.equal(logIntent.value.type, 'log')
-		assert.equal(logIntent.value.component, 'Table')
+		const showIntent = await iterator.next()
+		assert.equal(showIntent.value.type, 'show')
+		assert.equal(showIntent.value.component, 'Table')
 		
 		const result = await iterator.next()
 		assert.equal(result.value.data.rowsCount, 3)

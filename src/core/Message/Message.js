@@ -43,11 +43,6 @@ export default class UiMessage extends Message {
 		NAVIGATION: 'navigation',
 	}
 
-	/** @type {string} */
-	type = ''
-	/** @type {string} */
-	id = ''
-
 	/**
 	 * Creates a UiMessage.
 	 *
@@ -56,9 +51,11 @@ export default class UiMessage extends Message {
 	constructor(input = {}) {
 		super(input)
 
-		const { type = this.type, id = this.id } = input
+		const { type, id } = input
+		/** @type {string} */
 		this.id = id || `ui-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
-		this.type = String(type)
+		/** @type {string} */
+		this.type = type ? String(type) : ''
 
 		if (!('body' in input) && 'content' in input) {
 			this.body = Array.isArray(input.content) ? input.content : [input.content]

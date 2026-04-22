@@ -1,5 +1,0 @@
-[RENDER] <ui-shadow
-  value="5px 5px 0px #000000"
-  label="Neo-brutalism"
->
-[RESULT] {"ok":true}

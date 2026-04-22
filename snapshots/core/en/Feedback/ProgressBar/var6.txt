@@ -1,5 +1,0 @@
-[RENDER] <ui-progressbar
-  variant="secondary"
-  indeterminate="true"
->
-[RESULT] {"ok":true}

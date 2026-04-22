@@ -1,4 +1,0 @@
-[RENDER] <ui-badge
-  variant="ok"
->Done</ui-badge>
-[RESULT] {"ok":true}

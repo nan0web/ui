@@ -48,8 +48,8 @@ class ContractTestModel {
 		// Step 2: Progress — message from Model static field
 		yield { type: 'progress', message: ContractTestModel.messages.processing }
 
-		// Step 3: Log — message from Model static field
-		yield { type: 'log', level: 'info', message: ContractTestModel.messages.almostDone }
+		// Step 3: Show — message from Model static field
+		yield { type: 'show', level: 'info', message: ContractTestModel.messages.almostDone }
 
 		// Step 4: Return result
 		return { type: 'result', data: { echo: this.prompt } }
@@ -138,8 +138,8 @@ describe('Adapter Contract — Happy Path', () => {
 			progress: (intent) => {
 				log.push(`progress:${intent.message}`)
 			},
-			log: (intent) => {
-				log.push(`log:${intent.level}:${intent.message}`)
+			show: (intent) => {
+				log.push(`show:${intent.level}:${intent.message}`)
 			},
 			result: (intent) => {
 				log.push(`result:${JSON.stringify(intent.data)}`)
@@ -150,7 +150,7 @@ describe('Adapter Contract — Happy Path', () => {
 		assert.deepEqual(log, [
 			'ask:prompt',
 			`progress:${ContractTestModel.messages.processing}`,
-			`log:info:${ContractTestModel.messages.almostDone}`,
+			`show:info:${ContractTestModel.messages.almostDone}`,
 			'result:{"echo":"Hello World"}',
 		])
 	})
@@ -167,8 +167,8 @@ describe('Adapter Contract — Happy Path', () => {
 			progress: (intent) => {
 				log.push(`progress:${intent.message}`)
 			},
-			log: (intent) => {
-				log.push(`log:${intent.level}`)
+			show: (intent) => {
+				log.push(`show:${intent.level}`)
 			},
 		})
 
@@ -241,7 +241,8 @@ describe('Timeout Protection (Іван Сірко)', () => {
 					{
 						ask: () =>
 							new Promise((resolve) => {
-								setTimeout(() => resolve({ value: 'late' }), 5000)
+								let timer = setTimeout(() => resolve({ value: 'late' }), 500)
+								timer.unref() // allow node to exit
 							}),
 					},
 					{ timeoutMs: 50 },

@@ -185,16 +185,17 @@ describe('BreadcrumbModel', () => {
 
 	// ── Generator ──
 
-	it('run() yields log intent with breadcrumb display then returns path data', async () => {
+	it('run() yields show intent with breadcrumb display then returns path data', async () => {
 		const bc = new BreadcrumbModel()
 		bc.push('Home', 'home').push('Sub', 'sub')
 
 		const gen = bc.run()
 
 		const log = await gen.next()
-		assert.equal(log.value.type, 'log')
+		assert.equal(log.value.type, 'show')
 		assert.equal(log.value.component, 'Breadcrumbs')
-		assert.equal(log.value.message, 'Home › Sub')
+		assert.equal(log.value.model.path, '/home/sub')
+		assert.equal(log.value.message, 'Navigated to Context')
 
 		const result = await gen.next()
 		assert.equal(result.done, true)

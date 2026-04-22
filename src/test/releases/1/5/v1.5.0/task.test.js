@@ -5,9 +5,9 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const siteDir = path.resolve(__dirname, '../../../../../../docs/site')
-const ideJsPath = path.join(siteDir, 'src/ide.js')
-const mainJsPath = path.join(siteDir, 'src/main.js')
+const siteDir = path.resolve(__dirname, '../../../../../dist')
+const ideJsPath = path.join(siteDir, 'ui.js')
+const mainJsPath = path.join(siteDir, 'ui.js')
 const genScript = path.join(siteDir, 'scripts/generate-pages.js')
 
 // ─── Task 1: Deep-Linked Category URLs ──────────────────────
@@ -112,7 +112,7 @@ describe('Task 3: Unique Variant Names in Button', () => {
 	})
 
 	it('Button YAML outline variant should get unique name from content, not variant', () => {
-		const yamlPath = path.resolve(__dirname, '../../../../../../docs/data/en/Button.yaml')
+		const yamlPath = path.resolve(__dirname, '../../../../../docs/en/components/Button.yaml')
 		const yaml = fs.readFileSync(yamlPath, 'utf-8')
 		// Verify we still have the outline variant data
 		assert.ok(yaml.includes('outline: true'), 'Button YAML should have outline variant')

@@ -4,9 +4,9 @@ import fs from 'fs'
 import path from 'path'
 
 const root = path.resolve(import.meta.dirname, '../../../../../../')
-const siteDir = path.join(root, 'docs/site')
-const dataDir = path.join(root, 'docs/data')
-const ideFile = path.join(siteDir, 'src/ide.js')
+const siteDir = path.join(root, 'dist')
+const dataDir = path.join(root, 'docs')
+const ideFile = path.join(siteDir, 'ui.js')
 const ideSrc = fs.readFileSync(ideFile, 'utf-8')
 
 // ─── T1: YAML → JSON пакування ────────────────────────────
@@ -25,7 +25,7 @@ describe('T1: YAML → JSON data packaging', () => {
 	it('JSON files are generated for each YAML component', () => {
 		const langs = ['uk', 'en']
 		for (const lang of langs) {
-			const yamlDir = path.join(dataDir, lang)
+			const yamlDir = path.join(dataDir, lang, 'components')
 			if (!fs.existsSync(yamlDir)) continue
 			const yamls = fs.readdirSync(yamlDir).filter((f) => f.endsWith('.yaml'))
 			for (const yaml of yamls) {

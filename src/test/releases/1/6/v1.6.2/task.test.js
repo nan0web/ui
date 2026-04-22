@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const ideSource = readFileSync(
-	new URL('../../../../../../docs/site/src/ide.js', import.meta.url),
+	new URL('../../../../../dist/ui.js', import.meta.url),
 	'utf-8',
 )
 
@@ -81,7 +81,7 @@ describe('v1.6.2: Professional Theme Editor & UI Integrity', () => {
 
 		it('Table YAML has columns and rows in default props', () => {
 			const tableYaml = readFileSync(
-				new URL('../../../../../../docs/data/uk/Table.yaml', import.meta.url),
+				new URL('../../../../../docs/uk/components/Table.yaml', import.meta.url),
 				'utf-8',
 			)
 			assert.ok(tableYaml.includes('columns:'), 'Table YAML should define columns')
@@ -101,7 +101,7 @@ describe('v1.6.2: Professional Theme Editor & UI Integrity', () => {
 
 		it('Tree YAML has data with label/children structure', () => {
 			const treeYaml = readFileSync(
-				new URL('../../../../../../docs/data/uk/Tree.yaml', import.meta.url),
+				new URL('../../../../../docs/uk/components/Tree.yaml', import.meta.url),
 				'utf-8',
 			)
 			assert.ok(treeYaml.includes('data:'), 'Tree YAML should define data')
@@ -197,19 +197,19 @@ describe('v1.6.2: Professional Theme Editor & UI Integrity', () => {
 	describe('Feedback: Tree has 4+ levels of depth', () => {
 		it('Tree YAML has at least 4 nesting levels', () => {
 			const treeYaml = readFileSync(
-				new URL('../../../../../../docs/data/uk/Tree.yaml', import.meta.url),
+				new URL('../../../../../docs/uk/components/Tree.yaml', import.meta.url),
 				'utf-8',
 			)
 			// Count indentation levels (each level is 2 or more spaces deeper)
 			const lines = treeYaml.split('\n')
-			const maxIndent = Math.max(...lines.map((l) => l.match(/^(\s*)/)[1].length))
+			const maxIndent = Math.max(...lines.map((l) => l.match(/^(\s*)/)?.[1].length || 0))
 			// 4 levels × 2 spaces per level = at least 16 spaces of indentation
 			assert.ok(maxIndent >= 16, `Tree should have 4+ levels (max indent: ${maxIndent})`)
 		})
 
 		it('Tree YAML has taxonomy structure', () => {
 			const treeYaml = readFileSync(
-				new URL('../../../../../../docs/data/uk/Tree.yaml', import.meta.url),
+				new URL('../../../../../docs/uk/components/Tree.yaml', import.meta.url),
 				'utf-8',
 			)
 			assert.ok(treeYaml.includes('Рослини'), 'Should have Plants')

@@ -8,7 +8,7 @@ import UiMessage from './Message/Message.js'
  * @class InputAdapter
  * @extends Event
  */
-export default class InputAdapter extends Event {
+export class InputAdapter extends Event {
 	static CancelError = CancelError
 	/** @returns {typeof CancelError} */
 	get CancelError() {
@@ -59,3 +59,5 @@ export default class InputAdapter extends Event {
 		throw new Error('select() method must be implemented in subclass')
 	}
 }
+
+export default InputAdapter

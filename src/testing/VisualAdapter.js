@@ -2,8 +2,9 @@
  * VisualAdapter (Base)
  * 
  * Базовий клас для візуальної трансформації інтенцій OLMUI.
- * Використовувана у @nan0web/ui як фундамент для спеціалізованих рендерерів.
  */
+import { NaN0 } from '@nan0web/types'
+
 export class VisualAdapter {
     /**
      * Конвертує одну інтенцію у просте текстове представлення.
@@ -12,30 +13,34 @@ export class VisualAdapter {
      * @returns {string} Raw description
      */
     static render(intent, t = (k) => k) {
+        let node;
         switch (intent.type) {
             case 'ask':
-                return `[ASK] ${intent.field}: ${intent.input !== undefined ? intent.input : '...'}`
+                node = { ask: { field: intent.field, input: intent.input !== undefined ? intent.input : '...' } }
+                break
             case 'progress':
-                return `[PROGRESS] ${intent.message || ''}`
+                node = { progress: { message: intent.message || '' } }
+                break
             case 'log':
-                return `[LOG ${intent.level?.toUpperCase() || 'INFO'}] ${typeof intent.message === 'object' ? JSON.stringify(intent.message) : intent.message}`
-            case 'render': {
-                const { content, ...propsData } = intent.props || {}
-                const props = Object.entries(propsData)
-                    .map(([k, v]) => `  ${k}="${typeof v === 'object' ? JSON.stringify(v) : v}"`)
-                    .join('\n')
-                
-                if (content) {
-                    const attrs = props ? `\n${props}\n` : ' '
-                    return `[RENDER] <${intent.component}${attrs}>${content}</${intent.component}>`
-                }
-                
-                return `[RENDER] <${intent.component}${props ? '\n' + props + '\n' : ''}>`
+                node = { log: { level: intent.level?.toUpperCase() || 'INFO', message: intent.message } }
+                break
+            case 'render':
+                node = { render: { [intent.component]: intent.props || {} } }
+                break
+            case 'result': {
+                const data = intent.data || {}
+                node = { result: (typeof data === 'object' && data !== null && Object.keys(data).length === 0) ? {} : data }
+                break
             }
-            case 'result':
-                return `[RESULT] ${JSON.stringify(intent.data)}`
             default:
-                return `[UNKNOWN: ${intent.type}] ${JSON.stringify(intent)}`
+                node = { [intent.type || 'unknown']: intent }
+                break
+        }
+        
+        try {
+            return NaN0.stringify([node]).trim()
+        } catch (e) {
+            return `- error: ${JSON.stringify(node)}`
         }
     }
 }

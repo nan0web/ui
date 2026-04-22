@@ -1,4 +1,0 @@
-[RENDER] <ui-badge
-  variant="secondary"
->Archived</ui-badge>
-[RESULT] {"ok":true}

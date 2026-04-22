@@ -5,10 +5,10 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const rootDir = path.resolve(__dirname, '../../../../../..')
+const rootDir = path.resolve(__dirname, '../../../../..')
 const srcDir = path.join(rootDir, 'src')
-const siteDir = path.join(rootDir, 'docs/site')
-const ideJsPath = path.join(siteDir, 'src/ide.js')
+const siteDir = path.join(rootDir, 'dist')
+const ideJsPath = path.join(siteDir, 'ui.js')
 
 // ─── Task 1: Architecture UI Map ──────────────────────────────
 
@@ -218,7 +218,7 @@ describe('Task 3: InterfaceTemplate module', () => {
 			)
 		} catch (err) {
 			// Throwing is also valid — means "override me"
-			assert.ok(err.message, 'Error should have a message')
+			assert.ok(err instanceof Error && err.message, 'Error should have a message')
 		}
 	})
 

@@ -3,6 +3,10 @@
  * Displays tabular string data in rows and columns.
  */
 export class TableModel extends Model {
+    static $id: string;
+    static UI: {
+        displayingTable: string;
+    };
     static columns: {
         help: string;
         type: string;
