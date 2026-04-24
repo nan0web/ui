@@ -3,6 +3,18 @@ import CancelError from './Error/CancelError.js'
 import UiMessage from './Message/Message.js'
 
 /**
+ * @typedef {Object} AskOptions
+ * @property {boolean} [silent] - Suppress logs or output.
+ * @property {string} [title] - Custom title for the prompt.
+ * @property {string} [hint] - Presentation hint (e.g., 'password', 'tree', 'markdown').
+ * @property {any} [default] - Default value if no input is provided.
+ * @property {Array<string|Object>} [options] - Array of options for select inputs.
+ * @property {Record<string, any>} [UI] - Localization dictionary/overrides.
+ * @property {string} [component] - Target specific component override.
+ */
+/** @typedef {import('./index.js').AskResponse} AskResponse */
+
+/**
  * Abstract input adapter for UI implementations.
  *
  * @class InputAdapter
@@ -41,19 +53,22 @@ export class InputAdapter extends Event {
 		return true
 	}
 
+
+
 	/**
 	 * Helper to ask a question.
-	 * @param {string} question - Question to ask.
-	 * @returns {Promise<string>}
+	 * @param {string|import('./Message/Message.js').default|any} question - Question to ask, Form instance, or AskIntent.
+	 * @param {AskOptions} [options] - Additional options.
+	 * @returns {Promise<AskResponse>}
 	 */
-	async ask(question) {
+	async ask(question, options) {
 		throw new Error('ask() method must be implemented in subclass')
 	}
 
 	/**
 	 * Generic selection prompt.
 	 * @param {Object} config - Selection configuration.
-	 * @returns {Promise<{ index: number, value: string | null }>}
+	 * @returns {Promise<{ index?: number, value: string | null }>}
 	 */
 	async select(config) {
 		throw new Error('select() method must be implemented in subclass')

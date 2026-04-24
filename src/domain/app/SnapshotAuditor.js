@@ -64,16 +64,14 @@ export class SnapshotAuditor extends AuditorModel {
 	/** @type {number} Minimum filename length */
 	static MIN_FILENAME_LENGTH = 3
 
-	/** @type {import('../../index.js').ModelAsAppOptions} */
-	_
-
 	/**
 	 * @param {Partial<SnapshotAuditor> | Record<string, any>} [data={}]
 	 * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
 	 */
 	constructor(data = {}, options = {}) {
 		super(data, options)
-		this._ = options
+		/** @type {import('@nan0web/types').ModelOptions} */
+		this.options = options
 		/** @type {string} Target directory to audit */ this.dir
 		/** @type {string} Directory to scan for dictionaries */ this.data
 	}
@@ -160,7 +158,7 @@ export class SnapshotAuditor extends AuditorModel {
 	 * @returns {AsyncGenerator<import('@nan0web/ui').Intent, any, any>}
 	 */
 	async *run() {
-		const { t } = this._
+		const { t } = this.options
 		const snapshotsDir = this.dir || '.'
 
 		yield show(t(SnapshotAuditor.UI.starting, { dir: snapshotsDir }))
@@ -168,7 +166,7 @@ export class SnapshotAuditor extends AuditorModel {
 		const files = []
 
 		/** @type {import('@nan0web/db').DB} */
-		let fsDb = this._.db
+		let fsDb = this.options.db
 		if (fsDb && fsDb.mounts && fsDb.mounts.has('')) {
 			fsDb = /** @type {import('@nan0web/db').DB} */ (fsDb.mounts.get(''))
 		}

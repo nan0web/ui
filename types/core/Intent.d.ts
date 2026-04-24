@@ -25,14 +25,25 @@ export function validateIntent(intent: any): intent is Intent;
  */
 export function ask(field: string, schema: object | Function): AskIntent;
 /**
+ * @typedef {Object} ProgressOptions
+ * @property {number} [total] - Absolute total steps.
+ * @property {string} [id] - Progress tracking ID.
+ * @property {number} [width] - Width of the progress bar in terminal characters.
+ * @property {number} [fps] - Frames per second update rate limit.
+ * @property {string} [format] - Custom format string (e.g. '{time} {bar} {percent} {title}').
+ * @property {number} [columns] - Number of columns (terminal width).
+ * @property {boolean} [forceOneLine] - Prevent wrapping and truncate instead.
+ * @property {boolean|'success'|'error'} [stop] - Set to true to stop, or 'success'/'error' to stop with a status icon (for spinners).
+ */
+/**
  * Create a progress intent.
  * @param {string} message - Status message from Model (i18n static field value).
  * @param {number} [value=0] - Progress value (current step or percentage).
- * @param {number|string} [totalOrId] - Absolute total steps (number) OR progress tracking ID (string).
+ * @param {ProgressOptions|number|string} [optionsOrTotalOrId] - Options object, or absolute total steps (number), or progress tracking ID (string).
  * @param {string} [id='default'] - Progress ID (if total is provided).
  * @returns {ProgressIntent}
  */
-export function progress(message: string, value?: number, totalOrId?: number | string, id?: string): ProgressIntent;
+export function progress(message: string, value?: number, optionsOrTotalOrId?: ProgressOptions | number | string, id?: string): ProgressIntent;
 export function log(level: any, message: any, data?: {}): {
     type: string;
     level: any;
@@ -98,6 +109,7 @@ export function agent(task: string, context?: AgentContext): AgentIntent;
  * @property {number} [total] - Absolute total (if value is absolute).
  * @property {string} [id] - Progress ID for tracking by Adapter to calculate speed/eta.
  * @property {string} message - Status message from Model (i18n static field value).
+ * @property {ProgressOptions} [options] - Additional options for progress intent.
  */
 /**
  * @typedef {'info' | 'warn' | 'error' | 'success'} ShowLevel
@@ -163,7 +175,11 @@ export function agent(task: string, context?: AgentContext): AgentIntent;
  * The value MUST conform to the type described in the requested FieldSchema.
  * @typedef {Object} AskResponse
  * @property {*} value - The value matching schema.type (collected from user / LLM / test fixture).
- * @property {boolean} [cancelled] - Whether the user cancelled this interaction (e.g. pressed ESC).
+ * @property {boolean} cancelled - Whether the user cancelled this interaction (e.g. pressed ESC).
+ * @property {string} [action] - The action identifier (e.g., 'submit', 'exit', 'back').
+ * @property {any} [body] - Additional payload or form data.
+ * @property {any} [form] - The form model instance (if applicable).
+ * @property {number} [index] - The selected index for lists/tables.
  */
 /**
  * Response to an AgentIntent.
@@ -201,6 +217,40 @@ export function agent(task: string, context?: AgentContext): AgentIntent;
  * @typedef {'ask' | 'show' | 'progress' | 'render' | 'agent'} IntentType
  */
 export const INTENT_TYPES: readonly ["ask", "progress", "show", "log", "render", "agent"];
+export type ProgressOptions = {
+    /**
+     * - Absolute total steps.
+     */
+    total?: number | undefined;
+    /**
+     * - Progress tracking ID.
+     */
+    id?: string | undefined;
+    /**
+     * - Width of the progress bar in terminal characters.
+     */
+    width?: number | undefined;
+    /**
+     * - Frames per second update rate limit.
+     */
+    fps?: number | undefined;
+    /**
+     * - Custom format string (e.g. '{time} {bar} {percent} {title}').
+     */
+    format?: string | undefined;
+    /**
+     * - Number of columns (terminal width).
+     */
+    columns?: number | undefined;
+    /**
+     * - Prevent wrapping and truncate instead.
+     */
+    forceOneLine?: boolean | undefined;
+    /**
+     * - Set to true to stop, or 'success'/'error' to stop with a status icon (for spinners).
+     */
+    stop?: boolean | "error" | "success" | undefined;
+};
 export type ShowData = {
     component?: any;
     model?: import("@nan0web/types").Model | undefined;
@@ -275,6 +325,10 @@ export type ProgressIntent = {
      * - Status message from Model (i18n static field value).
      */
     message: string;
+    /**
+     * - Additional options for progress intent.
+     */
+    options?: ProgressOptions | undefined;
 };
 export type ShowLevel = "info" | "warn" | "error" | "success";
 export type LogLevel = ShowLevel;
@@ -384,7 +438,23 @@ export type AskResponse = {
     /**
      * - Whether the user cancelled this interaction (e.g. pressed ESC).
      */
-    cancelled?: boolean | undefined;
+    cancelled: boolean;
+    /**
+     * - The action identifier (e.g., 'submit', 'exit', 'back').
+     */
+    action?: string | undefined;
+    /**
+     * - Additional payload or form data.
+     */
+    body?: any;
+    /**
+     * - The form model instance (if applicable).
+     */
+    form?: any;
+    /**
+     * - The selected index for lists/tables.
+     */
+    index?: number | undefined;
 };
 /**
  * Response to an AgentIntent.

@@ -42,6 +42,9 @@ export { default as Flow } from './Flow.js'
 
 // OLMUI Generator Engine — Intent-based Model→Adapter contract
 export { validateIntent, ask, progress, log, render, result, INTENT_TYPES, isModelSchema } from './Intent.js'
+/** @typedef {import('./Intent.js').Intent} Intent */
+/** @typedef {import('./Intent.js').AskResponse} AskResponse */
+/** @typedef {import('./InputAdapter.js').AskOptions} AskOptions */
 export { IntentErrorModel } from './IntentErrorModel.js'
 export { runGenerator } from './GeneratorRunner.js'
 

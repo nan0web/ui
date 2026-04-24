@@ -86,8 +86,8 @@ export class SnapshotAuditor {
      * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
      */
     constructor(data?: Partial<SnapshotAuditor> | Record<string, any>, options?: Partial<import("@nan0web/types").ModelOptions>);
-    /** @type {import('../../index.js').ModelAsAppOptions} */
-    _: import("../../index.js").ModelAsAppOptions;
+    /** @type {import('@nan0web/types').ModelOptions} */
+    options: import("@nan0web/types").ModelOptions;
     /** @type {string} Target directory to audit */ dir: string;
     /** @type {string} Directory to scan for dictionaries */ data: string;
     /**

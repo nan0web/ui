@@ -33,6 +33,7 @@ export { default as UiAdapter } from './core/UiAdapter.js'
 /** @typedef {import('./core/Intent.js').IntentResponse} IntentResponse */
 /** @typedef {import('./core/Intent.js').AskIntent} AskIntent */
 /** @typedef {import('./core/Intent.js').ProgressIntent} ProgressIntent */
+/** @typedef {import('./core/Intent.js').ProgressOptions} ProgressOptions */
 /** @typedef {import('./core/Intent.js').LogIntent} LogIntent */
 /** @typedef {import('./core/Intent.js').ShowIntent} ShowIntent */
 /** @typedef {import('./core/Intent.js').RenderIntent} RenderIntent */
@@ -41,6 +42,7 @@ export { default as UiAdapter } from './core/UiAdapter.js'
 /** @typedef {import('./core/Intent.js').AskResponse} AskResponse */
 /** @typedef {import('./core/Intent.js').AbortResponse} AbortResponse */
 /** @typedef {import('./core/Intent.js').ShowData} ShowData */
+/** @typedef {import('./core/InputAdapter.js').AskOptions} AskOptions */
 export * from './core/Intent.js'
 
 export { IntentErrorModel } from './core/IntentErrorModel.js'

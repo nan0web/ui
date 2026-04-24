@@ -35,7 +35,7 @@
  * @property {string|ContentData[]} [fieldset]
  * @property {string|ContentData[]} [figcaption]
  * @property {string|ContentData[]} [figure]
- * @property {string|ContentData[]} [footer]
+ * @property {any} [footer]
  * @property {string|ContentData[]} [form]
  * @property {string|ContentData[]} [h1]
  * @property {string|ContentData[]} [h2]
@@ -44,7 +44,7 @@
  * @property {string|ContentData[]} [h5]
  * @property {string|ContentData[]} [h6]
  * @property {string|ContentData[]} [head]
- * @property {string|ContentData[]} [header]
+ * @property {any} [header]
  * @property {string|ContentData[]} [hgroup]
  * @property {boolean|object} [hr]
  * @property {string|ContentData[]} [html]
@@ -136,6 +136,8 @@
  * @property {import('./components/FAQModel.js').FAQModel} [faq]
  * @property {import('./components/FeatureGridModel.js').FeatureGridModel} [featureGrid]
  * @property {import('./components/GalleryModel.js').GalleryModel} [gallery]
+ * @property {import('./HeaderModel.js').HeaderModel} [header]
+ * @property {import('./FooterModel.js').FooterModel} [footer]
  * @property {import('./components/InputModel.js').InputModel} [input]
  * @property {import('./components/MarkdownModel.js').MarkdownModel} [markdown]
  * @property {import('./components/PriceModel.js').PriceModel} [price]
@@ -213,7 +215,7 @@ export type HTML5Elements = {
     fieldset?: string | ContentData[] | undefined;
     figcaption?: string | ContentData[] | undefined;
     figure?: string | ContentData[] | undefined;
-    footer?: string | ContentData[] | undefined;
+    footer?: any;
     form?: string | ContentData[] | undefined;
     h1?: string | ContentData[] | undefined;
     h2?: string | ContentData[] | undefined;
@@ -222,7 +224,7 @@ export type HTML5Elements = {
     h5?: string | ContentData[] | undefined;
     h6?: string | ContentData[] | undefined;
     head?: string | ContentData[] | undefined;
-    header?: string | ContentData[] | undefined;
+    header?: any;
     hgroup?: string | ContentData[] | undefined;
     hr?: boolean | object;
     html?: string | ContentData[] | undefined;
@@ -313,6 +315,8 @@ export type CoreUIElements = {
     faq?: import("./components/FAQModel.js").FAQModel | undefined;
     featureGrid?: import("./components/FeatureGridModel.js").FeatureGridModel | undefined;
     gallery?: import("./components/GalleryModel.js").GalleryModel | undefined;
+    header?: import("./HeaderModel.js").HeaderModel | undefined;
+    footer?: import("./FooterModel.js").FooterModel | undefined;
     input?: import("./components/InputModel.js").InputModel | undefined;
     markdown?: import("./components/MarkdownModel.js").MarkdownModel | undefined;
     price?: import("./components/PriceModel.js").PriceModel | undefined;

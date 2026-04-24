@@ -41,6 +41,7 @@ import { IntentErrorModel } from './IntentErrorModel.js'
  * @property {number} [total] - Absolute total (if value is absolute).
  * @property {string} [id] - Progress ID for tracking by Adapter to calculate speed/eta.
  * @property {string} message - Status message from Model (i18n static field value).
+ * @property {ProgressOptions} [options] - Additional options for progress intent.
  */
 
 /**
@@ -118,7 +119,11 @@ import { IntentErrorModel } from './IntentErrorModel.js'
  * The value MUST conform to the type described in the requested FieldSchema.
  * @typedef {Object} AskResponse
  * @property {*} value - The value matching schema.type (collected from user / LLM / test fixture).
- * @property {boolean} [cancelled] - Whether the user cancelled this interaction (e.g. pressed ESC).
+ * @property {boolean} cancelled - Whether the user cancelled this interaction (e.g. pressed ESC).
+ * @property {string} [action] - The action identifier (e.g., 'submit', 'exit', 'back').
+ * @property {any} [body] - Additional payload or form data.
+ * @property {any} [form] - The form model instance (if applicable).
+ * @property {number} [index] - The selected index for lists/tables.
  */
 
 /**
@@ -245,25 +250,49 @@ export function ask(field, schema) {
 }
 
 /**
+ * @typedef {Object} ProgressOptions
+ * @property {number} [total] - Absolute total steps.
+ * @property {string} [id] - Progress tracking ID.
+ * @property {number} [width] - Width of the progress bar in terminal characters.
+ * @property {number} [fps] - Frames per second update rate limit.
+ * @property {string} [format] - Custom format string (e.g. '{time} {bar} {percent} {title}').
+ * @property {number} [columns] - Number of columns (terminal width).
+ * @property {boolean} [forceOneLine] - Prevent wrapping and truncate instead.
+ * @property {boolean|'success'|'error'} [stop] - Set to true to stop, or 'success'/'error' to stop with a status icon (for spinners).
+ */
+
+/**
  * Create a progress intent.
  * @param {string} message - Status message from Model (i18n static field value).
  * @param {number} [value=0] - Progress value (current step or percentage).
- * @param {number|string} [totalOrId] - Absolute total steps (number) OR progress tracking ID (string).
+ * @param {ProgressOptions|number|string} [optionsOrTotalOrId] - Options object, or absolute total steps (number), or progress tracking ID (string).
  * @param {string} [id='default'] - Progress ID (if total is provided).
  * @returns {ProgressIntent}
  */
-export function progress(message, value = 0, totalOrId, id) {
-	let total = undefined
-	let progressId = 'default'
+export function progress(message, value = 0, optionsOrTotalOrId, id) {
+	/** @type {ProgressOptions} */
+	let options = {}
 
-	if (typeof totalOrId === 'number') {
-		total = totalOrId
-		if (typeof id === 'string') progressId = id
-	} else if (typeof totalOrId === 'string') {
-		progressId = totalOrId
+	if (typeof optionsOrTotalOrId === 'object' && optionsOrTotalOrId !== null) {
+		options = optionsOrTotalOrId
+	} else {
+		// legacy support
+		if (typeof optionsOrTotalOrId === 'number') {
+			options.total = optionsOrTotalOrId
+			if (typeof id === 'string') options.id = id
+		} else if (typeof optionsOrTotalOrId === 'string') {
+			options.id = optionsOrTotalOrId
+		}
 	}
 
-	return { type: 'progress', message, value, total, id: progressId }
+	return { 
+		type: 'progress', 
+		message, 
+		value, 
+		total: options.total,
+		id: options.id || 'default', 
+		options 
+	}
 }
 
 export function log(level, message, data = {}) {

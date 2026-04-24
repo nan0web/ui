@@ -43,8 +43,7 @@ export class SpecAdapter {
 	async ask(intent) {
 		const step = this.#popExpected('ask')
 		this.assert.equal(step.ask, intent.field, `Field mismatch on ask. Expected '${step.ask}', got '${intent.field}'`)
-		
-		return { value: step.$value }
+		return { value: step.$value, cancelled: false }
 	}
 
 	/**

@@ -1,6 +1,6 @@
 {
 	"name": "@nan0web/ui",
-	"version": "1.11.0",
+	"version": "1.12.0",
 	"description": "NaN•Web UI. One application logic (algorithm) and many UI.",
 	"main": "src/index.js",
 	"types": "types/index.d.ts",
@@ -52,6 +52,10 @@
 		"./core": {
 			"import": "./src/core/index.js",
 			"types": "./types/core/index.d.ts"
+		},
+		"./src/core/Intent.js": {
+			"import": "./src/core/Intent.js",
+			"types": "./types/core/Intent.d.ts"
 		},
 		"./domain": {
 			"import": "./src/domain/index.js",

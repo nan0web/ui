@@ -34,7 +34,7 @@ export default class ScenarioAdapter extends InputAdapter {
 			return { value: match.value, cancelled: !!match.cancelled }
 		}
 		// If no specific match, try to use the first available answer or default
-		return { value: null }
+		return { value: null, cancelled: false }
 	}
 
 	/** @param {import('../core/Intent.js').ProgressIntent} intent */

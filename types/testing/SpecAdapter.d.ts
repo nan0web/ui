@@ -17,6 +17,7 @@ export class SpecAdapter {
      */
     ask(intent: import("../core/Intent.js").AskIntent): Promise<{
         value: any;
+        cancelled: boolean;
     }>;
     /**
      * @param {import('../core/Intent.js').ShowIntent} intent

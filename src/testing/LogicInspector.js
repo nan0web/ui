@@ -27,7 +27,7 @@ export class LogicInspector {
                 const value = resolvedInputs[inputIdx++]
                 const entry = { type: 'ask', field: i.field, schema: i.schema, input: value }
                 intents.push(entry)
-                return { value }
+                return { value, cancelled: false }
             },
             /** @param {import('../core/Intent.js').ShowIntent} i */
             show: async (i) => {
