@@ -59,9 +59,10 @@ export function render(component: string, props?: object): RenderIntent;
 /**
  * Create a result intent.
  * @param {*} data - The raw result data.
+ * @param {boolean} [raw=false] - If true, result is printed raw.
  * @returns {ResultIntent}
  */
-export function result(data: any): ResultIntent;
+export function result(data: any, raw?: boolean): ResultIntent;
 /**
  * @typedef {Object} ShowData
  * @property {any} [component]
@@ -135,6 +136,7 @@ export function agent(task: string, context?: AgentContext): AgentIntent;
  * @typedef {Object} ResultIntent
  * @property {'result'} type
  * @property {*} data - The raw result data (JSON-serializable).
+ * @property {boolean} [raw] - If true, Adapter MUST output data raw (no UI decorations).
  */
 /**
  * Model requests rendering of a pure UI component (Header, Footer, Static Map).
@@ -364,6 +366,10 @@ export type ResultIntent = {
      * - The raw result data (JSON-serializable).
      */
     data: any;
+    /**
+     * - If true, Adapter MUST output data raw (no UI decorations).
+     */
+    raw?: boolean | undefined;
 };
 /**
  * Model requests rendering of a pure UI component (Header, Footer, Static Map).

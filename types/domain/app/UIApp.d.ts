@@ -2,7 +2,7 @@ export class UIApp extends ModelAsApp {
     static command: {
         type: string;
         help: string;
-        options: (typeof SnapshotAuditor | typeof GalleryCommand)[];
+        options: (typeof SnapshotAuditor | typeof GalleryCommand | typeof ConfigApp)[];
         default: string;
         positional: boolean;
     };
@@ -22,7 +22,7 @@ export class UIApp extends ModelAsApp {
     /** @type {string[]} */ _positionals: string[];
     /** @type {string} Type of command to run */ command: string;
     /** @type {boolean} Show help message */ help: boolean;
-    run(): AsyncGenerator<import("../../core/Intent.js").ShowIntent | (import("../../core/Intent.js").AskIntent & {
+    run(): AsyncGenerator<import("../../core/Intent.js").ShowIntent | import("../../core/Intent.js").RenderIntent | (import("../../core/Intent.js").AskIntent & {
         $value?: any;
         $success?: boolean;
         $files?: Record<string, string>;
@@ -33,11 +33,6 @@ export class UIApp extends ModelAsApp {
         $files?: Record<string, string>;
         $message?: string;
     }) | (import("../../core/Intent.js").LogIntent & {
-        $value?: any;
-        $success?: boolean;
-        $files?: Record<string, string>;
-        $message?: string;
-    }) | (import("../../core/Intent.js").RenderIntent & {
         $value?: any;
         $success?: boolean;
         $files?: Record<string, string>;
@@ -58,3 +53,4 @@ export default UIApp;
 import { ModelAsApp } from '../ModelAsApp.js';
 import SnapshotAuditor from './SnapshotAuditor.js';
 import GalleryCommand from './GalleryCommand.js';
+import ConfigApp from './ConfigApp.js';

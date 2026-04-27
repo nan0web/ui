@@ -28,7 +28,7 @@ export default class View {
 	frame
 	/** @type {Locale} */
 	locale
-	/** @type {Map} */
+	/** @type {Map<string, string>} */
 	vocab
 	/** @type {number[]} */
 	windowSize
@@ -43,7 +43,7 @@ export default class View {
 	 * @param {number} [input.startedAt]
 	 * @param {Frame} [input.frame]
 	 * @param {Locale} [input.locale]
-	 * @param {Map} [input.vocab]
+	 * @param {Map<string, string>} [input.vocab]
 	 * @param {number[]} [input.windowSize]
 	 * @param {Map<string, ComponentFn>} [input.components]
 	 * @param {string} [input.renderMethod]
@@ -66,7 +66,7 @@ export default class View {
 		this.frame = frame
 		this.locale = locale
 		this.vocab = vocab
-		this.windowSize = null === windowSize ? this.stdout.getWindowSize() : windowSize
+		this.windowSize = /** @type {number[]} */ (null === windowSize ? this.stdout.getWindowSize() : windowSize)
 		this.components = components
 		this.renderMethod = renderMethod
 		if (!empty(frame)) {
@@ -85,6 +85,10 @@ export default class View {
 	getWindowSize() {
 		return equal(this.windowSize, [0, 0]) ? this.stdout.getWindowSize() : this.windowSize
 	}
+	/**
+	 * @param {number} width
+	 * @param {number} height
+	 */
 	setWindowSize(width, height) {
 		this.windowSize = [width, height]
 	}
@@ -181,6 +185,7 @@ export default class View {
 		}
 	}
 
+	/** @param {any} value */
 	t(value) {
 		if (typeOf(Array)(value)) {
 			value = value.map((row) => {
@@ -196,16 +201,22 @@ export default class View {
 		return this.vocab.has(value) ? this.vocab.get(value) : value
 	}
 
+	/** @param {any[]} args */
 	debug(...args) {
+		// @ts-ignore
 		return this.render(1)([StdOut.STYLES.dim, 'Debug: ', args.join(' '), Frame.EOL, StdOut.RESET])
 	}
 
+	/** @param {any[]} args */
 	info(...args) {
+		// @ts-ignore
 		return this.render(1)([StdOut.COLORS.green, 'Info : ', args.join(' '), Frame.EOL, StdOut.RESET])
 	}
 
+	/** @param {any[]} args */
 	warn(...args) {
 		return this.render(1)([
+			// @ts-ignore
 			StdOut.COLORS.yellow,
 			'Warn : ',
 			args.join(' '),
@@ -214,8 +225,10 @@ export default class View {
 		])
 	}
 
+	/** @param {any[]} args */
 	error(...args) {
 		return this.render(1)([
+			// @ts-ignore
 			StdOut.COLORS.red,
 			StdOut.STYLES.bold,
 			'Error: ',

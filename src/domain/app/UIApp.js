@@ -2,13 +2,14 @@ import { ModelAsApp } from '../ModelAsApp.js'
 import { resolvePositionalArgs } from '@nan0web/ui-cli'
 import SnapshotAuditor from './SnapshotAuditor.js'
 import GalleryCommand from './GalleryCommand.js'
+import ConfigApp from './ConfigApp.js'
 import { show, result } from '../../core/Intent.js'
 
 export class UIApp extends ModelAsApp {
 	static command = {
 		type: 'string',
 		help: 'Command to run (e.g. gallery)',
-		options: [GalleryCommand, SnapshotAuditor],
+		options: [GalleryCommand, SnapshotAuditor, ConfigApp],
 		default: GalleryCommand.alias || GalleryCommand.name,
 		positional: true,
 	}

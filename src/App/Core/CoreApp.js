@@ -15,7 +15,7 @@ export default class CoreApp {
 	/** @type {Map<string, CommandFn>} Registered command handlers */
 	commands
 
-	/** @type {object} App state */
+	/** @type {Record<string, any>} App state */
 	state
 
 	/** @type {Message} Starting command parsed from argv */

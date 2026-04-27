@@ -4,6 +4,15 @@
 
 ---
 
+## History
+
+### [1.12.1] — 2026-04-25
+- **Intent Refactoring**: Added `raw` flag to `ResultIntent` for pure data output (piping support).
+- **Polymorphic Apps**: Standardized `run()` generator pattern for all Domain Models.
+- Improved `IntentDispatcher` with silent output support for text files.
+
+---
+
 ## 🧭 Фаза 1: Філософія та Абстракція (The Seed)
 
 _Перш ніж писати код, мИ визначаємо сутність проєкту та його місце в глобальній екосистемі._
@@ -490,6 +499,7 @@ class SandboxVariant {
   /** @type {Object<string, any>} Component props */
   props = {}
 }
+```
 ```
 
 **2. `SandboxConfig`** — глобальні налаштування самої пісочниці:

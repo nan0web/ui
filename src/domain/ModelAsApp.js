@@ -16,7 +16,7 @@ export class ModelAsApp extends Model {
 	}
 	/**
 	 * @param {Partial<ModelAsApp> | Record<string, any>} [data={}]
-	 * @param {ModelAsAppOptions} [options={}]
+	 * @param {Partial<ModelAsAppOptions>} [options={}]
 	 */
 	constructor(data = {}, options = {}) {
 		super(data, options)

@@ -5,9 +5,9 @@
 export class ModelAsApp extends Model {
     /**
      * @param {Partial<ModelAsApp> | Record<string, any>} [data={}]
-     * @param {ModelAsAppOptions} [options={}]
+     * @param {Partial<ModelAsAppOptions>} [options={}]
      */
-    constructor(data?: Partial<ModelAsApp> | Record<string, any>, options?: ModelAsAppOptions);
+    constructor(data?: Partial<ModelAsApp> | Record<string, any>, options?: Partial<ModelAsAppOptions>);
     /** @returns {ModelAsAppOptions} */
     get _(): ModelAsAppOptions;
     /**

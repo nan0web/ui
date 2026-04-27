@@ -20,8 +20,8 @@ export default class CoreApp {
     name: string;
     /** @type {Map<string, CommandFn>} Registered command handlers */
     commands: Map<string, CommandFn>;
-    /** @type {object} App state */
-    state: object;
+    /** @type {Record<string, any>} App state */
+    state: Record<string, any>;
     /** @type {Message} Starting command parsed from argv */
     startCommand: Message;
     /**

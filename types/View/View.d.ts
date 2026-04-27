@@ -22,7 +22,7 @@ export default class View {
      * @param {number} [input.startedAt]
      * @param {Frame} [input.frame]
      * @param {Locale} [input.locale]
-     * @param {Map} [input.vocab]
+     * @param {Map<string, string>} [input.vocab]
      * @param {number[]} [input.windowSize]
      * @param {Map<string, ComponentFn>} [input.components]
      * @param {string} [input.renderMethod]
@@ -33,7 +33,7 @@ export default class View {
         startedAt?: number | undefined;
         frame?: Frame | undefined;
         locale?: Locale | undefined;
-        vocab?: Map<any, any> | undefined;
+        vocab?: Map<string, string> | undefined;
         windowSize?: number[] | undefined;
         components?: Map<string, ComponentFn> | undefined;
         renderMethod?: string | undefined;
@@ -48,8 +48,8 @@ export default class View {
     frame: Frame;
     /** @type {Locale} */
     locale: Locale;
-    /** @type {Map} */
-    vocab: Map<any, any>;
+    /** @type {Map<string, string>} */
+    vocab: Map<string, string>;
     /** @type {number[]} */
     windowSize: number[];
     /** @type {Map<string, ComponentFn>} */
@@ -60,7 +60,11 @@ export default class View {
     get RenderMethod(): typeof FrameRenderMethod;
     get RenderOptions(): typeof RenderOptions;
     getWindowSize(): number[];
-    setWindowSize(width: any, height: any): void;
+    /**
+     * @param {number} width
+     * @param {number} height
+     */
+    setWindowSize(width: number, height: number): void;
     startTimer(): void;
     spent(checkpoint?: number): number;
     /**
@@ -71,10 +75,15 @@ export default class View {
     render(shouldRender?: boolean | number | Function | ComponentFn, options?: RenderOptions): (value: Frame | string | string[], ...args: any) => Frame;
     clear(shouldRender?: number): Frame;
     progress(shouldRender?: boolean): (value: any) => Frame;
+    /** @param {any} value */
     t(value: any): any;
+    /** @param {any[]} args */
     debug(...args: any[]): Frame;
+    /** @param {any[]} args */
     info(...args: any[]): Frame;
+    /** @param {any[]} args */
     warn(...args: any[]): Frame;
+    /** @param {any[]} args */
     error(...args: any[]): Frame;
     /**
      * @param {string} name

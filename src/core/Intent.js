@@ -72,6 +72,7 @@ import { IntentErrorModel } from './IntentErrorModel.js'
  * @typedef {Object} ResultIntent
  * @property {'result'} type
  * @property {*} data - The raw result data (JSON-serializable).
+ * @property {boolean} [raw] - If true, Adapter MUST output data raw (no UI decorations).
  */
 
 /**
@@ -312,10 +313,11 @@ export function render(component, props = {}) {
 /**
  * Create a result intent.
  * @param {*} data - The raw result data.
+ * @param {boolean} [raw=false] - If true, result is printed raw.
  * @returns {ResultIntent}
  */
-export function result(data) {
-	return { type: 'result', data }
+export function result(data, raw = false) {
+	return { type: 'result', data, raw }
 }
 
 /**
