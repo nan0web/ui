@@ -276,6 +276,14 @@ export async function runGenerator(generator, handlers, options = {}) {
 				break
 			}
 
+			case 'result': {
+				if (handlers.result) {
+					await handlers.result(intent)
+				}
+				nextVal = undefined
+				break
+			}
+
 			default:
 				throw IntentErrorModel.error('unhandled_intent', { type: /** @type {any} */ (intent).type })
 		}

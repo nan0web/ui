@@ -259,6 +259,18 @@ const output = Welcome({ user: { name: 'Test' } })
 console.info(output) // ← Welcome Test!
 ```
 
+### Сценарне тестування (файли специфікацій .nan0)
+
+Помічник `SpecRunner.executeFile` дозволяє автоматично запускати файли сценаріїв `.nan0` без шаблонного налаштування DBFS.
+Усі ручні перевірки (assertions) відсутні, оскільки `SpecAdapter` внутрішньо обробляє строге зіставлення очікувань.
+
+Як автоматично запускати файли специфікацій .nan0?
+```js
+//import { SpecRunner } from '@nan0web/ui/testing'
+const { SpecRunner } = await import('./testing/index.js')
+assert.equal(typeof SpecRunner.executeFile, 'function')
+```
+
 ### Master IDE (Пісочниця компонентів)
 
 Master IDE (OlmuiInspector) надає уніфіковане середовище для тестування та документування

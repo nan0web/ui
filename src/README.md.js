@@ -412,6 +412,20 @@ function testRender() {
 
 	/**
 	 * @docs
+	 * ### Story Testing (.nan0 spec files)
+	 *
+	 * The `SpecRunner.executeFile` helper allows running `.nan0` spec stories automatically without boilerplate DBFS setup.
+	 * All manual assertions are omitted because `SpecAdapter` handles strict expectation matching internally.
+	 */
+	it('How to execute .nan0 spec files automatically?', async () => {
+		//import { SpecRunner } from '@nan0web/ui/testing'
+		const { SpecRunner } = await import('./testing/index.js')
+
+		assert.equal(typeof SpecRunner.executeFile, 'function')
+	})
+
+	/**
+	 * @docs
 	 * All components, adapters, and models are designed to be testable
 	 * with minimal setup.
 	 */

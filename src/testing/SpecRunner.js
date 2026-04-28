@@ -36,6 +36,43 @@ export class SpecRunner extends ModelAsApp {
 	}
 
 	/**
+	 * Convenience method to load a .nan0 file and run a specific scenario.
+	 * 
+	 * 💡 Note on Expectations:
+	 * You do NOT need to write manual assertions when using this method. 
+	 * The `for await (const _ of runner.run()) {}` loop drives the generator,
+	 * but ALL assertions are handled automatically inside `SpecAdapter.js`.
+	 * 
+	 * Whenever the App yields an intent (`ask`, `show`, `result`), `SpecAdapter`
+	 * intercepts it and compares it strictly against the next step in the `.nan0` file.
+	 * - If it matches, the test continues (and `$value` is injected back into the App).
+	 * - If it mismatches, it throws an `assert.fail()` which fails the Node.js test immediately.
+	 * - If the App finishes early, it throws an `unhandledSteps` error.
+	 * 
+	 * @param {string} fileDir The directory containing the file (e.g., import.meta.dirname)
+	 * @param {string} fileName The name of the .nan0 file
+	 * @param {string} scenarioName The name of the scenario to run
+	 * @param {Record<string, any>} registry The Model Class registry
+	 * @param {Partial<import('../index.js').ModelAsAppOptions>} [options={}] Additional runner context options
+	 * @throws {Error} If the scenario is missing or if expectations fail during execution
+	 */
+	static async executeFile(fileDir, fileName, scenarioName, registry, options = {}) {
+		const DB = (await import('@nan0web/db-fs')).DBFS
+		const db = new DB({ root: fileDir })
+		const doc = await db.loadDocument(fileName)
+		const scenarios = Array.isArray(doc) ? doc : [doc]
+		const scenario = scenarios.find((s) => s.name === scenarioName) || scenarios[0]
+
+		if (!scenario) throw new Error(`Scenario ${scenarioName} not found in ${fileName}`)
+		if (!scenario.story) throw new Error(`Scenario ${scenarioName} has no story array`)
+
+		const runner = new this({ stream: scenario.story, registry }, options)
+		for await (const _ of runner.run()) {
+			// Iterate completely
+		}
+	}
+
+	/**
 	 * @throws {Error}
 	 * @returns {AsyncGenerator<import('../core/Intent.js').Intent, import('../core/Intent.js').ResultIntent, any>}
 	 */

@@ -250,6 +250,16 @@ const res = await ScenarioTest.run(ValidatedApp, [
 	{ field: 'code', value: '' } // Simulating empty response
 ])
 ```
+### Story Testing (.nan0 spec files)
+
+The `SpecRunner.executeFile` helper allows running `.nan0` spec stories automatically without boilerplate DBFS setup.
+All manual assertions are omitted because `SpecAdapter` handles strict expectation matching internally.
+
+How to execute .nan0 spec files automatically?
+```js
+import { SpecRunner } from '@nan0web/ui/testing'
+const { SpecRunner } = await import('./testing/index.js')
+```
 All components, adapters, and models are designed to be testable
 with minimal setup.
 

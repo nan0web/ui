@@ -8,6 +8,7 @@ agents:
     description: 'UI-WEB Interface Creation (Step 7)'
     workflows:
       - 'src/agents/workflows/pipeline-no7-ui-web.md'
+      - 'src/agents/workflows/web-gallery.md'
     inspectors:
       - 'src/agents/inspectors/inspect-web.md'
   - id: 'ui-mobile-architect'
@@ -30,5 +31,6 @@ agents:
     workflows:
       - 'src/agents/workflows/forge-component.md'
       - 'src/agents/workflows/ui-update.md'
+      - 'src/agents/workflows/interface-welding.md'
     inspectors:
       - 'src/agents/inspectors/prop-welder.md'
