@@ -26,9 +26,9 @@ export class SnapshotRunner extends Model {
     };
     /**
      * @param {Partial<SnapshotRunner> | Record<string, any>} [data={}]
-     * @param {import('@nan0web/types').ModelOptions} [options={}]
+     * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
      */
-    constructor(data?: Partial<SnapshotRunner> | Record<string, any>, options?: import("@nan0web/types").ModelOptions);
+    constructor(data?: Partial<SnapshotRunner> | Record<string, any>, options?: Partial<import("@nan0web/types").ModelOptions>);
     /** @type {string} Directory containing snapshots */ snapshotsDir: string;
     /** @type {string} Root data directory */ data: string;
     /** @type {(compName: string) => string} */ getCategory: (compName: string) => string;

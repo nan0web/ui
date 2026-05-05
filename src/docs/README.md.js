@@ -3,8 +3,22 @@ import assert from 'node:assert/strict'
 import FS from '@nan0web/db-fs'
 import { NoConsole } from '@nan0web/log'
 import { DatasetParser, DocsParser, runSpawn } from '@nan0web/test'
-import { Frame, Model, OutputMessage, View, FormInput, UiMessage, UiForm, ask, progress, show, result, render } from './index.js'
-import { Welcome } from './Component/index.js'
+import {
+	Frame,
+	Model,
+	Models,
+	OutputMessage,
+	View,
+	FormInput,
+	UiMessage,
+	UiForm,
+	ask,
+	progress,
+	show,
+	result,
+	render,
+} from '../index.js'
+import { Welcome } from '../Component/index.js'
 
 const fs = new FS()
 let pkg
@@ -263,18 +277,18 @@ function testRender() {
 	 * - `StatsModel` — data visualizations
 	 * - `TimelineModel` — event history
 	 */
-	it('How to use the new Header and Hero models?', () => {
-		//import { Model } from '@nan0web/ui'
-		const { HeaderModel, HeroModel } = Model
+	it('How to use the Models container?', () => {
+		//import { Models } from '@nan0web/ui'
+		const { HeaderModel, HeroModel } = Models
 
 		const header = new HeaderModel({
 			title: 'NaN•Web',
 			logo: '/logo.svg',
-			actions: [{ title: 'Docs', href: '/docs' }],
+			actions: [/** @type {any} */ ({ title: 'Docs', href: '/docs' })],
 		})
 		const hero = new HeroModel({
 			title: 'One Logic — Many UI',
-			actions: [{ title: 'Get Started', href: '/start' }],
+			actions: [/** @type {any} */ ({ title: 'Get Started', href: '/start' })],
 		})
 
 		console.info(header.title) // ← NaN•Web
@@ -284,9 +298,18 @@ function testRender() {
 		assert.equal(hero.actions[0].title, 'Get Started')
 	})
 
+	it('How to import models directly?', () => {
+		//import { HeaderModel, HeroModel } from '@nan0web/ui/models'
+		// Note: For testing we use the already imported Models registry
+		const { HeaderModel, HeroModel } = Models
+
+		const header = new HeaderModel({ title: 'Direct Import' })
+		assert.equal(header.title, 'Direct Import')
+	})
+
 	it('How to use the Pricing and Testimonial models?', () => {
-		//import { Model } from '@nan0web/ui'
-		const { PricingModel, TestimonialModel } = Model
+		//import { Models } from '@nan0web/ui'
+		const { PricingModel, TestimonialModel } = Models
 
 		const plan = new PricingModel({
 			title: 'Professional',
@@ -306,15 +329,52 @@ function testRender() {
 	})
 
 	it('How to use a User model?', () => {
-		//import { Model } from '@nan0web/ui'
+		//import { Models } from '@nan0web/ui'
 
-		const user = new Model.User({ name: 'Charlie', email: 'charlie@example.com' })
+		const user = new Models.User({ name: 'Charlie', email: 'charlie@example.com' })
 		console.info(user.name) // ← Charlie
 		console.info(user.email) // ← charlie@example.com
 		assert.equal(user.name, 'Charlie')
 		assert.equal(user.email, 'charlie@example.com')
 	})
 
+	/**
+	 * @docs
+	 * ### Model Inheritance & Normalization (v1.12.3)
+	 *
+	 * From v1.12.3, the system supports robust inheritance for static metadata.
+	 * Child classes automatically inherit and can override parent fields.
+	 *
+	 * Additionally, input data is automatically normalized:
+	 * - `boolean`: Strings `"0"`, `"1"`, `"false"`, `"true"` are cast to real booleans.
+	 * - `number`: Empty strings `""` are cast to `0`.
+	 */
+	it('How to use Model inheritance and normalization?', () => {
+		//import { Model } from '@nan0web/ui'
+		class Base extends Model {
+			static timeout = { type: 'number', default: 30 }
+			constructor(data = {}, options = {}) {
+				super(data, options)
+				/** @type {number} */
+				this.timeout
+			}
+		}
+		class Child extends Base {
+			static dir = { default: '.' }
+			constructor(data = {}, options = {}) {
+				super(data, options)
+				/** @type {string} */
+				this.dir
+			}
+		}
+
+		const instance = new Child({ timeout: '10' })
+		console.info(instance.timeout) // ← 10 (number)
+		console.info(instance.dir) // ← . (default from parent/self)
+
+		assert.strictEqual(instance.timeout, 10)
+		assert.strictEqual(instance.dir, '.')
+	})
 	/**
 	 * @docs
 	 * ### Intent Generators (v1.11.0)
@@ -354,23 +414,27 @@ function testRender() {
 	it('How to test Model pipelines deterministically?', async () => {
 		//import { ModelAsApp, ask, result, show } from '@nan0web/ui'
 		//import { ScenarioTest } from '@nan0web/ui/test/ScenarioTest.js'
-		const { ModelAsApp, ask, result, show } = await import('./index.js')
-		const { ScenarioTest } = await import('./test/ScenarioTest.js')
-		
+		const { ModelAsApp, ask, result, show } = await import('../index.js')
+		const { ScenarioTest } = await import('../test/ScenarioTest.js')
+
 		class ShoppingCartApp extends ModelAsApp {
-			*run() {
-				const product = yield ask('product', { help: 'Select product' })
+			async *run() {
+				const product = /** @type {import('../core/Intent.js').AskResponse} */ (
+					yield ask('product', { help: 'Select product' })
+				)
 				if (product?.value === 'laptop') {
-					yield show('Good choice!', 'ok')
+					yield show('Good choice!', 'success')
 				}
-				const confirm = yield ask('confirm', { help: 'Confirm purchase?' })
+				const confirm = /** @type {import('../core/Intent.js').AskResponse} */ (
+					yield ask('confirm', { help: 'Confirm purchase?' })
+				)
 				return result({ product: product?.value, confirm: confirm?.value })
 			}
 		}
 
 		const res = await ScenarioTest.run(ShoppingCartApp, [
 			{ field: 'product', value: 'laptop' },
-			{ field: 'confirm', value: true }
+			{ field: 'confirm', value: true },
 		])
 
 		assert.ok(!res.error, 'Should not have an error')
@@ -379,7 +443,7 @@ function testRender() {
 
 		// The show intent was also collected inside ScenarioTest
 		// Product ask (1), Show (2), Confirm ask (3), Result (4)
-		const shows = res.intents.filter(i => i.type === 'show')
+		const shows = res.intents.filter((i) => i.type === 'show')
 		assert.equal(shows.length, 1)
 		assert.equal(shows[0].message, 'Good choice!')
 	})
@@ -391,19 +455,21 @@ function testRender() {
 	it('How to test validation errors with ScenarioTest?', async () => {
 		//import { ModelAsApp, ask, result } from '@nan0web/ui'
 		//import { ScenarioTest } from '@nan0web/ui/test/ScenarioTest.js'
-		const { ModelAsApp, ask, result } = await import('./index.js')
-		const { ScenarioTest } = await import('./test/ScenarioTest.js')
+		const { ModelAsApp, ask, result } = await import('../index.js')
+		const { ScenarioTest } = await import('../test/ScenarioTest.js')
 
 		class ValidatedApp extends ModelAsApp {
-			*run() {
-				const code = yield ask('code', { help: 'Enter code', required: true })
+			async *run() {
+				const code = /** @type {import('../core/Intent.js').AskResponse} */ (
+					yield ask('code', { help: 'Enter code', required: true })
+				)
 				if (!code?.value) throw new Error('Code is mandatory')
 				return result({ code: code?.value })
 			}
 		}
 
 		const res = await ScenarioTest.run(ValidatedApp, [
-			{ field: 'code', value: '' } // Simulating empty response
+			{ field: 'code', value: '' }, // Simulating empty response
 		])
 
 		assert.ok(res.error instanceof Error)
@@ -419,7 +485,7 @@ function testRender() {
 	 */
 	it('How to execute .nan0 spec files automatically?', async () => {
 		//import { SpecRunner } from '@nan0web/ui/testing'
-		const { SpecRunner } = await import('./testing/index.js')
+		const { SpecRunner } = await import('../testing/index.js')
 
 		assert.equal(typeof SpecRunner.executeFile, 'function')
 	})
@@ -557,7 +623,9 @@ function testRender() {
 	 *
 	 * ## Project Architecture & Specs
 	 *
-	 * How the universal block spec is designed? - [check Universal Blocks Spec (`project.md`)](./project.md)
+	 * - [Package Architecture (`architecture.md`)](./architecture.md)
+	 * - [Catalog & Filter Architecture (`architecture-catalog.md`)](./architecture-catalog.md)
+	 * - [Universal Blocks Spec (`project.md`)](./project.md)
 	 *
 	 * ## Contributing
 	 */
@@ -586,14 +654,14 @@ describe('Rendering README.md', async () => {
 	let text = ''
 	const format = new Intl.NumberFormat('en-US').format
 	const parser = new DocsParser()
-	const source = await fs.loadDocument('src/README.md.js')
+	const source = await fs.loadDocument('src/docs/README.md.js')
 	text = String(parser.decode(source))
-	await fs.saveDocument('README.md', { content: text })
+	await fs.saveDocument('docs/en/README.md', { content: text })
 	const dataset = DatasetParser.parse(text, pkg?.name ?? '@nan0web/ui')
 	await fs.saveDocument('.datasets/README.dataset.jsonl', dataset)
 
-	it(`document is rendered in README.md [${format(Buffer.byteLength(text))}b]`, async () => {
-		const text = await fs.loadDocumentAs('.txt', 'README.md')
+	it(`document is rendered in docs/en/README.md [${format(Buffer.byteLength(text))}b]`, async () => {
+		const text = await fs.loadDocumentAs('.txt', 'docs/en/README.md')
 		assert.ok(text.includes('## License'))
 	})
 })

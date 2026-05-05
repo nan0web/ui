@@ -6,50 +6,19 @@ export class GalleryCommand extends ModelAsApp {
     static action: {
         type: string;
         help: string;
-        options: (typeof SnapshotAuditor | typeof GalleryRenderIntent)[];
-        default: string;
+        options: (typeof SnapshotAuditor | typeof GalleryRenderCommand)[];
+        default: typeof SnapshotAuditor;
         positional: boolean;
     };
     /**
      * @param {Partial<GalleryCommand> | Record<string, any>} [data={}]
-     * @param {import('@nan0web/types').ModelOptions} [options={}]
+     * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
      */
-    constructor(data?: Partial<GalleryCommand> | Record<string, any>, options?: import("@nan0web/types").ModelOptions);
-    /** @type {string} */ action: string;
+    constructor(data?: Partial<GalleryCommand> | Record<string, any>, options?: Partial<import("@nan0web/types").ModelOptions>);
+    /** @type {typeof SnapshotAuditor | typeof GalleryRenderCommand} */ action: typeof SnapshotAuditor | typeof GalleryRenderCommand;
     /** @type {string[]} */ _positionals: string[];
-    run(): AsyncGenerator<import("../../core/Intent.js").ShowIntent | (import("../../core/Intent.js").AskIntent & {
-        $value?: any;
-        $success?: boolean;
-        $files?: Record<string, string>;
-        $message?: string;
-    }) | (import("../../core/Intent.js").ProgressIntent & {
-        $value?: any;
-        $success?: boolean;
-        $files?: Record<string, string>;
-        $message?: string;
-    }) | (import("../../core/Intent.js").LogIntent & {
-        $value?: any;
-        $success?: boolean;
-        $files?: Record<string, string>;
-        $message?: string;
-    }) | (import("../../core/Intent.js").RenderIntent & {
-        $value?: any;
-        $success?: boolean;
-        $files?: Record<string, string>;
-        $message?: string;
-    }) | (import("../../core/Intent.js").AgentIntent & {
-        $value?: any;
-        $success?: boolean;
-        $files?: Record<string, string>;
-        $message?: string;
-    }) | (import("../../core/Intent.js").ResultIntent & {
-        $value?: any;
-        $success?: boolean;
-        $files?: Record<string, string>;
-        $message?: string;
-    }), any, any>;
 }
 export default GalleryCommand;
 import { ModelAsApp } from '../ModelAsApp.js';
 import SnapshotAuditor from './SnapshotAuditor.js';
-import GalleryRenderIntent from './GalleryRenderIntent.js';
+import GalleryRenderCommand from './GalleryRenderCommand.js';

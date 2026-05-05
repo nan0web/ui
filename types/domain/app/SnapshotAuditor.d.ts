@@ -1,25 +1,34 @@
 /**
  * SnapshotAuditor — Zero-Hallucination Snapshot Validation (Model-as-Schema v2).
  * Parses snapshots without evaluating the app logic and detects artifacts.
- *
- * @extends {AuditorModel}
  */
-export class SnapshotAuditor {
+export class SnapshotAuditor extends AuditorModel {
     static alias: string;
-    static dir: {
-        type: string;
-        help: string;
-        positional: boolean;
-        default: string;
-    };
     static data: {
         type: string;
         help: string;
         default: string;
     };
-    /** @type {Object<string, string>} Messages for UI */
     static UI: {
-        [x: string]: string;
+        title: string;
+        description: string;
+        icon: string;
+        starting: string;
+        noSnapshots: string;
+        doneSuccess: string;
+        doneErrors: string;
+        auditPassed: string;
+        auditFailed: string;
+        errorDb: string;
+        errorGlitch: string;
+        errorShort: string;
+        errorSyntax: string;
+        errorArtifact: string;
+        errorRouting: string;
+        errorUntranslated: string;
+        errorEnglishLeak: string;
+        errorEmptyRender: string;
+        errorForeignLeak: string;
     };
     /** @type {string[]} Common UI components that can be empty in render */
     static EXEMPT_EMPTY: string[];
@@ -31,6 +40,14 @@ export class SnapshotAuditor {
     static SUSPICIOUS_FILENAME: RegExp;
     /** @type {number} Minimum filename length */
     static MIN_FILENAME_LENGTH: number;
+    /** @type {string[]} Directories to ignore during scanning */
+    static IGNORE_DIRS: string[];
+    /**
+     * Checks if a directory or file should be ignored.
+     * @param {string} name
+     * @returns {boolean}
+     */
+    static isIgnored(name: string): boolean;
     /**
      * Extracts all valid words from an object into a Set.
      * @param {any} obj Node to extract from.
@@ -39,11 +56,11 @@ export class SnapshotAuditor {
     static extractWords(obj: any, set: Set<string>): void;
     /**
      * Scans data directories to build a word set for each language.
-     * @param {any} fsDb FileSystem DB.
+     * @param {import('@nan0web/db').DB} fsDb FileSystem DB.
      * @param {string} data
      * @returns {Promise<Record<string, Set<string>>>}
      */
-    static buildDictionaries(fsDb: any, data?: string): Promise<Record<string, Set<string>>>;
+    static buildDictionaries(fsDb: import("@nan0web/db").DB, data?: string): Promise<Record<string, Set<string>>>;
     /**
      * Inspects a single snapshot text.
      * @param {string} content Content of the file.
@@ -83,17 +100,10 @@ export class SnapshotAuditor {
     }): void;
     /**
      * @param {Partial<SnapshotAuditor> | Record<string, any>} [data={}]
-     * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
+     * @param {Partial<import('@nan0web/ui').ModelAsAppOptions>} [options={}]
      */
-    constructor(data?: Partial<SnapshotAuditor> | Record<string, any>, options?: Partial<import("@nan0web/types").ModelOptions>);
-    /** @type {import('@nan0web/types').ModelOptions} */
-    options: import("@nan0web/types").ModelOptions;
-    /** @type {string} Target directory to audit */ dir: string;
+    constructor(data?: Partial<SnapshotAuditor> | Record<string, any>, options?: Partial<import("@nan0web/ui").ModelAsAppOptions>);
     /** @type {string} Directory to scan for dictionaries */ data: string;
-    /**
-     * Run the snapshot audit inside the target directory.
-     * @returns {AsyncGenerator<import('@nan0web/ui').Intent, any, any>}
-     */
-    run(): AsyncGenerator<import("@nan0web/ui").Intent, any, any>;
 }
 export default SnapshotAuditor;
+import { AuditorModel } from '@nan0web/inspect/domain/AuditorModel';

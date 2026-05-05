@@ -10,5 +10,5 @@ export function verifySnapshot({ name, data, fs, path }: {
     name: string;
     data: Array<any>;
     fs?: typeof import("node:fs/promises") | undefined;
-    path?: import("path").PlatformPath | undefined;
+    path?: typeof import("node:path") | undefined;
 }): Promise<void>;

@@ -5,7 +5,7 @@
 import { ShowcaseAppModel } from '../src/domain/components/ShowcaseAppModel.js'
 import { runGenerator } from '../src/index.js'
 // TODO: switch to '@nan0web/ui-cli' after v2.10.0 (with OLMUI log/progress/result handlers)
-import { CLiInputAdapter as InputAdapter } from '../../ui-cli/src/index.js'
+import { CLiInputAdapter as InputAdapter } from '@nan0web/ui-cli'
 import Logger from '@nan0web/log'
 import fs from 'node:fs'
 import path from 'node:path'

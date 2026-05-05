@@ -12,7 +12,7 @@ export class Document extends Model {
 	/**
 	 *
 	 * @param {Partial<Document>} [data]
-	 * @param {import('@nan0web/types').ModelOptions} [options]
+	 * @param {Partial<import('@nan0web/types').ModelOptions>} [options]
 	 */
 	constructor(data = {}, options = {}) {
 		super(data, options)

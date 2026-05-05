@@ -26,9 +26,9 @@ export class Document extends Model {
     /**
      *
      * @param {Partial<Document>} [data]
-     * @param {import('@nan0web/types').ModelOptions} [options]
+     * @param {Partial<import('@nan0web/types').ModelOptions>} [options]
      */
-    constructor(data?: Partial<Document>, options?: import("@nan0web/types").ModelOptions);
+    constructor(data?: Partial<Document>, options?: Partial<import("@nan0web/types").ModelOptions>);
     /** @type {string} Title */ title: string;
     /** @type {Array<Content>} Content */ content: Array<Content>;
     /** @type {Array<Content>} Layout configuration */ $content: Array<Content>;

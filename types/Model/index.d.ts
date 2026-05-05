@@ -1,4 +1,4 @@
-export default Model;
+export default Models;
 import User from './User/User.js';
 import { HeaderModel } from '../domain/HeaderModel.js';
 import { FooterModel } from '../domain/FooterModel.js';
@@ -26,7 +26,7 @@ import { TimelineModel } from '../domain/components/index.js';
 import { EmptyStateModel } from '../domain/components/index.js';
 import { BannerModel } from '../domain/components/index.js';
 import { ProfileDropdownModel } from '../domain/components/index.js';
-declare namespace Model {
+declare namespace Models {
     export { User };
     export { HeaderModel };
     export { FooterModel };

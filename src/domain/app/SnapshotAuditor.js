@@ -1,12 +1,11 @@
 import { NaN0 } from '@nan0web/types'
-import { AuditorModel } from '@nan0web/inspect'
-import { progress, result, show } from '../../core/Intent.js'
+import { AuditorModel } from '@nan0web/inspect/domain/AuditorModel'
+
+import { result, show } from '../../core/Intent.js'
 
 /**
  * SnapshotAuditor — Zero-Hallucination Snapshot Validation (Model-as-Schema v2).
  * Parses snapshots without evaluating the app logic and detects artifacts.
- *
- * @extends {AuditorModel}
  */
 export class SnapshotAuditor extends AuditorModel {
 	static alias = 'audit'
@@ -24,7 +23,6 @@ export class SnapshotAuditor extends AuditorModel {
 		default: 'data',
 	}
 
-	/** @type {Object<string, string>} Messages for UI */
 	static UI = {
 		title: 'Snapshot Auditor',
 		description: 'Validates UI snapshots against hallucinations and localization leaks.',
@@ -36,6 +34,7 @@ export class SnapshotAuditor extends AuditorModel {
 		auditPassed: 'Audit passed: {file}',
 		auditFailed: 'Audit failed for {file}: {errors}',
 
+		errorDb: 'Database not provided to auditor',
 		errorGlitch: 'Filename "{filename}" has multiple consecutive separators (glitch detected).',
 		errorShort: 'Filename "{filename}" is too short.',
 		errorSyntax: 'Syntax Error: Failed to parse NaN0 file. {msg}',
@@ -56,7 +55,24 @@ export class SnapshotAuditor extends AuditorModel {
 	static ARTIFACTS = ['[object Object]', 'undefined', 'NaN']
 
 	/** @type {string[]} Words to ignore across all languages */
-	static EXEMPT_WORDS = ['true', 'false', 'value', 'max', 'min', 'step', 'open', 'first', 'what', 'how', 'start', 'code', 'successfully', 'enter', 'with', 'system']
+	static EXEMPT_WORDS = [
+		'true',
+		'false',
+		'value',
+		'max',
+		'min',
+		'step',
+		'open',
+		'first',
+		'what',
+		'how',
+		'start',
+		'code',
+		'successfully',
+		'enter',
+		'with',
+		'system',
+	]
 
 	/** @type {RegExp} Pattern for suspicious filenames */
 	static SUSPICIOUS_FILENAME = /__|--/
@@ -64,14 +80,24 @@ export class SnapshotAuditor extends AuditorModel {
 	/** @type {number} Minimum filename length */
 	static MIN_FILENAME_LENGTH = 3
 
+	/** @type {string[]} Directories to ignore during scanning */
+	static IGNORE_DIRS = ['node_modules', '.git', '.venv', '.datasets', 'dist', 'build', 'types']
+
+	/**
+	 * Checks if a directory or file should be ignored.
+	 * @param {string} name
+	 * @returns {boolean}
+	 */
+	static isIgnored(name) {
+		return name.startsWith('.') || SnapshotAuditor.IGNORE_DIRS.includes(name)
+	}
+
 	/**
 	 * @param {Partial<SnapshotAuditor> | Record<string, any>} [data={}]
-	 * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
+	 * @param {Partial<import('@nan0web/ui').ModelAsAppOptions>} [options={}]
 	 */
 	constructor(data = {}, options = {}) {
 		super(data, options)
-		/** @type {import('@nan0web/types').ModelOptions} */
-		this.options = options
 		/** @type {string} Target directory to audit */ this.dir
 		/** @type {string} Directory to scan for dictionaries */ this.data
 	}
@@ -96,7 +122,7 @@ export class SnapshotAuditor extends AuditorModel {
 
 	/**
 	 * Scans data directories to build a word set for each language.
-	 * @param {any} fsDb FileSystem DB.
+	 * @param {import('@nan0web/db').DB} fsDb FileSystem DB.
 	 * @param {string} data
 	 * @returns {Promise<Record<string, Set<string>>>}
 	 */
@@ -104,106 +130,74 @@ export class SnapshotAuditor extends AuditorModel {
 		/** @type {Record<string, Set<string>>} */
 		const dicts = {}
 
-		let entries = []
 		try {
-			let entriesList;
-			try {
-				entriesList = await fsDb.listDir(data)
-			} catch (e) {
-				if (/** @type {any} */ (e).code === 'ENOENT' && !data.startsWith('../')) {
-					entriesList = await fsDb.listDir('../' + data)
-				} else {
-					throw e;
-				}
-			}
-			for (const e of entriesList) entries.push(e)
-		} catch (e) {
-			return dicts
-		}
-
-		for (const entry of entries) {
-			if (entry.stat.isDirectory && entry.name !== '_') {
-				const lang = entry.name
-				if (!dicts[lang]) dicts[lang] = new Set()
-
-				const scanLang = async (dirPath) => {
-					let files = []
-					try {
-						const entries = await fsDb.listDir(dirPath)
-						for (const f of entries) files.push(f)
-					} catch (e) {
-						return
+			// Find all language directories
+			const entries = await fsDb
+				.listDir(data)
+				.catch(async (e) => {
+					if (/** @type {any} */ (e).code === 'ENOENT' && !data.startsWith('../')) {
+						return await fsDb.listDir('../' + data)
 					}
+					throw e
+				})
+				.catch(() => [])
 
-					for (const f of files) {
-						if (f.stat.isDirectory) {
-							await scanLang(f.path)
-						} else {
+			for (const entry of entries) {
+				if (entry.stat.isDirectory && entry.name !== '_') {
+					const lang = entry.name
+					if (!dicts[lang]) dicts[lang] = new Set()
+
+					// Use browse for deep dictionary scanning
+					for await (const f of fsDb.browse(entry.path, { depth: Infinity })) {
+						if (SnapshotAuditor.isIgnored(f.name)) continue
+						if (f.isFile) {
 							try {
-								const _fsDb = /** @type {any} */ (fsDb)
-								const raw = _fsDb.FS ? await _fsDb.FS.loadTXT(_fsDb.location(f.path), '', true) : await fsDb.fetch(f.path)
+								const raw = await fsDb.fetch(f.path)
 								SnapshotAuditor.extractWords(raw, dicts[lang])
 							} catch (e) {}
 						}
 					}
 				}
-				await scanLang(entry.path)
 			}
+		} catch (e) {
+			// Ignore dictionary errors
 		}
 		return dicts
 	}
 
 	/**
 	 * Run the snapshot audit inside the target directory.
-	 * @returns {AsyncGenerator<import('@nan0web/ui').Intent, any, any>}
+	 * @returns {AsyncGenerator<import('@nan0web/ui').Intent, import('@nan0web/ui').ResultIntent, any>}
 	 */
 	async *run() {
-		const { t } = this.options
-		const snapshotsDir = this.dir || '.'
+		const { t } = this._
 
-		yield show(t(SnapshotAuditor.UI.starting, { dir: snapshotsDir }))
+		yield show(t(SnapshotAuditor.UI.starting, { dir: this.dir }))
 
-		const files = []
-
-		/** @type {import('@nan0web/db').DB} */
-		let fsDb = this.options.db
-		if (fsDb && fsDb.mounts && fsDb.mounts.has('')) {
-			fsDb = /** @type {import('@nan0web/db').DB} */ (fsDb.mounts.get(''))
-		}
+		const fsDb = this._.db
 
 		if (!fsDb) {
-			yield show('FS Database not provided to auditor', 'error')
+			yield show(t(SnapshotAuditor.UI.errorDb), 'error')
 			return result({ success: false })
 		}
 
-		const findSnapshots = async (dir) => {
-			try {
-				let entries;
-				try {
-					entries = await fsDb.listDir(dir)
-				} catch (e) {
-					if (/** @type {any} */ (e).code === 'ENOENT' && !dir.startsWith('../')) {
-						entries = await fsDb.listDir('../' + dir)
-					} else {
-						throw e;
-					}
+		const files = []
+		const snapshotsDir = '@app/' + (this.dir || 'snapshots/core')
+
+		// Use robust DB.browse for recursive snapshot detection
+		try {
+			for await (const entry of fsDb.browse(snapshotsDir, { depth: Infinity })) {
+				if (SnapshotAuditor.isIgnored(entry.name)) continue
+				if (entry.isFile && (entry.name.endsWith('.nan0') || entry.name.endsWith('.txt'))) {
+					files.push(entry.path)
 				}
-				for (const entry of entries) {
-					if (entry.stat.isDirectory) {
-						await findSnapshots(entry.path)
-					} else if (entry.name.endsWith('.nan0') || entry.name.endsWith('.txt')) {
-						files.push(entry.path)
-					}
-				}
-			} catch (e) {
-				console.error('Error reading dir:', dir, e)
 			}
+		} catch (e) {
+			// Directory might be missing
 		}
 
-		await findSnapshots(snapshotsDir)
-
 		if (files.length === 0) {
-			yield show(t(SnapshotAuditor.UI.noSnapshots, { dir: snapshotsDir }), 'error')
+			yield show(t(SnapshotAuditor.UI.noSnapshots, { dir: this.dir }), 'error')
 			return result({ success: false })
 		}
 
@@ -216,8 +210,7 @@ export class SnapshotAuditor extends AuditorModel {
 			const locale = segments[segments.indexOf('core') + 1] || 'uk'
 			const componentName = segments.pop() || ''
 
-			const _fsDb = /** @type {any} */ (fsDb)
-			const content = _fsDb.FS ? await _fsDb.FS.loadTXT(_fsDb.location(file), '', true) : await fsDb.fetch(file)
+			const content = await fsDb.fetch(file)
 			const textContent = typeof content === 'string' ? content : JSON.stringify(content)
 
 			return {
@@ -231,10 +224,13 @@ export class SnapshotAuditor extends AuditorModel {
 		let hasErrors = false
 
 		for (const { file, audit } of results) {
-			const displayFile = file.startsWith('../') ? file.slice(3) : file
+			const displayFile = file.startsWith('@app/') ? file.slice(5) : file
 			if (audit.score < 100) {
 				const errorMessages = audit.errors.join('; ')
-				yield show(t(SnapshotAuditor.UI.auditFailed, { file: displayFile, errors: errorMessages }), 'error')
+				yield show(
+					t(SnapshotAuditor.UI.auditFailed, { file: displayFile, errors: errorMessages }),
+					'error',
+				)
 				allErrors.push(...audit.errors.map((e) => ({ file: displayFile, error: e })))
 				hasErrors = true
 			} else {

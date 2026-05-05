@@ -1,7 +1,3 @@
----
-title: Documentation
-lang: en
----
 # @nan0web/ui
 
 🏴󠁧󠁢󠁥󠁮󠁧󠁿 [English](./README.md) | 🇺🇦 [Українською](./docs/uk/README.md)
@@ -162,27 +158,64 @@ These models follow the **Model-as-Schema** pattern.
 - `FooterModel` — copyright, version, social links
 - `HeroModel` — prominent call-to-action
 
+#### HTML5 Base Elements
+Fully typed zero-cost support for standard tags: `div`, `span`, `p`, `h1`-`h6`, `a`, `ul`, `table`, etc., plus SVG basics (`svg`, `path`, `rect`). Data must be standard `camelCase`.
+
 #### Component Models
-- `PricingModel` — plans with features and prices
+- `PricingModel` / `PricingSection` — plans with features and prices
+- `FeatureGrid` — grid of feature highlights
+- `ProfileDropdown` — user avatar and settings menu
 - `CommentModel` & `TestimonialModel` — social proof
 - `StatsModel` — data visualizations
 - `TimelineModel` — event history
 
-How to use the new Header and Hero models?
+How to use the Models container?
 ```js
-import { Model } from '@nan0web/ui'
-const { HeaderModel, HeroModel } = Model
+import { Models } from '@nan0web/ui'
+const { HeaderModel, HeroModel } = Models
 const header = new HeaderModel({
 	title: 'NaN•Web',
 	logo: '/logo.svg',
-	actions: [{ title: 'Docs', href: '/docs' }],
+	actions: [/** @type {any} */ ({ title: 'Docs', href: '/docs' })],
 })
 const hero = new HeroModel({
 	title: 'One Logic — Many UI',
-	actions: [{ title: 'Get Started', href: '/start' }],
+	actions: [/** @type {any} */ ({ title: 'Get Started', href: '/start' })],
 })
 console.info(header.title) // ← NaN•Web
 console.info(hero.actions[0].title) // ← Get Started
+```
+### Model Inheritance & Normalization (v1.12.3)
+
+From v1.12.3, the system supports robust inheritance for static metadata.
+Child classes automatically inherit and can override parent fields.
+
+Additionally, input data is automatically normalized:
+- `boolean`: Strings `"0"`, `"1"`, `"false"`, `"true"` are cast to real booleans.
+- `number`: Empty strings `""` are cast to `0`.
+
+How to use Model inheritance and normalization?
+```js
+import { Model } from '@nan0web/ui'
+class Base extends Model {
+	static timeout = { type: 'number', default: 30 }
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {number} */
+		this.timeout
+	}
+}
+class Child extends Base {
+	static dir = { default: '.' }
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {string} */
+		this.dir
+	}
+}
+const instance = new Child({ timeout: '10' })
+console.info(instance.timeout) // ← 10 (number)
+console.info(instance.dir) // ← . (default from parent/self)
 ```
 ### Intent Generators (v1.11.0)
 
@@ -202,14 +235,73 @@ const nameIntent = ask('name', { help: 'Your name' })
 const msgIntent = show('Processing...', 'info')
 const endIntent = result({ ok: true })
 ```
-### Testing UI
+### Testing UI (v1.11.0 Deterministic Testing)
 
 Core unit-tested to ensure stability in different environments.
+With **v1.11.0**, the architecture formally introduces `ScenarioTest` for zero-I/O deterministic testing.
 
+By lifting the asynchronous logic and providing an explicit scenario array, models are evaluated instantly without waiting on user prompt delays.
+
+How to test Model pipelines deterministically?
+```js
+import { ModelAsApp, ask, result, show } from '@nan0web/ui'
+import { ScenarioTest } from '@nan0web/ui/test/ScenarioTest.js'
+const { ModelAsApp, ask, result, show } = await import('../index.js')
+const { ScenarioTest } = await import('../test/ScenarioTest.js')
+class ShoppingCartApp extends ModelAsApp {
+	async *run() {
+		const product = /** @type {import('../core/Intent.js').AskResponse} */ (
+			yield ask('product', { help: 'Select product' })
+		)
+		if (product?.value === 'laptop') {
+			yield show('Good choice!', 'success')
+		}
+		const confirm = /** @type {import('../core/Intent.js').AskResponse} */ (
+			yield ask('confirm', { help: 'Confirm purchase?' })
+		)
+		return result({ product: product?.value, confirm: confirm?.value })
+	}
+}
+const res = await ScenarioTest.run(ShoppingCartApp, [
+	{ field: 'product', value: 'laptop' },
+	{ field: 'confirm', value: true },
+])
+```
+You can also verify exceptions and validation rules by observing the final error in ScenarioTest.
+
+How to test validation errors with ScenarioTest?
+```js
+import { ModelAsApp, ask, result } from '@nan0web/ui'
+import { ScenarioTest } from '@nan0web/ui/test/ScenarioTest.js'
+const { ModelAsApp, ask, result } = await import('../index.js')
+const { ScenarioTest } = await import('../test/ScenarioTest.js')
+class ValidatedApp extends ModelAsApp {
+	async *run() {
+		const code = /** @type {import('../core/Intent.js').AskResponse} */ (
+			yield ask('code', { help: 'Enter code', required: true })
+		)
+		if (!code?.value) throw new Error('Code is mandatory')
+		return result({ code: code?.value })
+	}
+}
+const res = await ScenarioTest.run(ValidatedApp, [
+	{ field: 'code', value: '' }, // Simulating empty response
+])
+```
+### Story Testing (.nan0 spec files)
+
+The `SpecRunner.executeFile` helper allows running `.nan0` spec stories automatically without boilerplate DBFS setup.
+All manual assertions are omitted because `SpecAdapter` handles strict expectation matching internally.
+
+How to execute .nan0 spec files automatically?
+```js
+import { SpecRunner } from '@nan0web/ui/testing'
+const { SpecRunner } = await import('../testing/index.js')
+```
 All components, adapters, and models are designed to be testable
 with minimal setup.
 
-How to test UI components with assertions?
+How to test visual UI components with assertions?
 ```js
 import { Welcome } from '@nan0web/ui'
 const output = Welcome({ user: { name: 'Test' } })
@@ -308,7 +400,9 @@ Explore:
 
 ## Project Architecture & Specs
 
-How the universal block spec is designed? - [check Universal Blocks Spec (`project.md`)](./project.md)
+- [Package Architecture (`architecture.md`)](./architecture.md)
+- [Catalog & Filter Architecture (`architecture-catalog.md`)](./architecture-catalog.md)
+- [Universal Blocks Spec (`project.md`)](./project.md)
 
 ## Contributing
 

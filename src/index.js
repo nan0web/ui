@@ -5,11 +5,12 @@ import StdOut from './StdOut.js'
 import View from './View/View.js'
 import RenderOptions from './View/RenderOptions.js'
 import FrameProps from './Frame/Props.js'
-import Model from './Model/index.js'
+import { Model } from '@nan0web/types'
+import Models from './Model/index.js'
 import Component from './Component/index.js'
 import App from './App/index.js'
 
-export { Frame, FrameProps, Locale, StdIn, StdOut, View, RenderOptions, Model, Component, App }
+export { Frame, FrameProps, Locale, StdIn, StdOut, View, RenderOptions, Model, Models, Component, App }
 export { format } from './format.js'
 export { default as Navigation } from './domain/Navigation.js'
 
@@ -24,6 +25,7 @@ export { default as UiMessage } from './core/Message/Message.js'
 export { default as UiStream } from './core/Stream.js'
 export { default as Error, CancelError } from './core/Error/index.js'
 export { default as UiAdapter } from './core/UiAdapter.js'
+export { resolvePositionalArgs } from './core/resolvePositionalArgs.js'
 
 // OLMUI Generator Engine
 /** @typedef {import('./core/Intent.js').LogLevel} LogLevel */

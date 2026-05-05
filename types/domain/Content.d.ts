@@ -173,9 +173,9 @@ export class Content extends Model {
     };
     /**
      * @param {ContentData | string} [data={}]
-     * @param {import('@nan0web/types').ModelOptions} [options={}]
+     * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
      */
-    constructor(data?: ContentData | string, options?: import("@nan0web/types").ModelOptions);
+    constructor(data?: ContentData | string, options?: Partial<import("@nan0web/types").ModelOptions>);
     /** @type {string|undefined} Content */ content: string | undefined;
     /** @type {Array<Content>|undefined} Children */ children: Array<Content> | undefined;
 }

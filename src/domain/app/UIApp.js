@@ -5,6 +5,11 @@ import GalleryCommand from './GalleryCommand.js'
 import ConfigApp from './ConfigApp.js'
 import { show, result } from '../../core/Intent.js'
 
+/**
+ * @property {string[]} _positionals
+ * @property {string} command Type of command to run
+ * @property {boolean} help Show help message
+ */
 export class UIApp extends ModelAsApp {
 	static command = {
 		type: 'string',
@@ -40,39 +45,25 @@ export class UIApp extends ModelAsApp {
 
 	/**
 	 * @param {Partial<UIApp> | Record<string, any>} [data={}]
-	 * @param {import('@nan0web/types').ModelOptions} [options={}]
+	 * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
 	 */
 	constructor(data = {}, options = {}) {
 		super(data, options)
-		/** @type {string[]} */ this._positionals = []
-		/** @type {string} Type of command to run */ this.command
-		/** @type {boolean} Show help message */ this.help
 	}
 
 	async *run() {
 		const t = this._.t
-		if (this.help || this.command === 'help') {
-			yield show(t(UIApp.UI.helpText, undefined))
-			return result({})
-		}
+		const cmd = /** @type {any} */ (this).command
+		const help = /** @type {any} */ (this).help
 
-		const TargetCommand = UIApp.command.options.find((opt) =>
-			[opt.alias, opt.name].includes(this.command),
-		)
+		if (help) return yield* super.run()
 
-		if (!TargetCommand) {
-			yield show(t(UIApp.UI.unknownCommand, { command: this.command }), 'error')
+		if (!cmd || !(cmd instanceof ModelAsApp)) {
+			yield show(t(UIApp.UI.unknownCommand, { command: cmd }), 'error')
 			return result({ status: 'error' })
 		}
 
-		// Pass remaining positionals down to the target action
-		const nextData = resolvePositionalArgs(
-			/** @type {any} */ (TargetCommand),
-			this._positionals || [],
-			this
-		)
-		const intent = new TargetCommand(nextData, this._)
-		return yield* intent.run()
+		return yield* cmd.run()
 	}
 }
 

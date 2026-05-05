@@ -1,6 +1,6 @@
 import { Model } from '@nan0web/types'
 
-/** 
+/**
  * @typedef {Object} HTML5Elements
  * @property {string|ContentData[]} [a]
  * @property {string|ContentData[]} [abbr]
@@ -126,7 +126,7 @@ import { Model } from '@nan0web/types'
  * @property {string|ContentData[]} [text]
  */
 
-/** 
+/**
  * @typedef {Object} CoreUIElements
  * @property {import('./components/AccordionModel.js').AccordionModel} [accordion]
  * @property {import('./components/AutocompleteModel.js').AutocompleteModel} [autocomplete]
@@ -162,8 +162,8 @@ import { Model } from '@nan0web/types'
  * @property {ContentData[]} [sortable] - Інтерактивний Drag-n-Drop контейнер
  */
 
-/** 
- * @typedef {Partial<Content & HTML5Elements & CoreUIElements> & Record<string, any>} ContentData 
+/**
+ * @typedef {Partial<Content & HTML5Elements & CoreUIElements> & Record<string, any>} ContentData
  */
 
 export class Content extends Model {
@@ -172,7 +172,7 @@ export class Content extends Model {
 
 	/**
 	 * @param {ContentData | string} [data={}]
-	 * @param {import('@nan0web/types').ModelOptions} [options={}]
+	 * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
 	 */
 	constructor(data = {}, options = {}) {
 		if ('string' === typeof data) {

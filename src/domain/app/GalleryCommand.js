@@ -1,7 +1,7 @@
 import { ModelAsApp } from '../ModelAsApp.js'
 import { resolvePositionalArgs } from '@nan0web/ui-cli'
 import SnapshotAuditor from './SnapshotAuditor.js'
-import GalleryRenderIntent from './GalleryRenderIntent.js'
+import GalleryRenderCommand from './GalleryRenderCommand.js'
 import { show, result } from '../../core/Intent.js'
 
 export class GalleryCommand extends ModelAsApp {
@@ -14,25 +14,26 @@ export class GalleryCommand extends ModelAsApp {
 	static action = {
 		type: 'string',
 		help: 'Command to run',
-		options: [SnapshotAuditor, GalleryRenderIntent],
-		default: SnapshotAuditor.alias || SnapshotAuditor.name,
+		options: [SnapshotAuditor, GalleryRenderCommand],
+		default: SnapshotAuditor,
 		positional: true,
 	}
 
 	/**
 	 * @param {Partial<GalleryCommand> | Record<string, any>} [data={}]
-	 * @param {import('@nan0web/types').ModelOptions} [options={}]
+	 * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
 	 */
 	constructor(data = {}, options = {}) {
 		super(data, options)
-		/** @type {string} */ this.action
+		/** @type {typeof SnapshotAuditor | typeof GalleryRenderCommand} */ this.action
 		/** @type {string[]} */ this._positionals = []
 	}
 
+	/**
+	 * @returns {AsyncGenerator<import('@nan0web/ui').Intent, import('@nan0web/ui').ResultIntent, any>}
+	 */
 	async *run() {
-		const TargetAction = GalleryCommand.action.options.find(
-			(opt) => opt.alias === this.action || opt.name === this.action
-		)
+		const TargetAction = this.action
 
 		if (!TargetAction) {
 			yield show(this._.t(GalleryCommand.UI.unknownAction, { command: this.action }), 'error')

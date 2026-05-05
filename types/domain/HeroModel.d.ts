@@ -32,9 +32,9 @@ export class HeroModel extends Model {
     };
     /**
      * @param {Partial<HeroModel | Record<string, any>>} [data={}]
-     * @param {import('@nan0web/types').ModelOptions} [options={}]
+     * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
      */
-    constructor(data?: Partial<HeroModel | Record<string, any>>, options?: import("@nan0web/types").ModelOptions);
+    constructor(data?: Partial<HeroModel | Record<string, any>>, options?: Partial<import("@nan0web/types").ModelOptions>);
     /** @type {string} Top small badge text ior icon */ badge: string;
     /** @type {string} Hero heading */ title: string;
     /** @type {string} Hero secondary text */ subtitle: string;

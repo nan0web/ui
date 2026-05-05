@@ -1,69 +1,59 @@
----
-title: Документація
-lang: uk
----
 # @nan0web/ui
 
-🏴󠁧󠁢󠁥󠁮󠁧󠁿 [English](../../README.md) | 🇺🇦 [Українською](./README.md)
+🇺🇦 [Українською](./README.md) | 🏴󠁧󠁢󠁥󠁮󠁧󠁿 [English](../en/README.md)
 
 <!-- %PACKAGE_STATUS% -->
 
-Легкий, агностичний UI-фреймворк, побудований за **філософією nan0web**
-— одна логіка застосунку, багато UI-реалізацій.
+Легкий, агностичний UI-фреймворк, розроблений за філософією **nan0web**
+— одна логіка додатка, багато UI-реалізацій (One Logic — Many UI).
 
-Ця бібліотека надає базові класи та утиліти для побудови структурованих інтерфейсів.
-Підтримує:
+Ця бібліотека надає базові класи та утиліти для побудови структурованих інтерфейсів користувача.
+Вона підтримує:
 
 - Обмін повідомленнями (Input/Output)
 - Форми з валідацією
 - Відстеження прогресу
 - Рендеринг компонентів
-- Керування виглядом через Frame-рендеринг
-- Структуру застосунку з основними та користувацькими додатками
+- Керування представленням через Frame Rendering
+- Структуру додатків (Core та User Apps)
 
-Працює як у синхронному, так і в асинхронному режимі — у термінальних та веб-застосунках,
-з акцентом на типобезпеку, мінімалізм та чистий JavaScript-дизайн.
+Створено для роботи в синхронних або асинхронних режимах, у термінальних або веб-додатках, з акцентом на типізацію, мінімалізм та чистий JavaScript.
 
 ## Встановлення
 
 Як встановити через npm?
-
 ```bash
 npm install @nan0web/ui
 ```
 
 Як встановити через pnpm?
-
 ```bash
 pnpm add @nan0web/ui
 ```
 
 Як встановити через yarn?
-
 ```bash
 yarn add @nan0web/ui
 ```
 
-## Концепції та архітектура
+## Концепції та Архітектура
 
-### Потік повідомлень
+### Потік повідомлень (Message Flow)
 
-UI-комунікація побудована навколо повідомлень:
+Комунікація в UI побудована навколо повідомлень:
 
-- **`UiMessage`** – абстрактний базовий клас повідомлень
-- **`OutputMessage`** – системний вивід (контент, помилка, пріоритет)
+- **`UiMessage`** – абстрактний базовий клас повідомлення.
+- **`OutputMessage`** – системний вивід (вміст, помилка, пріоритет).
 
-Повідомлення — це прості, серіалізовані контейнери даних. Вони допомагають будувати
-розʼєднані системи комунікації між UI-компонентами.
+Повідомлення — це прості серіалізовані контейнери даних. Вони допомагають будувати слабкопов'язані системи комунікації між компонентами.
 
-Як створити вхідні та вихідні повідомлення?
-
+Як створювати вхідні та вихідні повідомлення?
 ```js
 import { InputMessage, OutputMessage } from '@nan0web/ui'
-const input = UiMessage.from({ body: 'Hello User' })
-const output = OutputMessage.from({ content: ['Welcome to @nan0web/ui'] })
-console.info(input) // ← Message { body: "Hello User", head: {}, id: "....", type: "" }
-console.info(String(output)) // ← Welcome to @nan0web/ui
+const input = UiMessage.from({ body: 'Привіт, Користувачу' })
+const output = OutputMessage.from({ content: ['Ласкаво просимо до @nan0web/ui'] })
+console.info(input) // ← Message { body: "Привіт, Користувачу", head: {}, id: "....", type: "" }
+console.info(String(output)) // ← Ласкаво просимо до @nan0web/ui
 ```
 
 ### Форми
@@ -81,24 +71,23 @@ console.info(String(output)) // ← Welcome to @nan0web/ui
 - `textarea`
 
 Як визначити та валідувати UiForm?
-
 ```js
 import { UiForm } from '@nan0web/ui'
 const form = new UiForm({
-  title: 'Contact Form',
-  fields: [
-    FormInput.from({ name: 'email', label: 'Email Address', type: 'email', required: true }),
-    FormInput.from({
-      name: 'message',
-      label: 'Your Message',
-      type: 'textarea',
-      required: true,
-    }),
-  ],
-  state: {
-    email: 'invalid-email',
-    message: 'Hello!',
-  },
+	title: 'Контактна форма',
+	fields: [
+		FormInput.from({ name: 'email', label: 'Email адреса', type: 'email', required: true }),
+		FormInput.from({
+			name: 'message',
+			label: 'Ваше повідомлення',
+			type: 'textarea',
+			required: true,
+		}),
+	],
+	state: {
+		email: 'invalid-email',
+		message: 'Привіт!',
+	},
 })
 const { isValid, errors } = form.validate()
 console.info(Object.keys(errors).length) // ← 1
@@ -107,272 +96,238 @@ console.info(errors.email) // ← Invalid email format
 
 ### Компоненти
 
-Компоненти рендерять дані як готовий до фрейму вивід.
+Компоненти рендерить дані як готовий вивід для фрейму.
 
-- `Welcome` – вітає користувача на імʼя
-- `Process` – показує прогрес-бар та час
+- `Welcome` – вітає користувача за ім'ям.
+- `Process` – показує прогрес-бар та час.
 
 Як відрендерити компонент Welcome?
-
 ```js
 import { Welcome } from '@nan0web/ui'
-const frame = Welcome({ user: { name: 'Alice' } })
+const frame = Welcome({ user: { name: 'Аліса' } })
 const firstLine = frame[0].join('')
-console.info(firstLine) // ← Welcome Alice!
+console.info(firstLine) // ← Welcome Аліса!
 ```
 
-### Менеджер вигляду
+### Менеджер представлення (View Manager)
 
 `View` поєднує компоненти та рендерить фрейми.
 
-Кожен вигляд має:
+Кожне представлення має:
 
-- Locale – форматований текст, числа, валюта
-- StdIn / StdOut – потоки вводу/виводу
-- Frame – буфер виводу з візуальними властивостями
+- Локаль (Locale) – форматування тексту, чисел, валюти.
+- StdIn / StdOut – потоки вводу/виводу.
+- Frame – вихідний буфер з візуальними властивостями.
 
-Як відрендерити фрейм за допомогою View?
-
+Як рендерити фрейм через View?
 ```js
 import { View } from '@nan0web/ui'
 const view = new View()
-view.render(1)(['Hello, world'])
-console.info(String(view.frame)) // ← "\rHello, world"
+view.render(1)(['Привіт, світ'])
+console.info(String(view.frame)) // ← "\rПривіт, світ"
 ```
 
-### Рендеринг фреймів
+### Рендеринг фреймів (Frame Rendering)
 
 `Frame` керує візуальним рендерингом з обмеженнями ширини та висоти.
-Корисний для терміналів фіксованого розміру або UI-блоків.
+Корисно для терміналів фіксованого розміру або блоків UI.
 
 Методи рендерингу:
 
-- `APPEND` – додає контент після попереднього фрейму
-- `REPLACE` – стирає та замінює всю область фрейму
-- `VISIBLE` – рендерить лише видиму частину фрейму
+- `APPEND` – додає контент після попереднього фрейму.
+- `REPLACE` – очищує та замінює всю область фрейму.
+- `VISIBLE` – рендерить лише видиму частину фрейму.
 
-Як створити Frame з фіксованим розміром?
-
+Як створити фрейм фіксованого розміру?
 ```js
 import { Frame } from '@nan0web/ui'
 const frame = new Frame({
-  value: [['Frame content']],
-  width: 20,
-  height: 5,
-  renderMethod: Frame.RenderMethod.APPEND,
+	value: [['Вміст фрейму']],
+	width: 20,
+	height: 5,
+	renderMethod: Frame.RenderMethod.APPEND,
 })
 const rendered = frame.render()
-console.info(rendered.includes('Frame content')) // ← true
+console.info(rendered.includes('Вміст фрейму')) // ← true
 ```
 
-### Моделі
+### Доменні Моделі (v1.9.0)
 
-UI-моделі — це прості обʼєкти даних, керовані класами `Model`.
+Версія v1.9.0 представляє повний набір доменних моделей для лейауту та компонентів.
+Ці моделі слідують патерну **Model-as-Schema**.
 
-- `User` – дані користувача
+#### Моделі Лейауту
+- `HeaderModel` — заголовок, логотип, навігаційні дії.
+- `FooterModel` — копірайт, версія, соціальні посилання.
+- `HeroModel` — головний заклик до дії (CTA).
 
-Як використовувати модель User?
+#### Базові елементи HTML5
+Повна типізована підтримка стандартних тегів: `div`, `span`, `p`, `h1`-`h6`, `a`, `ul`, `table` тощо, а також базові SVG (`svg`, `path`, `rect`). Дані повинні бути у стандартному `camelCase`.
 
+#### Моделі компонентів
+- `PricingModel` / `PricingSection` — плани з функціями та цінами.
+- `FeatureGrid` — сітка ключових особливостей.
+- `ProfileDropdown` — аватар користувача та меню налаштувань.
+- `CommentModel` & `TestimonialModel` — соціальні докази (відгуки).
+- `StatsModel` — візуалізація даних (статистика).
+- `TimelineModel` — історія подій (таймлайн).
+
+Як використовувати контейнер Models?
 ```js
-import { Model } from '@nan0web/ui'
+import { Models } from '@nan0web/ui'
+const { HeaderModel, HeroModel } = Models
+const header = new HeaderModel({
+	title: 'NaN•Web',
+	logo: '/logo.svg',
+	actions: [/** @type {any} */ ({ title: 'Документація', href: '/docs' })],
+})
 const hero = new HeroModel({
-	title: 'Одна логіка — багато UI',
-	actions: [{ title: 'Почати', href: '/start' }],
+	title: 'One Logic — Many UI',
+	actions: [/** @type {any} */ ({ title: 'Почати', href: '/start' })],
 })
 console.info(header.title) // ← NaN•Web
 console.info(hero.actions[0].title) // ← Почати
 ```
 
-### Генератори Інтенцій (v1.11.0)
+### Успадкування моделей та нормалізація (v1.12.3)
 
-Починаючи з v1.11.0, генератори інтенцій — це стандартні іменовані функції, що генерують суворі взаємодії (ask, progress, show, render, result).
+З версії v1.12.3 система підтримує надійне успадкування статичних метаданих.
+Дочірні класи автоматично успадковують та можуть перевизначати поля батьківських класів.
 
-- `ask(field, schema)` — запитує ввід із середовища.
+Крім того, вхідні дані автоматично нормалізуються:
+- `boolean`: Рядки `"0"`, `"1"`, `"false"`, `"true"` приводяться до справжніх логічних значень.
+- `number`: Порожні рядки `""` приводяться до `0`.
+
+Як використовувати успадкування та нормалізацію моделей?
+```js
+import { Model } from '@nan0web/ui'
+class Base extends Model {
+	static timeout = { type: 'number', default: 30 }
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {number} */
+		this.timeout
+	}
+}
+class Child extends Base {
+	static dir = { default: '.' }
+	constructor(data = {}, options = {}) {
+		super(data, options)
+		/** @type {string} */
+		this.dir
+	}
+}
+const instance = new Child({ timeout: '10' })
+console.info(instance.timeout) // ← 10 (number)
+console.info(instance.dir) // ← . (default від батька/себе)
+```
+
+### Генератори інтентів (v1.11.0)
+
+Починаючи з v1.11.0, творці інтентів (Intent creators) є стандартними іменованими функціями, що генерують суворі взаємодії (ask, progress, show, render, result).
+
+- `ask(field, schema)` — запитує ввід від оточення.
 - `progress(message)` — оновлює візуальний завантажувач.
 - `show(message, level, data)` — відображає сповіщення (замінює застарілий `log`).
-- `render(component, props)` — рендерить специфічний компонент.
+- `render(component, props)` — рендерить специфічний вигляд компонента.
 - `result(data)` — чисто завершує виконання моделі.
 
-Як використовувати генератори інтенцій? (v1.11.0)
+Як використовувати генератори інтентів? (v1.11.0)
 ```js
 import { ask, show, result } from '@nan0web/ui'
-const nameIntent = ask('name', { help: 'Твоє ім\'я' })
+const nameIntent = ask('name', { help: 'Ваше ім\'я' })
 const msgIntent = show('Обробка...', 'info')
 const endIntent = result({ ok: true })
 ```
 
-### Тестування UI (v1.11.0 Детерміноване тестування)
+### Тестування UI (v1.11.0 Deterministic Testing)
 
-Ядро покрите юніт-тестами для стабільності в різних середовищах.
-З **v1.11.0** архітектура офіційно впроваджує `ScenarioTest` для детермінованого тестування без I/O-операцій (нульова затримка).
+Ядро протестоване юніт-тестами для забезпечення стабільності в різних середовищах.
+У версії **v1.11.0** архітектура формально впроваджує `ScenarioTest` для детермінованого тестування без вводу/виводу.
 
-Виносячи асинхронну логіку та подаючи явний масив сценарію (масив відповідей користувача), моделі оцінюються миттєво без очікування введення команд.
+Виносячи асинхронну логіку та надаючи явний масив сценаріїв, моделі обчислюються миттєво, не чекаючи на затримки вводу користувача.
 
-Як тестувати пайплайни моделей детерміновано?
+Як детерміновано тестувати пайплайни моделей?
 ```js
 import { ModelAsApp, ask, result, show } from '@nan0web/ui'
 import { ScenarioTest } from '@nan0web/ui/test/ScenarioTest.js'
 
 class ShoppingCartApp extends ModelAsApp {
-	*run() {
-		const product = yield ask('product', { help: 'Виберіть товар' })
+	async *run() {
+		const product = /** @type {import('../core/Intent.js').AskResponse} */ (
+			yield ask('product', { help: 'Оберіть товар' })
+		)
 		if (product?.value === 'laptop') {
-			yield show('Гарний вибір!', 'ok')
+			yield show('Гарний вибір!', 'success')
 		}
-		const confirm = yield ask('confirm', { help: 'Підтвердити покупку?' })
+		const confirm = /** @type {import('../core/Intent.js').AskResponse} */ (
+			yield ask('confirm', { help: 'Підтвердити покупку?' })
+		)
 		return result({ product: product?.value, confirm: confirm?.value })
 	}
 }
-
 const res = await ScenarioTest.run(ShoppingCartApp, [
 	{ field: 'product', value: 'laptop' },
-	{ field: 'confirm', value: true }
+	{ field: 'confirm', value: true },
 ])
 ```
 
-Ви також можете перевірити винятки та правила валідації, спостерігаючи форму кінцевої помилки в ScenarioTest.
+### Story Testing (.nan0 spec files)
 
-Як тестувати помилки валідації за допомогою ScenarioTest?
+Помічник `SpecRunner.executeFile` дозволяє автоматично запускати `.nan0` специфікації без складного налаштування DBFS.
+
+Як автоматично виконувати .nan0 файли специфікацій?
 ```js
-import { ModelAsApp, ask, result } from '@nan0web/ui'
-import { ScenarioTest } from '@nan0web/ui/test/ScenarioTest.js'
-
-class ValidatedApp extends ModelAsApp {
-	*run() {
-		const code = yield ask('code', { help: 'Введіть код', required: true })
-		if (!code?.value) throw new Error('Код є обов\'язковим')
-		return result({ code: code?.value })
-	}
-}
-
-const res = await ScenarioTest.run(ValidatedApp, [
-	{ field: 'code', value: '' } // Імітація порожньої відповіді
-])
+import { SpecRunner } from '@nan0web/ui/testing'
 ```
 
-Усі компоненти, адаптери та моделі розроблені для зручного тестування з мінімальним налаштуванням.
+### Master IDE (Component Sandbox)
 
-Як тестувати візуальні UI-компоненти з асертами?
-```js
-import { Welcome } from '@nan0web/ui'
-const output = Welcome({ user: { name: 'Test' } })
-console.info(output) // ← Welcome Test!
-```
+Master IDE (OlmuiInspector) надає уніфіковане середовище для тестування та документування веб-компонентів. Вона підтримує:
 
-### Сценарне тестування (файли специфікацій .nan0)
-
-Помічник `SpecRunner.executeFile` дозволяє автоматично запускати файли сценаріїв `.nan0` без шаблонного налаштування DBFS.
-Усі ручні перевірки (assertions) відсутні, оскільки `SpecAdapter` внутрішньо обробляє строге зіставлення очікувань.
-
-Як автоматично запускати файли специфікацій .nan0?
-```js
-//import { SpecRunner } from '@nan0web/ui/testing'
-const { SpecRunner } = await import('./testing/index.js')
-assert.equal(typeof SpecRunner.executeFile, 'function')
-```
-
-### Master IDE (Пісочниця компонентів)
-
-Master IDE (OlmuiInspector) надає уніфіковане середовище для тестування та документування
-веб-компонентів на різних платформах. Підтримує:
-
-- **NaN0 Spec** — лаконічний YAML-формат для оголошення варіацій компонентів.
-- **OlmuiInspector** — уніфікований UI для дослідження моделей та властивостей компонентів.
-- **Живий перегляд** — рендеринг станів компонентів у реальному часі.
+- **NaN0 Spec** — лаконічний YAML-формат для опису варіацій компонентів.
+- **OlmuiInspector** — уніфікований UI для дослідження моделей та властивостей.
+- **Live Preview** — рендеринг станів компонентів у реальному часі.
 - **i18n UI** — повністю локалізований інтерфейс (UK/EN) для розробників.
-- **Редактор тем** — система CSS-змінних рівня Bootstrap з живим попереднім переглядом.
+- **Theme Editor** — система CSS-змінних для кастомізації теми.
 
-Побудований за патерном **Olmui**: _Одна логіка — багато UI_ (один маніфест працює і у CLI, і у Web).
+####NaN0 Spec (YAML)
 
-#### Редактор тем (CSS-змінні)
-
-Професійна система налаштування тем з живим переглядом. Підтримує:
-
-- **Палітра**: primary, secondary, success, warning, danger, info
-- **Геометрія**: border-radius (sm/md/lg/pill/circle), spacing (sm/md/lg)
-- **Типобезпечні поля**: `type="color"` для кольорів, числові поля для розмірів
-
-#### Архітектура рендерингу компонентів
-
-IDE виконує трансформацію даних між YAML-моделями та веб-компонентами:
-
-- **Table**: `rows[][] + columns[]` → `data[]` (масив обʼєктів)
-- **Tree**: `data` → `items` маппінг з 4-рівневою таксономією
-- **Markdown**: Сирий markdown → HTML через конвертер `_md2html()`
-- **ProgressBar**: Аліас тегу (`ui-progress-bar` → `ui-progress`), кольорові варіанти
-- **LangSelect**: `string[]` → `{code,title}[]` конвертація
-- **Hyphenated props**: Автоматична `camelCase` конвертація (`show-label` → `showLabel`)
-
-#### NaN0 Spec (YAML)
-
-Лаконічний формат для визначення варіацій:
-
-Як визначити варіацію компонента за допомогою NaN0 Spec?
-
+Приклад опису варіації компонента:
 ```yaml
 - Button: Primary
   $variant: brand
   $outline: true
 ```
 
-#### Сайт документації
+## Демонстраційні майданчики (Playground)
 
-IDE включає автогенерований сайт документації.
-HTML-сторінки генеруються з шаблону `ide.html` через `generate-pages.js`:
+Бібліотека містить багаті приклади використання:
 
-- Сторінки для кожної мови (`/uk/Data/Table.html`, `/en/Feedback/Alert.html`)
-- SEO-оптимізовані з `<title>` та `<meta>` для кожного компонента
-- Маршрутизація за категоріями (`/Data/`, `/Feedback/`, `/Forms/`, `/Actions/`, `/System/`)
-- i18n навбар з атрибутами `data-i18n`
+- [Форма реєстрації](./play/registration.form.js)
+- [Обмін валют](./play/currency.exchange.js)
+- [Поповнення мобільного](./play/topup.telephone.js)
+- [Вибір мови](./play/language.form.js)
 
-Як запустити сайт документації?
-
+Як запустити Playground?
 ```bash
-npm run docs:dev
-```
-
-## Демо-пісочниця
-
-Бібліотека містить багаті демо-приклади:
-
-- [Форма реєстрації](../../play/registration.form.js)
-- [Обмін валют](../../play/currency.exchange.js)
-- [Мобільне поповнення](../../play/topup.telephone.js)
-- [Вибір мови](../../play/language.form.js)
-
-Запустіть для дослідження функціональності:
-
-Як запустити пісочницю?
-
-```bash
-# Клонуйте репозиторій та запустіть пісочницю
+# Клонуйте репозиторій та запустіть playground
 git clone https://github.com/nan0web/ui.git
 cd ui
 npm install
 npm run play
 ```
 
-## Документація API
+## Архітектура та Специфікації проєкту
 
-Детальна документація API доступна в JSDoc кожного класу.
-Досліджуйте:
+- [Архітектура пакету (`architecture.md`)](./architecture.md)
+- [Архітектура каталогів та фільтрів (`architecture-catalog.md`)](./architecture-catalog.md)
+- [Специфікація універсальних блоків (`project.md`)](./project.md)
 
-- [Повідомлення](../../src/core/Message/)
-- [Форми](../../src/core/Form/)
-- [Потік](../../src/core/Stream.js)
-- [Компоненти](../../src/Component/)
-- [Вигляд](../../src/View/)
-- [Застосунок](../../src/App/)
-- [Моделі](../../src/Model/)
+## Внесок (Contributing)
 
-## Архітектура проєкту та специфікації
-
-Як спроєктовано універсальну блок-специфікацію? — [дивіться Universal Blocks Spec (`project.md`)](../../project.md)
-
-## Участь у розробці
-
-Як долучитися? — [дивіться тут](../../CONTRIBUTING.md)
+Як долучитися до розробки? - [Дивіться тут](./CONTRIBUTING.md)
 
 ## Ліцензія
 
-ISC ліцензія — [дивіться тут](../../LICENSE)
+Ліцензія ISC - [деталі тут](./LICENSE)

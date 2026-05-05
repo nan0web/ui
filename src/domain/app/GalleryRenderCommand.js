@@ -1,9 +1,9 @@
-import { Model } from '@nan0web/types'
 import SnapshotRunner from './SnapshotRunner.js'
 
 import { show, result } from '../../core/Intent.js'
+import { ModelAsApp } from '../index.js'
 
-export class GalleryRenderIntent extends Model {
+export class GalleryRenderCommand extends ModelAsApp {
 	static alias = 'render'
 
 	static UI = {
@@ -11,36 +11,35 @@ export class GalleryRenderIntent extends Model {
 		success: '✅ Gallery render complete',
 		failed: '🚨 Gallery render failed: {error}',
 	}
-	
-	static dataDir = { 
-		type: 'string', 
+
+	static dataDir = {
+		type: 'string',
 		default: 'docs/data',
 		help: 'Path to source models directory'
 	}
-	
-	static dir = { 
-		type: 'string', 
+
+	static dir = {
+		type: 'string',
 		default: 'snapshots/core',
 		help: 'Path to output snapshots directory'
 	}
 
 	/**
-
-	 * @param {Partial<GalleryRenderIntent> | Record<string, any>} [data={}]
-
-	 * @param {import('@nan0web/types').ModelOptions} [options={}]
-
+	 * @param {Partial<GalleryRenderCommand> | Record<string, any>} [data={}]
+	 * @param {Partial<import('@nan0web/types').ModelOptions>} [options={}]
 	 */
-
 	constructor(data = {}, options = {}) {
 		super(data, options)
 		/** @type {string} */ this.dataDir
 		/** @type {string} */ this.dir
 	}
 
+	/**
+	 * @returns {AsyncGenerator<import('../../core/Intent.js').Intent, import('../../core/Intent.js').ResultIntent, any>}
+	 */
 	async *run() {
-		yield show(this._.t(GalleryRenderIntent.UI.rendering, { dataDir: this.dataDir, dir: this.dir }))
-		
+		yield show(this._.t(GalleryRenderCommand.UI.rendering, { dataDir: this.dataDir, dir: this.dir }))
+
 		const snapshotRunner = new SnapshotRunner({
 			dataDir: this.dataDir,
 			snapshotsDir: this.dir,
@@ -62,16 +61,17 @@ export class GalleryRenderIntent extends Model {
 		try {
 			const res = yield* snapshotRunner.run()
 			if (res.data && res.data.success) {
-				yield show(this._.t(GalleryRenderIntent.UI.success, {}))
+				yield show(this._.t(GalleryRenderCommand.UI.success, {}))
 			} else {
-				yield show(this._.t(GalleryRenderIntent.UI.failed, { error: 'Audit failed' }), 'error')
+				yield show(this._.t(GalleryRenderCommand.UI.failed, { error: 'Audit failed' }), 'error')
 				return result({ status: 'error' })
 			}
 		} catch (error) {
-			yield show(this._.t(GalleryRenderIntent.UI.failed, { error: /** @type {Error} */ (error).message }), 'error')
+			yield show(this._.t(GalleryRenderCommand.UI.failed, { error: /** @type {Error} */ (error).message }), 'error')
 			return result({ status: 'error' })
 		}
+		return result({})
 	}
 }
 
-export default GalleryRenderIntent
+export default GalleryRenderCommand

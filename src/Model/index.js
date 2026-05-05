@@ -58,7 +58,7 @@ export {
 	ProfileDropdownModel,
 }
 
-const Model = {
+const Models = {
 	User,
 	HeaderModel,
 	FooterModel,
@@ -88,4 +88,4 @@ const Model = {
 	ProfileDropdownModel,
 }
 
-export default Model
+export default Models

@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.12.3] — 2026-05-05
+
+### Added
+- **Inheritance-Aware Metadata**: Refactored `ModelAsApp` to use the new `@nan0web/types` `getMetadata` protocol. This ensures that sub-commands and help generation correctly identify static metadata from parent classes.
+- **Direct Model Exports**: Exposed `./models` subpath in `package.json` to enable direct imports of UI models for improved developer experience and tree-shaking.
+- **Multi-language Documentation**: Reorganized documentation into localized paths (`docs/en/`, `docs/uk/`) and added full Ukrainian translation.
+
+### Fixed
+- **Sub-Command Instantiation**: Fixed a bug where inherited sub-command definitions were ignored during application bootstrapping.
+- **Positional Argument Resolution**: Enhanced `resolvePositionalArgs` to be inheritance-aware, correctly mapping arguments based on the full class hierarchy.
+- **Namespace Collision**: Renamed UI component container from `Model` to `Models` to resolve collision with the base framework class.
+- **Docs Rendering**: Fixed JSDoc parsing issues in `README.md.js` by isolating type comments on separate lines.
+
 ## [1.12.1]
 
 ### Fixed

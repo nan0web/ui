@@ -1,6 +1,6 @@
 {
 	"name": "@nan0web/ui",
-	"version": "1.12.2",
+	"version": "1.12.3",
 	"description": "NaN•Web UI. One application logic (algorithm) and many UI.",
 	"main": "src/index.js",
 	"types": "types/index.d.ts",
@@ -8,7 +8,7 @@
 	"files": [
 		"src/**/*.js",
 		"!src/**/*.test.js",
-		"!src/README.md.js",
+		"!src/docs/**/*.md.js",
 		"types/**/*.d.ts"
 	],
 	"scripts": {
@@ -20,7 +20,7 @@
 		"test:nan0test": "node --test --test-timeout=3333 \"src/**/*.test.js\" | nan0test parse --fail",
 		"test:coverage": "node --experimental-test-coverage --test-coverage-include=\"src/**/*.js\" --test-coverage-exclude=\"src/**/*.test.js\" --test \"src/**/*.test.js\"",
 		"test:coverage:collect": "nan0test coverage",
-		"test:docs": "node --test src/README.md.js",
+		"test:docs": "node --test --test-timeout=3333 'src/docs/**/*.md.js'",
 		"release:spec": "node --test \"src/test/releases/**/*.test.js\"",
 		"test:release": "node --test \"src/test/releases/**/*.test.js\"",
 		"test:status": "nan0test status --hide-name",
@@ -60,6 +60,10 @@
 		"./domain": {
 			"import": "./src/domain/index.js",
 			"types": "./types/domain/index.d.ts"
+		},
+		"./models": {
+			"import": "./src/Model/index.js",
+			"types": "./types/Model/index.d.ts"
 		},
 		"./inspect": {
 			"import": "./src/inspect.js",
@@ -107,6 +111,7 @@
 		"@nan0web/ui-lit": "workspace:*",
 		"@playwright/test": "^1.58.2",
 		"@rollup/plugin-yaml": "^4.1.2",
+		"@types/node": "^25.6.0",
 		"@vitest/coverage-v8": "^3.2.4",
 		"husky": "^9.1.7",
 		"js-yaml": "^4.1.1",
